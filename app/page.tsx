@@ -54,14 +54,14 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[url('/modern-luxury-car-in-sri-lanka-with-palm-trees-and.png')] bg-cover bg-center opacity-10"></div>
         {/* Smooth transition to next section */}
         <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent via-white/5 to-white/20 pointer-events-none"></div>
-        {/* Floating mini nav */}
+        {/* Floating mini nav
         <nav className="hidden md:flex gap-4 absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-md rounded-full px-6 py-2 text-sm font-medium border border-white/20 shadow-lg">
           <a href="#services" className="text-white/80 hover:text-yellow-300 transition">Services</a>
           <a href="#fleet" className="text-white/80 hover:text-yellow-300 transition">Fleet</a>
           <a href="#awards" className="text-white/80 hover:text-yellow-300 transition">Awards</a>
           <a href="#tours" className="text-white/80 hover:text-yellow-300 transition">Tours</a>
           <a href="#contact" className="text-white/80 hover:text-yellow-300 transition">Contact</a>
-        </nav>
+        </nav> */}
         <div className="relative container mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <Reveal className="space-y-8 text-white">

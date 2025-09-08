@@ -111,8 +111,8 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="relative h-96 lg:h-[500px]">
+      <section className="relative overflow-hidden" id="top">
+        <div className="relative h-[460px] lg:h-[520px]">
           <Image
             src={packageData.image || "/placeholder.svg"}
             alt={packageData.title}
@@ -120,37 +120,55 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/60" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(255,255,255,0.15),transparent_60%)]" />
-          <div className="absolute inset-0 flex items-center">
+          {/* Layered overlays */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/40 to-black/70" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_25%,rgba(255,255,255,0.18),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_75%,rgba(255,255,255,0.12),transparent_55%)]" />
+          {/* Content */}
+          <div className="absolute inset-0 flex items-end pb-12 lg:items-center lg:pb-0">
             <div className="container mx-auto px-4">
               <Reveal>
-                <div className="max-w-3xl text-white">
-                  <Link href="/packages" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 transition-colors">
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to Packages
-                  </Link>
-                  <Badge className="bg-emerald-600 mb-4 shadow-md shadow-emerald-800/30">{category?.name}</Badge>
-                  <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight tracking-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">
+                <div className="max-w-4xl text-white">
+                  <div className="flex flex-wrap items-center gap-3 mb-5">
+                    <Link href="/packages" className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm backdrop-blur-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 transition-colors">
+                      <ArrowLeft className="h-4 w-4" /> Back
+                    </Link>
+                    <Badge className="bg-emerald-600/90 backdrop-blur-sm px-3 py-1 rounded-full shadow shadow-emerald-900/30">{category?.name}</Badge>
+                  </div>
+                  <h1 className="text-4xl lg:text-5xl font-bold mb-5 leading-tight tracking-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]">
                     {packageData.title}
                   </h1>
-                  <p className="text-xl text-white/90 mb-6 leading-relaxed">
+                  <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed max-w-3xl">
                     {packageData.shortDescription}
                   </p>
-                  <div className="flex flex-wrap items-center gap-6 text-white/80 text-sm font-medium">
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="h-5 w-5" />
-                      <span>{packageData.days} Days</span>
+                  <div className="hidden lg:grid grid-cols-4 gap-6 max-w-4xl">
+                    <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
+                      <Clock className="h-6 w-6 text-emerald-300" />
+                      <div>
+                        <p className="text-xs uppercase tracking-wide text-white/70">Duration</p>
+                        <p className="font-semibold">{packageData.days} Days</p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Users className="h-5 w-5" />
-                      <span>Max {packageData.maxPeople} people</span>
+                    <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
+                      <Users className="h-6 w-6 text-emerald-300" />
+                      <div>
+                        <p className="text-xs uppercase tracking-wide text-white/70">Group Size</p>
+                        <p className="font-semibold">Max {packageData.maxPeople}</p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                      <span>
-                        {packageData.rating} ({packageData.reviews} reviews)
-                      </span>
+                    <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
+                      <Star className="h-6 w-6 text-yellow-400 fill-current" />
+                      <div>
+                        <p className="text-xs uppercase tracking-wide text-white/70">Rating</p>
+                        <p className="font-semibold">{packageData.rating} <span className="text-white/60 text-xs">({packageData.reviews})</span></p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
+                      <Badge className="bg-emerald-500 text-white hover:bg-emerald-500">{category?.name?.split(' ')[0]}</Badge>
+                      <div>
+                        <p className="text-xs uppercase tracking-wide text-white/70">Category</p>
+                        <p className="font-semibold">{category?.name}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -158,11 +176,44 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
             </div>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-b from-transparent to-white" />
+        {/* Floating stats bar (mobile) */}
+        <div className="lg:hidden -mt-10 relative z-10 px-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
+              <Clock className="h-5 w-5 text-emerald-600" />
+              <span className="text-sm font-medium">{packageData.days} Days</span>
+            </div>
+            <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
+              <Users className="h-5 w-5 text-emerald-600" />
+              <span className="text-sm font-medium">Max {packageData.maxPeople}</span>
+            </div>
+            <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
+              <Star className="h-5 w-5 text-yellow-500 fill-current" />
+              <span className="text-sm font-medium">{packageData.rating}</span>
+            </div>
+            <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
+              <span className="text-xs font-semibold tracking-wide bg-emerald-100 text-emerald-700 px-2 py-1 rounded">{category?.name?.split(' ')[0]}</span>
+              <span className="text-sm font-medium">Category</span>
+            </div>
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent to-white" />
       </section>
 
+      {/* Anchor Navigation (desktop) */}
+      <nav className="hidden lg:block sticky top-0 z-30 bg-white/70 backdrop-blur-md border-b border-gray-200/70 shadow-sm">
+        <div className="container mx-auto px-4">
+          <ul className="flex items-center gap-8 text-sm font-medium">
+            <li><a href="#overview" className="py-4 inline-block hover:text-emerald-600 transition-colors">Overview</a></li>
+            <li><a href="#info" className="py-4 inline-block hover:text-emerald-600 transition-colors">Information</a></li>
+            <li><a href="#inquiry" className="py-4 inline-block hover:text-emerald-600 transition-colors">Inquiry</a></li>
+            <li className="ml-auto"><a href="#top" className="py-4 inline-block text-gray-500 hover:text-emerald-600 transition-colors">Back to top</a></li>
+          </ul>
+        </div>
+      </nav>
+
       {/* Content Section */}
-      <section className="py-20 relative overflow-hidden">
+      <section className="py-20 relative overflow-hidden" id="overview">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-32 -right-16 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-200/30 rounded-full blur-3xl" />
@@ -174,9 +225,9 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
               {/* Package Description */}
               <Reveal>
                 <Card className="group border-gray-200/70 shadow-sm hover:shadow-xl transition-shadow rounded-2xl overflow-hidden">
-                  <div className="h-1 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500 opacity-70" />
-                  <CardHeader>
-                    <CardTitle>Package Details</CardTitle>
+                  <div className="h-1 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500" />
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-2xl">Package Details</CardTitle>
                   </CardHeader>
                   <CardContent className="prose prose-emerald max-w-none">
                     <div dangerouslySetInnerHTML={{ __html: packageData.detailedDescription }} className="space-y-4" />
@@ -185,9 +236,9 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
               </Reveal>
 
               {category && (
-                <Reveal className="delay-100">
-                  <Card className="group border-gray-200/70 shadow-sm hover:shadow-xl transition-shadow rounded-2xl">
-                    <CardHeader>
+                <Reveal className="delay-100" >
+                  <Card id="info" className="group border-gray-200/70 shadow-sm hover:shadow-xl transition-shadow rounded-2xl">
+                    <CardHeader className="pb-2">
                       <CardTitle>Important Information</CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -200,12 +251,12 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
 
             <div className="lg:col-span-1">
               <Reveal className="lg:sticky lg:top-8">
-                <Card className="shadow-md hover:shadow-xl transition-shadow border-gray-200/70 rounded-2xl backdrop-blur-sm bg-white/90">
-                  <CardHeader>
+                <Card id="inquiry" className="shadow-md hover:shadow-xl transition-shadow border-gray-200/70 rounded-2xl backdrop-blur-sm bg-white/90">
+                  <CardHeader className="pb-2">
                     <CardTitle>Book Your Private Driver & Tour Guide</CardTitle>
                     <p className="text-sm text-gray-600">Fields marked with an * are required</p>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-5">
                     <div className="space-y-2">
                       <Label htmlFor="name">Name *</Label>
                       <Input id="name" placeholder="Your full name" required />
@@ -312,9 +363,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                       />
                     </div>
 
-                    <Button className="w-full bg-emerald-600 hover:bg-emerald-700" size="lg">
-                      Send Inquiry
-                    </Button>
+                    <Button className="w-full bg-emerald-600 hover:bg-emerald-700" size="lg">Send Inquiry</Button>
 
                     <div className="text-center text-sm text-gray-600">
                       <p>Questions? Call us at</p>
@@ -327,6 +376,17 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
           </div>
         </div>
       </section>
+      {/* Mobile sticky CTA */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-gray-200 shadow-lg px-4 py-3 flex items-center gap-4">
+        <div className="flex-1 text-sm">
+          <p className="font-semibold leading-tight">Interested in this tour?</p>
+          <p className="text-xs text-gray-500">Send us your inquiry now</p>
+        </div>
+        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 rounded-full" onClick={() => {
+          const el = document.getElementById('inquiry');
+          el?.scrollIntoView({ behavior: 'smooth' });
+        }}>Inquire</Button>
+      </div>
       {showScrollTop && (
         <button
           aria-label="Scroll to top"
