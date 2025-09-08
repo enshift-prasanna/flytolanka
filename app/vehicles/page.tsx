@@ -80,6 +80,14 @@ const features = [
       "Garbage bin for passenger convenience",
     ],
   },
+  {
+    category: "🚍 Vehicle Options",
+    items: [
+      "Cars (for private tours & transfers)",
+      "Vans & Mini Coaches (ideal for families & small groups)",
+      "Luxury Coaches & Buses (for large group tours)",
+    ],
+  },
 ]
 
 export default function VehiclesPage() {
@@ -129,7 +137,7 @@ export default function VehiclesPage() {
             following standard features:
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             {features.map((feature, index) => (
               <Card key={index} className="h-full">
                 <CardHeader>
@@ -152,31 +160,6 @@ export default function VehiclesPage() {
       </section>
 
       {/* Vehicle Options */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">🚍 Vehicle Options</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <h3 className="font-semibold mb-2">Cars</h3>
-                <p className="text-sm text-gray-600">(for private tours & transfers)</p>
-              </CardContent>
-            </Card>
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <h3 className="font-semibold mb-2">Vans & Mini Coaches</h3>
-                <p className="text-sm text-gray-600">(ideal for families & small groups)</p>
-              </CardContent>
-            </Card>
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <h3 className="font-semibold mb-2">Luxury Coaches & Buses</h3>
-                <p className="text-sm text-gray-600">(for large group tours)</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
 
       {/* Trusted Drivers */}
       <section className="py-16 bg-blue-50">

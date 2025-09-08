@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -13,89 +13,136 @@ import { Badge } from "@/components/ui/badge"
 import { RichTextEditor } from "@/components/rich-text-editor"
 import { Plus, Trash2, Save, Eye, Package, FileText, Users, Car, BarChart3, FolderPlus } from "lucide-react"
 
-export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState("dashboard")
+const AdminPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState("categories")
 
-  const [categoryForm, setCategoryForm] = useState({
-    name: "",
-    description: "",
-    image: "",
-    defaultText: "",
-  })
+  // Category CRUD
+  const [categoryForm, setCategoryForm] = useState<{ name: string; description: string; image: string | File; defaultText: string }>({ name: "", description: "", image: "", defaultText: "" })
+  const [categories, setCategories] = useState<any[]>([])
+  const [editingCategory, setEditingCategory] = useState<string|null>(null)
 
-  // Package form state
-  const [packageForm, setPackageForm] = useState({
-    title: "",
-    categoryId: "",
-    days: "", // Changed from number to string
-    shortDescription: "",
-    detailedDescription: "",
-    image: "",
-  })
+  // Package CRUD
+  const [packageForm, setPackageForm] = useState({ title: "", categoryId: "", days: "", shortDescription: "", detailedDescription: "", image: "" })
+  const [packages, setPackages] = useState<any[]>([])
+  const [editingPackage, setEditingPackage] = useState<string|null>(null)
 
-  // Blog form state
-  const [blogForm, setBlogForm] = useState({
-    title: "",
-    category: "",
-    excerpt: "",
-    content: "",
-    author: "",
-    image: "",
-    tags: [] as string[],
-    featured: false,
-  })
+  // Blog CRUD
+  const [blogForm, setBlogForm] = useState({ title: "", excerpt: "", content: "", image: "" })
+  const [blogs, setBlogs] = useState<any[]>([])
+  const [editingBlog, setEditingBlog] = useState<string|null>(null)
 
-  const [newTag, setNewTag] = useState("")
+  // Cloudinary config
+  const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgyxftryr/upload";
+  const CLOUDINARY_UPLOAD_PRESET = "ftl_main";
 
-  const addTag = () => {
-    if (newTag.trim()) {
-      setBlogForm((prev) => ({
-        ...prev,
-        tags: [...prev.tags, newTag.trim()],
-      }))
-      setNewTag("")
+  // Fetch lists
+  useEffect(() => {
+    fetch("/api/category").then(res => res.json()).then(setCategories)
+    fetch("/api/package").then(res => res.json()).then(setPackages)
+    fetch("/api/blog").then(res => res.json()).then(setBlogs)
+  }, [])
+
+  // Cloudinary upload helper
+  async function uploadImage(file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    const res = await fetch(CLOUDINARY_URL, { method: "POST", body: formData });
+    const data = await res.json();
+    return data.secure_url;
+  }
+
+  // Category CRUD handlers
+  async function handleCategorySubmit(e: React.FormEvent) {
+    e.preventDefault();
+    let imageUrl = categoryForm.image;
+    if (imageUrl && typeof imageUrl !== 'string') {
+      imageUrl = await uploadImage(imageUrl);
+    }
+    const payload = { ...categoryForm, image: imageUrl };
+    const method = editingCategory ? "PUT" : "POST";
+    const res = await fetch("/api/category", { method, body: JSON.stringify(editingCategory ? { id: editingCategory, ...payload } : payload) });
+    if (res.ok) {
+      setCategoryForm({ name: "", description: "", image: "", defaultText: "" });
+      setEditingCategory(null);
+      fetch("/api/category").then(res => res.json()).then(setCategories);
+    }
+  }
+  function handleCategoryEdit(cat: any) {
+    setCategoryForm({ name: cat.name, description: cat.description, image: cat.image || "", defaultText: cat.defaultText || "" });
+    setEditingCategory(cat.id);
+  }
+  async function handleCategoryDelete(id: string) {
+    if (confirm("Delete this category?")) {
+      await fetch("/api/category", { method: "DELETE", body: JSON.stringify({ id }) });
+      fetch("/api/category").then(res => res.json()).then(setCategories);
     }
   }
 
-  const removeTag = (index: number) => {
-    setBlogForm((prev) => ({
-      ...prev,
-      tags: prev.tags.filter((_, i) => i !== index),
-    }))
+  // Package CRUD handlers
+  async function handlePackageSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    let imageUrl = packageForm.image;
+    if (imageUrl && typeof imageUrl !== 'string') {
+      imageUrl = await uploadImage(imageUrl);
+    }
+    const payload = { ...packageForm, image: imageUrl };
+    const method = editingPackage ? "PUT" : "POST";
+    const res = await fetch("/api/package", { method, body: JSON.stringify(editingPackage ? { id: editingPackage, ...payload } : payload) });
+    if (res.ok) {
+      setPackageForm({ title: "", categoryId: "", days: "", shortDescription: "", detailedDescription: "", image: "" });
+      setEditingPackage(null);
+      fetch("/api/package").then(res => res.json()).then(setPackages);
+    }
+  }
+  function handlePackageEdit(pkg: any) {
+    setPackageForm({ title: pkg.title, categoryId: pkg.categoryId, days: pkg.days, shortDescription: pkg.shortDescription, detailedDescription: pkg.detailedDescription, image: pkg.image || "" });
+    setEditingPackage(pkg.id);
+  }
+  async function handlePackageDelete(id: string) {
+    if (confirm("Delete this package?")) {
+      await fetch("/api/package", { method: "DELETE", body: JSON.stringify({ id }) });
+      fetch("/api/package").then(res => res.json()).then(setPackages);
+    }
   }
 
-  const handleCategorySubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Category submitted:", categoryForm)
-    alert("Category saved successfully!")
+  // Blog CRUD handlers
+  async function handleBlogSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    let imageUrl = blogForm.image;
+    if (imageUrl && typeof imageUrl !== 'string') {
+      imageUrl = await uploadImage(imageUrl);
+    }
+    const payload = { ...blogForm, image: imageUrl };
+    const method = editingBlog ? "PUT" : "POST";
+    const res = await fetch("/api/blog", { method, body: JSON.stringify(editingBlog ? { id: editingBlog, ...payload } : payload) });
+    if (res.ok) {
+      setBlogForm({ title: "", excerpt: "", content: "", image: "" });
+      setEditingBlog(null);
+      fetch("/api/blog").then(res => res.json()).then(setBlogs);
+    }
   }
-
-  const handlePackageSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Package submitted:", packageForm)
-    alert("Package saved successfully!")
+  function handleBlogEdit(blog: any) {
+    setBlogForm({ title: blog.title, excerpt: blog.excerpt, content: blog.content, image: blog.image || "" });
+    setEditingBlog(blog.id);
   }
-
-  const handleBlogSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Blog submitted:", blogForm)
-    alert("Blog post saved successfully!")
+  async function handleBlogDelete(id: string) {
+    if (confirm("Delete this blog post?")) {
+      await fetch("/api/blog", { method: "DELETE", body: JSON.stringify({ id }) });
+      fetch("/api/blog").then(res => res.json()).then(setBlogs);
+    }
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Panel</h1>
           <p className="text-gray-600">Manage your travel packages and blog content</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="dashboard" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Dashboard
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="categories" className="flex items-center gap-2">
               <FolderPlus className="h-4 w-4" />
               Categories
@@ -108,102 +155,7 @@ export default function AdminPage() {
               <FileText className="h-4 w-4" />
               Blogs
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Analytics
-            </TabsTrigger>
           </TabsList>
-
-          {/* Dashboard Tab */}
-          <TabsContent value="dashboard" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Packages</CardTitle>
-                  <Package className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">6</div>
-                  <p className="text-xs text-muted-foreground">+2 from last month</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Blog Posts</CardTitle>
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">12</div>
-                  <p className="text-xs text-muted-foreground">+4 from last month</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Vehicles</CardTitle>
-                  <Car className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">18</div>
-                  <p className="text-xs text-muted-foreground">All operational</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Monthly Bookings</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">45</div>
-                  <p className="text-xs text-muted-foreground">+12% from last month</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Activity</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                    <span className="text-sm">New package "Cultural Triangle" added</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span className="text-sm">Blog post "Top 10 Places" published</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                    <span className="text-sm">Vehicle "Toyota Camry" updated</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Button className="w-full justify-start bg-transparent" variant="outline">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add New Package
-                  </Button>
-                  <Button className="w-full justify-start bg-transparent" variant="outline">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create Blog Post
-                  </Button>
-                  <Button className="w-full justify-start bg-transparent" variant="outline">
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Website
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
 
           <TabsContent value="categories" className="space-y-6">
             <Card>
@@ -224,15 +176,17 @@ export default function AdminPage() {
                         required
                       />
                     </div>
-
                     <div className="space-y-2">
-                      <Label htmlFor="category-image">Category Image URL</Label>
+                      <Label htmlFor="category-image">Category Image</Label>
                       <Input
                         id="category-image"
-                        value={categoryForm.image}
-                        onChange={(e) => setCategoryForm((prev) => ({ ...prev, image: e.target.value }))}
-                        placeholder="https://example.com/image.jpg"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setCategoryForm((prev) => ({ ...prev, image: e.target.files?.[0] ?? "" }))}
                       />
+                      {typeof categoryForm.image === "string" && categoryForm.image && (
+                        <img src={categoryForm.image} alt="Category" className="h-16 mt-2" />
+                      )}
                     </div>
                   </div>
 
@@ -256,8 +210,25 @@ export default function AdminPage() {
 
                   <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700">
                     <Save className="mr-2 h-4 w-4" />
-                    Save Category
+                    {editingCategory ? "Update" : "Save"} Category
                   </Button>
+                  {editingCategory && (
+                    <Button type="button" variant="outline" onClick={() => { setEditingCategory(null); setCategoryForm({ name: "", description: "", image: "", defaultText: "" }); }}>Cancel Edit</Button>
+                  )}
+                {/* Category List */}
+                <div className="mt-8">
+                  <h2 className="font-semibold mb-2">Categories</h2>
+                  <ul className="space-y-2">
+                    {categories.map(cat => (
+                      <li key={cat.id} className="flex items-center gap-2">
+                        {cat.image && <img src={cat.image} alt="" className="h-8 w-8 object-cover rounded" />}
+                        <span className="font-medium">{cat.name}</span>
+                        <Button size="sm" variant="outline" onClick={() => handleCategoryEdit(cat)}>Edit</Button>
+                        <Button size="sm" variant="destructive" onClick={() => handleCategoryDelete(cat.id)}><Trash2 className="h-4 w-4" /></Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
                 </form>
               </CardContent>
             </Card>
@@ -294,11 +265,9 @@ export default function AdminPage() {
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="1">Cultural Tours</SelectItem>
-                          <SelectItem value="2">Adventure Tours</SelectItem>
-                          <SelectItem value="3">Beach & Coastal Tours</SelectItem>
-                          <SelectItem value="4">Wildlife Safari Tours</SelectItem>
-                          <SelectItem value="5">Wellness & Ayurveda</SelectItem>
+                          {categories.map(cat => (
+                            <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -316,13 +285,27 @@ export default function AdminPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="package-image">Image URL</Label>
+                      <Label htmlFor="package-image">Image</Label>
                       <Input
                         id="package-image"
-                        value={packageForm.image}
-                        onChange={(e) => setPackageForm((prev) => ({ ...prev, image: e.target.value }))}
-                        placeholder="https://example.com/image.jpg"
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            // Option 1: Show preview using URL.createObjectURL
+                            setPackageForm((prev) => ({ ...prev, image: URL.createObjectURL(file) }));
+                            // Option 2: Upload immediately and set URL (uncomment if you want to upload on select)
+                            // const imageUrl = await uploadImage(file);
+                            // setPackageForm((prev) => ({ ...prev, image: imageUrl }));
+                          } else {
+                            setPackageForm((prev) => ({ ...prev, image: "" }));
+                          }
+                        }}
                       />
+                      {typeof packageForm.image === "string" && packageForm.image && (
+                        <img src={packageForm.image} alt="Package" className="h-16 mt-2" />
+                      )}
                     </div>
                   </div>
 
@@ -346,8 +329,25 @@ export default function AdminPage() {
 
                   <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700">
                     <Save className="mr-2 h-4 w-4" />
-                    Save Package
+                    {editingPackage ? "Update" : "Save"} Package
                   </Button>
+                  {editingPackage && (
+                    <Button type="button" variant="outline" onClick={() => { setEditingPackage(null); setPackageForm({ title: "", categoryId: "", days: "", shortDescription: "", detailedDescription: "", image: "" }); }}>Cancel Edit</Button>
+                  )}
+                {/* Package List */}
+                <div className="mt-8">
+                  <h2 className="font-semibold mb-2">Packages</h2>
+                  <ul className="space-y-2">
+                    {packages.map(pkg => (
+                      <li key={pkg.id} className="flex items-center gap-2">
+                        {pkg.image && <img src={pkg.image} alt="" className="h-8 w-8 object-cover rounded" />}
+                        <span className="font-medium">{pkg.title}</span>
+                        <Button size="sm" variant="outline" onClick={() => handlePackageEdit(pkg)}>Edit</Button>
+                        <Button size="sm" variant="destructive" onClick={() => handlePackageDelete(pkg.id)}><Trash2 className="h-4 w-4" /></Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
                 </form>
               </CardContent>
             </Card>
@@ -375,44 +375,22 @@ export default function AdminPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="blog-category">Category</Label>
-                      <Select
-                        value={blogForm.category}
-                        onValueChange={(value) => setBlogForm((prev) => ({ ...prev, category: value }))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Travel Guide">Travel Guide</SelectItem>
-                          <SelectItem value="Food & Culture">Food & Culture</SelectItem>
-                          <SelectItem value="Wildlife">Wildlife</SelectItem>
-                          <SelectItem value="Culture">Culture</SelectItem>
-                          <SelectItem value="Beaches">Beaches</SelectItem>
-                          <SelectItem value="Adventure">Adventure</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="blog-author">Author</Label>
-                      <Input
-                        id="blog-author"
-                        value={blogForm.author}
-                        onChange={(e) => setBlogForm((prev) => ({ ...prev, author: e.target.value }))}
-                        placeholder="Author name"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="blog-image">Featured Image URL</Label>
+                      <Label htmlFor="blog-image">Featured Image</Label>
                       <Input
                         id="blog-image"
-                        value={blogForm.image}
-                        onChange={(e) => setBlogForm((prev) => ({ ...prev, image: e.target.value }))}
-                        placeholder="https://example.com/image.jpg"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          setBlogForm((prev) => ({
+                            ...prev,
+                            image: file ? URL.createObjectURL(file) : ""
+                          }));
+                        }}
                       />
+                      {typeof blogForm.image === "string" && blogForm.image && (
+                        <img src={blogForm.image} alt="Blog" className="h-16 mt-2" />
+                      )}
                     </div>
                   </div>
 
@@ -434,98 +412,37 @@ export default function AdminPage() {
                     placeholder="Write your blog post content here. Use the toolbar to format text, add headings, lists, and more."
                   />
 
-                  {/* Tags */}
-                  <div className="space-y-3">
-                    <Label>Tags</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={newTag}
-                        onChange={(e) => setNewTag(e.target.value)}
-                        placeholder="Add a tag"
-                        onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
-                      />
-                      <Button type="button" onClick={addTag}>
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {blogForm.tags.map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                          #{tag}
-                          <button type="button" onClick={() => removeTag(index)}>
-                            <Trash2 className="h-3 w-3" />
-                          </button>
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="featured"
-                      checked={blogForm.featured}
-                      onChange={(e) => setBlogForm((prev) => ({ ...prev, featured: e.target.checked }))}
-                      className="rounded"
-                    />
-                    <Label htmlFor="featured">Mark as featured post</Label>
-                  </div>
 
                   <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700">
                     <Save className="mr-2 h-4 w-4" />
-                    Publish Blog Post
+                    {editingBlog ? "Update" : "Publish"} Blog Post
                   </Button>
+                  {editingBlog && (
+                    <Button type="button" variant="outline" onClick={() => { setEditingBlog(null); setBlogForm({ title: "", excerpt: "", content: "", image: "" }); }}>Cancel Edit</Button>
+                  )}
+                {/* Blog List */}
+                <div className="mt-8">
+                  <h2 className="font-semibold mb-2">Blog Posts</h2>
+                  <ul className="space-y-2">
+                    {blogs.map(blog => (
+                      <li key={blog.id} className="flex items-center gap-2">
+                        {blog.image && <img src={blog.image} alt="" className="h-8 w-8 object-cover rounded" />}
+                        <span className="font-medium">{blog.title}</span>
+                        <Button size="sm" variant="outline" onClick={() => handleBlogEdit(blog)}>Edit</Button>
+                        <Button size="sm" variant="destructive" onClick={() => handleBlogDelete(blog.id)}><Trash2 className="h-4 w-4" /></Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
                 </form>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          {/* Analytics Tab */}
-          <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Popular Packages</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span>Cultural Triangle Explorer</span>
-                    <Badge>45 bookings</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Southern Coast Paradise</span>
-                    <Badge>38 bookings</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Hill Country Adventure</span>
-                    <Badge>32 bookings</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Popular Blog Posts</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span>Top 10 Must-Visit Places</span>
-                    <Badge>2.5k views</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Sri Lankan Cuisine Guide</span>
-                    <Badge>1.8k views</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Wildlife Safari Guide</span>
-                    <Badge>1.6k views</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
           </TabsContent>
         </Tabs>
       </div>
     </div>
   )
 }
+
+export default AdminPage
+// ...existing code...

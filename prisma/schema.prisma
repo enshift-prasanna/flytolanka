@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+// Category model
+model Category {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  description  String
+  image        String?
+  defaultText  String?
+  packages     Package[]
+}
+
+// Package model
+model Package {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  title               String
+  categoryId          String
+  days                String
+  shortDescription    String
+  detailedDescription String
+  image               String?
+  category            Category @relation(fields: [categoryId], references: [id])
+}
+
+// Blog model
+model Blog {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  title      String
+  excerpt    String
+  content    String
+  image      String?
+  createdAt  DateTime @default(now())
+}
+
+// Vehicle model
+model Vehicle {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  image String?
+}
