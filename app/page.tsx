@@ -396,41 +396,40 @@ export default function HomePage() {
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">Excellence Awards</h2>
             <p className="text-base sm:text-xl text-white/70 max-w-xl sm:max-w-2xl mx-auto">Award-winning service recognized year after year</p>
           </Reveal>
-          <div className="flex flex-col lg:flex-row justify-center items-center gap-6 sm:gap-12 mb-8 sm:mb-12">
+            <div className="flex flex-col lg:flex-row justify-center items-stretch gap-6 sm:gap-12 mb-8 sm:mb-12">
             {[
               {
-                year: 2023,
-                img: "https://res.cloudinary.com/dgyxftryr/image/upload/v1757408258/Adventure-Beach-Escape-_E2_80_93-15-Days-1_aaoekm.png",
-                title: "Travellers' Choice",
-                desc: "Top 10% of attractions worldwide"
+              year: 2023,
+              img: "https://res.cloudinary.com/dgyxftryr/image/upload/v1757408258/Adventure-Beach-Escape-_E2_80_93-15-Days-1_aaoekm.png",
+              title: "Travellers' Choice",
+              desc: "Top 10% of attractions worldwide"
               },
               {
-                year: 2024,
-                img: "https://res.cloudinary.com/dgyxftryr/image/upload/v1757408329/1_c3m2k6.png",
-                title: "Tripadvisor Travellers' Choice Awards",
-                desc: "Exceptional service recognition"
+              year: 2024,
+              img: "https://res.cloudinary.com/dgyxftryr/image/upload/v1757408329/1_c3m2k6.png",
+              title: "Tripadvisor Travellers' Choice Awards",
+              desc: "Exceptional service recognition"
               },
               {
-                year: 2025,
-                img: "https://res.cloudinary.com/dgyxftryr/image/upload/v1757408352/2_eqkacz.png",
-                title: "Tripadvisor Travelers' Choice Awards",
-                desc: "Continued excellence"
+              year: 2025,
+              img: "https://res.cloudinary.com/dgyxftryr/image/upload/v1757408352/2_eqkacz.png",
+              title: "Tripadvisor Travelers' Choice Awards",
+              desc: "Continued excellence"
               }
             ].map((award, i) => (
-              <Reveal key={award.year} className={`w-full sm:w-auto flex-1 ${i === 1 ? 'delay-100' : i === 2 ? 'delay-150' : ''}`}>
-                <div className={`group bg-white/10 border-white/20 p-5 sm:p-10 hover:bg-white/20 hover:scale-102 backdrop-blur-lg text-white rounded-2xl text-center border transition-all duration-300 hover:shadow-2xl relative`}
-                  style={{ minWidth: 0 }}>
-                  {i === 1 && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold">LATEST AWARD</div>}
-                  <div className="flex justify-center mb-3 sm:mb-4">
-                    <img src={award.img} alt={`Award ${award.year}`} className="w-28 h-28 sm:w-40 sm:h-40 rounded-xl shadow-lg" style={{objectFit: 'cover'}} />
-                  </div>
-                  <div className="font-bold text-base sm:text-lg mb-1 sm:mb-2">{award.title}</div>
-                  <div className="text-xl sm:text-3xl font-bold text-yellow-300 mb-1">{award.year}</div>
-                  <div className="text-xs sm:text-sm text-white/70 mt-2">{award.desc}</div>
+              <Reveal key={award.year} className={`w-full lg:w-1/3 ${i === 1 ? 'delay-100' : i === 2 ? 'delay-150' : ''}`}>
+              <div className={`group h-full bg-white/10 border-white/20 p-5 sm:p-10 hover:bg-white/20 hover:scale-102 backdrop-blur-lg text-white rounded-2xl text-center border transition-all duration-300 hover:shadow-2xl relative`}>
+                {i === 2 && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold">LATEST AWARD</div>}
+                <div className="flex justify-center mb-3 sm:mb-4">
+                <img src={award.img} alt={`Award ${award.year}`} className="w-28 h-28 sm:w-40 sm:h-40 rounded-xl shadow-lg" style={{objectFit: 'cover'}} />
                 </div>
+                <div className="font-bold text-base sm:text-lg mb-1 sm:mb-2">{award.title}</div>
+                <div className="text-xl sm:text-3xl font-bold text-yellow-300 mb-1">{award.year}</div>
+                <div className="text-xs sm:text-sm text-white/70 mt-2">{award.desc}</div>
+              </div>
               </Reveal>
             ))}
-          </div>
+            </div>
           <Reveal className="text-center">
             <a
               className="bg-white text-secondary  font-bold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 inline-block"
