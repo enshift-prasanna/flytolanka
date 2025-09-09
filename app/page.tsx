@@ -572,7 +572,7 @@ export default function HomePage() {
 
                 <Reveal className="bg-gradient-to-r from-secondary via-primary/90 to-secondary text-white p-8 rounded-xl text-center">
                   <div>
-                    <h4 className="text-2xl font-bold mb-4">Final Thoughts</h4>
+                    <h4 className="text-2xl text-yellow-300 font-bold mb-4">Final Thoughts</h4>
                     <p className="text-lg text-emerald-100">Fly To Lanka Tours is the perfect choice for travelers who want comfort, safety, and a personalized travel experience. Whether you are on a short trip or a long holiday, having a local driver guide will make your journey unforgettable.</p>
                   </div>
                 </Reveal>
