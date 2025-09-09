@@ -385,13 +385,7 @@ export default function HomePage() {
           <Reveal className="text-center mb-10 sm:mb-16">
             <div className="inline-flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-white/20 text-white rounded-full text-xs sm:text-sm font-medium mb-3 sm:mb-4 backdrop-blur-sm border border-white/30">🏆 Award Winning Service</div>
             <div className="flex items-center justify-center gap-3 mb-4 sm:mb-6">
-              <div className="bg-white rounded-lg px-4 py-2">
-                <img 
-                  src="https://static.tacdn.com/img2/brand_refresh/Tripadvisor_lockup_horizontal_secondary_registered.svg" 
-                  alt="TripAdvisor" 
-                  className="h-6 sm:h-8"
-                />
-              </div>
+
             </div>
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">Excellence Awards</h2>
             <p className="text-base sm:text-xl text-white/70 max-w-xl sm:max-w-2xl mx-auto">Award-winning service recognized year after year</p>
@@ -432,12 +426,17 @@ export default function HomePage() {
             </div>
           <Reveal className="text-center">
             <a
-              className="bg-white text-secondary  font-bold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 inline-block"
+              className="bg-white rounded-lg px-4 py-2 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 inline-flex items-center justify-center"
               href="https://www.tripadvisor.com/Attraction_Review-g293962-d23803919-Reviews-Fly_To_Lanka_Tours-Colombo_Western_Province.html"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Read our reviews on TripAdvisor"
             >
-              Read Our Excellent Reviews On Tripadvisor
+              <img 
+                src="https://static.tacdn.com/img2/brand_refresh/Tripadvisor_lockup_horizontal_secondary_registered.svg" 
+                alt="TripAdvisor Reviews" 
+                className="h-6 sm:h-8"
+              />
             </a>
             <div className="flex flex-col sm:flex-row items-center justify-center mt-4 sm:mt-6 space-y-2 sm:space-y-0 sm:space-x-2">
               <div className="flex text-yellow-400 text-xl sm:text-2xl">⭐⭐⭐⭐⭐</div>
