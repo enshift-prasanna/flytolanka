@@ -69,7 +69,7 @@ export default function CategoryPage({ params }: PageProps) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Hero Section (copied from package[id], static image) */}
       <section className="relative overflow-hidden" id="top">
         <div className="relative h-[460px] lg:h-[520px]">
@@ -109,9 +109,9 @@ export default function CategoryPage({ params }: PageProps) {
       </section>
 
       {/* Packages Grid */}
-      <section className="py-20 relative bg-gradient-to-br from-gray-50 via-white to-blue-50 overflow-hidden">
-        <div className="absolute -top-24 -right-10 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-200/30 rounded-full blur-3xl" />
+      <section className="py-20 relative bg-gradient-to-br from-gray-50 via-white to-slate-100 overflow-hidden">
+        <div className="absolute -top-24 -right-10 w-72 h-72 bg-slate-200/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-slate-200/30 rounded-full blur-3xl" />
         <div className="relative container mx-auto px-4 lg:px-24">
           {loading ? (
             <Reveal className="text-center py-16">Loading packages...</Reveal>
@@ -123,10 +123,10 @@ export default function CategoryPage({ params }: PageProps) {
                     <div className="relative h-48 w-full overflow-hidden">
                       <Image src={pkg.image || "/placeholder.svg"} alt={pkg.title} width={600} height={400} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <Badge className="absolute top-4 left-4 bg-emerald-600">{category?.name}</Badge>
+                      <Badge className="absolute top-4 left-4 bg-secondary">{category?.name}</Badge>
                     </div>
                     <CardHeader className="space-y-2">
-                      <CardTitle className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{pkg.title}</CardTitle>
+                      <CardTitle className="text-lg font-semibold text-gray-900 group-hover:text-primary transition-colors">{pkg.title}</CardTitle>
                       <CardDescription className="text-gray-600 leading-relaxed line-clamp-3">{pkg.shortDescription}</CardDescription>
                       <div className="flex items-center text-sm text-gray-600">
                         <Clock className="h-4 w-4 mr-1" />
@@ -136,10 +136,10 @@ export default function CategoryPage({ params }: PageProps) {
                     <CardContent className="space-y-4">
                       <div className="flex items-center justify-between pt-4 border-t">
                         <div>
-                          <span className="text-lg font-bold text-emerald-600">Contact for Pricing</span>
+                          <span className="text-lg font-bold text-secondary">Contact for Pricing</span>
                         </div>
                         <Link href={`/packages/${pkg.id}`}>
-                          <Button className="bg-emerald-600 hover:bg-emerald-700">
+                          <Button className="bg-secondary hover:bg-secondary/80">
                             View Details
                             <ArrowRight className="ml-2 h-4 w-4" />
                           </Button>

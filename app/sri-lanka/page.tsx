@@ -60,7 +60,7 @@ export default function SriLankaPage() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Hero Section - Styled like drivers page with provided image */}
       <section className="relative overflow-hidden" id="top">
         <div className="relative h-[420px] lg:h-[500px]">
@@ -100,8 +100,8 @@ export default function SriLankaPage() {
       {/* Combined Articles Section */}
       <section className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-32 -right-16 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-200/30 rounded-full blur-3xl" />
+          <div className="absolute -top-32 -right-16 w-72 h-72 bg-slate-200/30 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-200/30 rounded-full blur-3xl" />
         </div>
         <div className="relative container mx-auto lg:px-24 px-4">
           {loading ? (
@@ -123,7 +123,7 @@ export default function SriLankaPage() {
                       {/* Removed hover line */}
                     </div>
                     <CardHeader className="space-y-2">
-                      <CardTitle className="text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-emerald-600 transition-colors">
+                      <CardTitle className="text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-secondary transition-colors">
                         {post.title}
                       </CardTitle>
                       <CardDescription className="text-gray-600 leading-relaxed line-clamp-3">

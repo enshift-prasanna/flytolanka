@@ -50,9 +50,9 @@ export default function HomePage() {
       .catch(() => setVehicles([]));
   }, []);
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 [scrollbar-width:thin] [scrollbar-color:#3b82f6_#e0f2fe]">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 [scrollbar-width:thin] [scrollbar-color:hsl(var(--primary))_#e0f2fe]">
       {/* Hero Section */}
-      <section id="hero" className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-4 lg:py-12 overflow-hidden">
+      <section id="hero" className="relative bg-gradient-to-br from-primary via-primary/90 to-primary/80 py-4 lg:py-12 overflow-hidden">
         {/* Animated subtle beams */}
         <div className="pointer-events-none absolute inset-0">
           <div className="animate-pulse-slow absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(255,255,255,0.12),transparent_60%)]" />
@@ -133,12 +133,12 @@ export default function HomePage() {
 
       {/* Our Services Section */}
       <section id="services" className="py-20 relative scroll-mt-24">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/30"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-100/10 to-indigo-100/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-br from-cyan-100/10 to-blue-100/10 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/30 via-white to-slate-100/30"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-slate-100/10 to-slate-200/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-br from-slate-100/10 to-slate-200/10 rounded-full blur-3xl"></div>
         <div className="relative container mx-auto px-4 lg:px-24">
           <Reveal className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-medium mb-4">🎯 What We Offer</div>
+            <div className="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">🎯 What We Offer</div>
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Our Premium Services</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">Discover Sri Lanka with our comprehensive tour packages designed to create unforgettable memories</p>
           </Reveal>
@@ -147,13 +147,13 @@ export default function HomePage() {
             <Reveal className="[grid-area:1/1] lg:[grid-area:auto]">
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white">
                 <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🏛️</span></div>
-                  <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Customizable Tour Packages</CardTitle>
+                  <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🏛️</span></div>
+                  <CardTitle className="text-primary group-hover:text-primary/80 transition-colors">Customizable Tour Packages</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-blue-500 mt-1">•</span><p><strong>Cultural Tours:</strong> Explore ancient temples, historic landmarks, and UNESCO World Heritage Sites.</p></div>
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-blue-500 mt-1">•</span><p><strong>Adventure Tours:</strong> Embark on thrilling activities like hiking, rafting, and wildlife safaris.</p></div>
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-blue-500 mt-1">•</span><p><strong>Relaxation Packages:</strong> Unwind on pristine beaches and serene hill stations.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-primary mt-1">•</span><p><strong>Cultural Tours:</strong> Explore ancient temples, historic landmarks, and UNESCO World Heritage Sites.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-primary mt-1">•</span><p><strong>Adventure Tours:</strong> Embark on thrilling activities like hiking, rafting, and wildlife safaris.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-primary mt-1">•</span><p><strong>Relaxation Packages:</strong> Unwind on pristine beaches and serene hill stations.</p></div>
                 </CardContent>
               </Card>
             </Reveal>
@@ -161,7 +161,7 @@ export default function HomePage() {
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🐘</span></div>
-                  <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Wildlife and Nature Excursions</CardTitle>
+                  <CardTitle className="text-secondary group-hover:text-secondary/80 transition-colors">Wildlife and Nature Excursions</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
                   <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-green-500 mt-1">•</span><p><strong>Wildlife Safaris:</strong> Witness majestic elephants, leopards, and exotic bird species.</p></div>
@@ -173,7 +173,7 @@ export default function HomePage() {
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🏰</span></div>
-                  <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">City and Heritage Tours</CardTitle>
+                  <CardTitle className="text-primary group-hover:text-primary/80 transition-colors">City and Heritage Tours</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
                   <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-orange-500 mt-1">•</span><p>Discover vibrant cities such as Colombo, Kandy, and Galle with expert guides.</p></div>
@@ -185,7 +185,7 @@ export default function HomePage() {
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🚗</span></div>
-                  <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Transportation Services</CardTitle>
+                  <CardTitle className="text-primary group-hover:text-primary/80 transition-colors">Transportation Services</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
                   <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-purple-500 mt-1">•</span><p>Comfortable and reliable airport transfers.</p></div>
@@ -197,7 +197,7 @@ export default function HomePage() {
               <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-2 bg-white/80 backdrop-blur-sm">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🏨</span></div>
-                  <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Accommodation Arrangements</CardTitle>
+                  <CardTitle className="text-primary group-hover:text-primary/80 transition-colors">Accommodation Arrangements</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
                   <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-cyan-500 mt-1">•</span><p>Handpicked hotels, resorts, and homestays to suit your budget and preferences.</p></div>
@@ -208,7 +208,7 @@ export default function HomePage() {
               <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-2 bg-white/80 backdrop-blur-sm">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🌿</span></div>
-                  <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Eco-Tourism and Village Tours</CardTitle>
+                  <CardTitle className="text-secondary group-hover:text-secondary/80 transition-colors">Eco-Tourism and Village Tours</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
                   <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-teal-500 mt-1">•</span><p>Experience sustainable tourism by visiting local communities and participating in traditional village activities.</p></div>
@@ -219,7 +219,7 @@ export default function HomePage() {
               <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-2 bg-white/80 backdrop-blur-sm">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">💕</span></div>
-                  <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Honeymoon Packages</CardTitle>
+                  <CardTitle className="text-primary group-hover:text-primary/80 transition-colors">Honeymoon Packages</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
                   <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-pink-500 mt-1">•</span><p>Romantic getaways with special arrangements to make your trip truly memorable.</p></div>
@@ -230,7 +230,7 @@ export default function HomePage() {
               <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-2 bg-white/80 backdrop-blur-sm">
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">📞</span></div>
-                  <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Travel Assistance</CardTitle>
+                  <CardTitle className="text-primary group-hover:text-primary/80 transition-colors">Travel Assistance</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
                   <div className="flex items-start space-x-2"><span className="text-indigo-500 mt-1">•</span><p>24/7 customer support for a hassle-free travel experience.</p></div>
@@ -252,7 +252,7 @@ export default function HomePage() {
           </Reveal>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             {vehicles.length === 0 ? (
-              <div className="col-span-full text-center text-blue-200 py-12">No vehicles available at the moment.</div>
+              <div className="col-span-full text-center text-gray-400 py-12">No vehicles available at the moment.</div>
             ) : (
               vehicles.map((vehicle, i) => (
                 <Reveal key={vehicle.id || i}>
@@ -283,7 +283,7 @@ export default function HomePage() {
       </section>
 
       {/* TripAdvisor Awards Section */}
-      <section id="awards" className="py-20 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 relative overflow-hidden scroll-mt-24">
+      <section id="awards" className="py-20 bg-gradient-to-r from-secondary via-primary/90 to-secondary relative overflow-hidden scroll-mt-24">
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-yellow-400/10 to-orange-400/10"></div>
           <div className="absolute top-10 left-4 w-40 h-40 bg-white/5 rounded-full blur-2xl sm:top-20 sm:left-20 sm:w-64 sm:h-64 sm:blur-3xl"></div>
@@ -293,7 +293,7 @@ export default function HomePage() {
           <Reveal className="text-center mb-10 sm:mb-16">
             <div className="inline-flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-white/20 text-white rounded-full text-xs sm:text-sm font-medium mb-3 sm:mb-4 backdrop-blur-sm border border-white/30">🏆 Award Winning Service</div>
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">Excellent Reviews On Tripadvisor</h2>
-            <p className="text-base sm:text-xl text-emerald-100 max-w-xl sm:max-w-3xl mx-auto">Recognized for outstanding service and customer satisfaction year after year</p>
+            <p className="text-base sm:text-xl text-white/70 max-w-xl sm:max-w-3xl mx-auto">Recognized for outstanding service and customer satisfaction year after year</p>
           </Reveal>
           <div className="flex flex-col lg:flex-row justify-center items-center gap-6 sm:gap-12 mb-8 sm:mb-12">
             {[
@@ -325,14 +325,14 @@ export default function HomePage() {
                   </div>
                   <div className="font-bold text-base sm:text-lg mb-1 sm:mb-2">{award.title}</div>
                   <div className={`${i === 1 ? 'text-2xl sm:text-4xl' : 'text-xl sm:text-3xl'} font-bold text-yellow-300 mb-1`}>{award.year}</div>
-                  <div className="text-xs sm:text-sm text-emerald-100 mt-2">{award.desc}</div>
+                  <div className="text-xs sm:text-sm text-white/70 mt-2">{award.desc}</div>
                 </div>
               </Reveal>
             ))}
           </div>
           <Reveal className="text-center">
             <a
-              className="bg-white text-emerald-600 hover:bg-emerald-50 font-bold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 inline-block"
+              className="bg-white text-secondary hover:bg-primary/10 font-bold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 inline-block"
               href="https://www.tripadvisor.com/Attraction_Review-g293962-d23803919-Reviews-Fly_To_Lanka_Tours-Colombo_Western_Province.html"
               target="_blank"
               rel="noopener noreferrer"
@@ -348,11 +348,11 @@ export default function HomePage() {
       </section>
 
       {/* Our Private Tours Section */}
-      <section id="tours" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 scroll-mt-24">
+      <section id="tours" className="py-20 bg-gradient-to-br from-gray-50 to-slate-100 scroll-mt-24">
         <div className="container mx-auto px-4 lg:px-24">
           <div className="mx-auto">
             <Reveal className="text-center mb-16">
-              <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-medium mb-4">🗺️ Our Experience</div>
+              <div className="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">🗺️ Our Experience</div>
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Our Private Tours</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">Discover the authentic beauty of Sri Lanka with our personalized travel experiences</p>
             </Reveal>
@@ -362,14 +362,14 @@ export default function HomePage() {
                   <div>
                     <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">Personalized Travel & Sightseeing in Sri Lanka</h3>
                     <p className="text-lg text-gray-700 mb-6">Our travel and tourism services are designed to give you a private, safe, and customized experience. Whether you're exploring cities, cultural sites, or nature escapes, we ensure your journey is comfortable, flexible, and memorable.</p>
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl">
+                    <div className="bg-gradient-to-r from-slate-50 to-slate-100 p-6 rounded-xl">
                       <p className="text-gray-700 italic">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo."</p>
                     </div>
                   </div>
                 </Reveal>
                 <Reveal className="delay-100">
                   <div className="relative">
-                    <div className="absolute -inset-4 bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-xl rounded-2xl"></div>
+                    <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-secondary/20 blur-xl rounded-2xl"></div>
                     <Image src="https://res.cloudinary.com/dgyxftryr/image/upload/v1757409607/driving-in-sri-lanka-driving-permit-information_j07etj.webp" alt="Driving in Sri Lanka" width={500} height={180} className="relative rounded-xl shadow-lg w-full h-auto" />
                   </div>
                 </Reveal>
@@ -377,10 +377,10 @@ export default function HomePage() {
               <div className="grid md:grid-cols-2 gap-8 mb-12">
                 <Reveal>
                   <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-8 rounded-xl">
-                    <h4 className="text-lg font-bold text-blue-900 mb-6 flex items-center"><span className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm mr-3">✓</span>Premium Features</h4>
+                    <h4 className="text-lg font-bold text-primary mb-6 flex items-center"><span className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm mr-3">✓</span>Premium Features</h4>
                     <ul className="space-y-3">
                       {['Fully Air-Conditioned & Comfortable Vehicles','Experienced & Licensed Drivers / Chauffeur Guides','Customized Itineraries to Suit Your Preferences','Clean & Well-Maintained Cars, Vans, and Buses','Bottled Water, Umbrellas','Child Seats & Booster Seats on Request'].map(item => (
-                        <li key={item} className="flex items-start space-x-3"><span className="text-blue-500 text-lg">✦</span><span className="text-gray-700">{item}</span></li>
+                        <li key={item} className="flex items-start space-x-3"><span className="text-primary text-lg">✦</span><span className="text-gray-700">{item}</span></li>
                       ))}
                     </ul>
                   </div>

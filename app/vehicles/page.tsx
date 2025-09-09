@@ -104,7 +104,7 @@ export default function VehiclesPage() {
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Hero Section - styled like package[id] */}
       <section className="relative overflow-hidden" id="top">
         <div className="relative h-[460px] lg:h-[520px]">
@@ -127,7 +127,7 @@ export default function VehiclesPage() {
                 <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
                   Hire Your <span className="text-yellow-300">Private Driver & Vehicle</span> in Sri Lanka
                 </h1>
-                <p className="text-lg lg:text-xl text-blue-100 mb-8">Comfortable, safe and flexible transport for tours, transfers & multi-day journeys across the island.</p>
+                <p className="text-lg lg:text-xl text-white/90 mb-8">Comfortable, safe and flexible transport for tours, transfers & multi-day journeys across the island.</p>
               </Reveal>
             </div>
           </div>
@@ -158,12 +158,12 @@ export default function VehiclesPage() {
       </section>
 
       {/* Vehicle Features */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 via-white to-blue-50 relative overflow-hidden">
-        <div className="absolute -top-20 -right-10 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-200/20 rounded-full blur-3xl"></div>
+      <section className="py-24 bg-gradient-to-br from-gray-50 via-white to-slate-100 relative overflow-hidden">
+        <div className="absolute -top-20 -right-10 w-72 h-72 bg-slate-200/30 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-200/20 rounded-full blur-3xl"></div>
         <div className="relative container mx-auto px-4 lg:px-24">
           <Reveal className="text-center mb-14">
-            <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">🚖 Vehicle Standards</div>
+            <div className="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">🚖 Vehicle Standards</div>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Our Vehicles Standard Features</h2>
             <p className="text-gray-600 max-w-4xl mx-auto">Every vehicle is prepared before each journey to ensure comfort, cleanliness and safety for you and your group.</p>
           </Reveal>
@@ -172,14 +172,14 @@ export default function VehiclesPage() {
               <Reveal key={f.category} className="h-full">
                   <Card className="h-full border border-gray-100 rounded-2xl shadow-sm hover:shadow-lg transition-all">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-lg lg:text-xl font-semibold text-blue-700 flex items-start gap-2">
+                      <CardTitle className="text-lg lg:text-xl font-semibold text-primary flex items-start gap-2">
                         <span>{f.category}</span>
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="pb-6">
                       <ul className="space-y-2 text-base lg:text-lg text-gray-700">
                         {f.items.map(it => (
-                          <li key={it} className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">✓</span><span>{it}</span></li>
+                          <li key={it} className="flex items-start gap-2"><span className="text-secondary mt-0.5">✓</span><span>{it}</span></li>
                         ))}
                       </ul>
                     </CardContent>
@@ -191,35 +191,35 @@ export default function VehiclesPage() {
       </section>
 
       {/* Booking Form */}
-  <section className="py-28 bg-emerald-600 relative overflow-hidden">
+  <section className="py-28 bg-secondary relative overflow-hidden">
         {/* Removed background image. Changed background to green. */}
         <div className="relative container mx-auto px-4 lg:px-24">
           <div className="max-w-3xl mx-auto">
             <Reveal className="text-center mb-12">
               <div className="inline-flex items-center px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium mb-5 backdrop-blur-sm border border-white/30">📅 Quick Booking Form</div>
               <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">Book Your Private Driver & Tour Guide</h2>
-              <p className="text-blue-100">Fields marked with an * are required</p>
+              <p className="text-white/70">Fields marked with an * are required</p>
             </Reveal>
             <Reveal className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 lg:p-10 shadow-xl">
               <form className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="name" className="text-white">Name *</Label>
-                    <Input id="name" required className="bg-white/80 focus-visible:ring-blue-500" />
+                    <Input id="name" required className="bg-white/80 focus-visible:ring-primary" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-white">Email Address *</Label>
-                    <Input id="email" type="email" required className="bg-white/80 focus-visible:ring-blue-500" />
+                    <Input id="email" type="email" required className="bg-white/80 focus-visible:ring-primary" />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="whatsapp" className="text-white">WhatsApp Number</Label>
-                  <Input id="whatsapp" className="bg-white/80 focus-visible:ring-blue-500" />
+                  <Input id="whatsapp" className="bg-white/80 focus-visible:ring-primary" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="vehicle" className="text-white">Vehicle Type</Label>
                   <Select>
-                    <SelectTrigger className="bg-white/80 focus:ring-blue-500">
+                    <SelectTrigger className="bg-white/80 focus:ring-primary">
                       <SelectValue placeholder="Select vehicle" />
                     </SelectTrigger>
                     <SelectContent>
@@ -232,28 +232,28 @@ export default function VehiclesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="arrival" className="text-white">Arrival Date *</Label>
-                    <Input id="arrival" type="date" required className="bg-white/80 focus-visible:ring-blue-500" />
+                    <Input id="arrival" type="date" required className="bg-white/80 focus-visible:ring-primary" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="departure" className="text-white">Departure Date</Label>
-                    <Input id="departure" type="date" className="bg-white/80 focus-visible:ring-blue-500" />
+                    <Input id="departure" type="date" className="bg-white/80 focus-visible:ring-primary" />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[['adults','Number of Adults (13+)'],['children','Number of Children (6–12)'],['infants','Number of Infants (0–5)']].map(([id,label]) => (
                     <div key={id} className="space-y-2">
                       <Label htmlFor={id} className="text-white">{label}</Label>
-                      <Input id={id} type="number" min={0} className="bg-white/80 focus-visible:ring-blue-500" />
+                      <Input id={id} type="number" min={0} className="bg-white/80 focus-visible:ring-primary" />
                     </div>
                   ))}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="requirements" className="text-white">Describe your planned route, interests, or any special requirements... *</Label>
-                  <Textarea id="requirements" rows={6} required className="bg-white/80 focus-visible:ring-blue-500" />
+                  <Textarea id="requirements" rows={6} required className="bg-white/80 focus-visible:ring-primary" />
                 </div>
                 <div className="pt-2">
                   <Button type="submit" className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-6 rounded-full shadow-lg hover:shadow-2xl transition">Submit Booking Request</Button>
-                  <p className="text-center text-xs text-blue-100 mt-3">No advance payment required • Fast response • Secure & private</p>
+                  <p className="text-center text-xs text-white/70 mt-3">No advance payment required • Fast response • Secure & private</p>
                 </div>
               </form>
             </Reveal>

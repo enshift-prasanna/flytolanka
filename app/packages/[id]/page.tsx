@@ -87,7 +87,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Hero Section */}
       <section className="relative overflow-hidden" id="top">
         <div className="relative h-[460px] lg:h-[520px]">
@@ -121,14 +121,14 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                   </p>
                   <div className="hidden lg:grid grid-cols-4 gap-6 max-w-4xl">
                     <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
-                      <Clock className="h-6 w-6 text-emerald-300" />
+                      <Clock className="h-6 w-6 text-secondary" />
                       <div>
                         <p className="text-xs uppercase tracking-wide text-white/70">Duration</p>
                         <p className="font-semibold">{packageData.days} Days</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
-                      <Users className="h-6 w-6 text-emerald-300" />
+                      <Users className="h-6 w-6 text-secondary" />
                       <div>
                         <p className="text-xs uppercase tracking-wide text-white/70">Group Size</p>
                         <p className="font-semibold">Max {packageData.maxPeople}</p>
@@ -158,11 +158,11 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
         <div className="lg:hidden -mt-10 relative z-10 px-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
-              <Clock className="h-5 w-5 text-emerald-600" />
+              <Clock className="h-5 w-5 text-secondary" />
               <span className="text-sm font-medium">{packageData.days} Days</span>
             </div>
             <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
-              <Users className="h-5 w-5 text-emerald-600" />
+              <Users className="h-5 w-5 text-secondary" />
               <span className="text-sm font-medium">Max {packageData.maxPeople}</span>
             </div>
             <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
@@ -170,7 +170,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
               <span className="text-sm font-medium">5</span>
             </div>
             <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
-              <span className="text-xs font-semibold tracking-wide bg-emerald-100 text-emerald-700 px-2 py-1 rounded">{category?.name?.split(' ')[0]}</span>
+              <span className="text-xs font-semibold tracking-wide bg-secondary/10 text-secondary px-2 py-1 rounded">{category?.name?.split(' ')[0]}</span>
               <span className="text-sm font-medium">Category</span>
             </div>
           </div>
@@ -182,8 +182,8 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
       {/* Content Section */}
       <section className="py-20 relative overflow-hidden" id="overview">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-32 -right-16 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-200/30 rounded-full blur-3xl" />
+          <div className="absolute -top-32 -right-16 w-72 h-72 bg-slate-200/30 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-200/30 rounded-full blur-3xl" />
         </div>
         <div className="relative container mx-auto px-4 lg:px-24">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -196,7 +196,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                   <CardHeader className="pb-2">
                     <CardTitle className="text-2xl">Package Details</CardTitle>
                   </CardHeader>
-                  <CardContent className="prose prose-emerald max-w-none">
+                  <CardContent className="prose prose-gray max-w-none">
                     <div dangerouslySetInnerHTML={{ __html: packageData.detailedDescription }} className="space-y-4" />
                   </CardContent>
                 </Card>
@@ -333,11 +333,11 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                       />
                     </div>
 
-                    <Button className="w-full bg-emerald-600 hover:bg-emerald-700" size="lg">Send Inquiry</Button>
+                    <Button className="w-full bg-secondary hover:bg-secondary/80" size="lg">Send Inquiry</Button>
 
                     <div className="text-center text-sm text-gray-600">
                       <p>Questions? Call us at</p>
-                      <p className="font-medium text-emerald-600">+94 77 123 4567</p>
+                      <p className="font-medium text-secondary">+94 77 123 4567</p>
                     </div>
                   </CardContent>
                 </Card>

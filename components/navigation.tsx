@@ -19,7 +19,7 @@ export function Navigation() {
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       {/* Top contact bar */}
-      <div className="bg-emerald-600 text-white py-2">
+      <div className="bg-secondary text-white py-2">
         <div className="container mx-auto px-4 lg:px-24 flex justify-between items-center text-sm">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
@@ -42,7 +42,7 @@ export function Navigation() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="bg-emerald-600 text-white px-3 py-2 rounded-lg font-bold text-xl">FTL</div>
+            <div className="bg-primary text-white px-3 py-2 rounded-lg font-bold text-xl">FTL</div>
             <div className="flex flex-col">
               <span className="font-bold text-xl text-gray-900">FlyToLanka</span>
               <span className="text-sm text-gray-600">Travel & Transport</span>
@@ -55,12 +55,12 @@ export function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-gray-700 hover:text-emerald-600 font-medium transition-colors"
+                className="text-gray-700 hover:text-primary font-medium transition-colors"
               >
                 {item.label}
               </Link>
             ))}
-            <Button className="bg-emerald-600 hover:bg-emerald-700">Tailor Made</Button>
+            <Button className="bg-secondary hover:bg-secondary/80">Tailor Made</Button>
           </div>
 
           {/* Mobile menu button */}
@@ -77,13 +77,13 @@ export function Navigation() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-gray-700 hover:text-emerald-600 font-medium transition-colors"
+                  className="text-gray-700 hover:text-primary font-medium transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   {item.label}
                 </Link>
               ))}
-              <Button className="bg-emerald-600 hover:bg-emerald-700 w-fit">Tailor Made</Button>
+              <Button className="bg-secondary hover:bg-secondary/80 w-fit">Tailor Made</Button>
             </div>
           </div>
         )}

@@ -47,7 +47,7 @@ export default function DriversPage() {
   }, [])
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Hero Section - Styled like package[id] with static image and centered content */}
       <section className="relative overflow-hidden" id="top">
         <div className="relative h-[420px] lg:h-[500px]">
@@ -89,26 +89,26 @@ export default function DriversPage() {
       <section className="py-28 relative overflow-hidden">
         <div className="relative container mx-auto px-6">
           <div className="max-w-3xl mx-auto">
-            <Reveal className="bg-emerald-600 bg-opacity-95 backdrop-blur-md border border-white/20 rounded-2xl p-8 lg:p-10 shadow-xl">
+            <Reveal className="bg-secondary bg-opacity-95 backdrop-blur-md border border-white/20 rounded-2xl p-8 lg:p-10 shadow-xl">
               <form className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="name" className="text-white">Name *</Label>
-                    <Input id="name" type="text" required className="bg-white/80 focus-visible:ring-blue-500" />
+                    <Input id="name" type="text" required className="bg-white/80 focus-visible:ring-primary" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-white">Email Address *</Label>
-                    <Input id="email" type="email" required className="bg-white/80 focus-visible:ring-blue-500" />
+                    <Input id="email" type="email" required className="bg-white/80 focus-visible:ring-primary" />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="whatsapp" className="text-white">WhatsApp Number</Label>
-                  <Input id="whatsapp" type="tel" className="bg-white/80 focus-visible:ring-blue-500" />
+                  <Input id="whatsapp" type="tel" className="bg-white/80 focus-visible:ring-primary" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="vehicle" className="text-white">Vehicle Type</Label>
                   <Select>
-                    <SelectTrigger className="bg-white/80 focus:ring-blue-500">
+                    <SelectTrigger className="bg-white/80 focus:ring-primary">
                       <SelectValue placeholder="Select Vehicle Type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -121,11 +121,11 @@ export default function DriversPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="arrival" className="text-white">Arrival Date *</Label>
-                    <Input id="arrival" type="date" required className="bg-white/80 focus-visible:ring-blue-500" />
+                    <Input id="arrival" type="date" required className="bg-white/80 focus-visible:ring-primary" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="departure" className="text-white">Departure Date</Label>
-                    <Input id="departure" type="date" className="bg-white/80 focus-visible:ring-blue-500" />
+                    <Input id="departure" type="date" className="bg-white/80 focus-visible:ring-primary" />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -133,7 +133,7 @@ export default function DriversPage() {
                     <div key={id} className="space-y-2">
                       <Label htmlFor={id} className="text-white">{label}</Label>
                       <Select>
-                        <SelectTrigger className="bg-white/80 focus:ring-blue-500">
+                        <SelectTrigger className="bg-white/80 focus:ring-primary">
                           <SelectValue placeholder="0" />
                         </SelectTrigger>
                         <SelectContent>
@@ -147,11 +147,11 @@ export default function DriversPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="requirements" className="text-white">Describe your planned route, interests, or any special requirements... *</Label>
-                  <Textarea id="requirements" rows={6} required className="bg-white/80 focus-visible:ring-blue-500" />
+                  <Textarea id="requirements" rows={6} required className="bg-white/80 focus-visible:ring-primary" />
                 </div>
                 <div className="pt-2">
                   <Button type="submit" className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-6 rounded-full shadow-lg hover:shadow-2xl transition">Submit Booking Request</Button>
-                  <p className="text-center text-xs text-blue-100 mt-3">No advance payment • Fast response • Secure & private</p>
+                  <p className="text-center text-xs text-white/70 mt-3">No advance payment • Fast response • Secure & private</p>
                 </div>
               </form>
             </Reveal>

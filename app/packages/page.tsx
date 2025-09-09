@@ -49,7 +49,7 @@ export default function PackagesPage() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Hero Section - matches [id] style, static image, centered content */}
       <section className="relative overflow-hidden" id="top">
         <div className="relative h-[420px] lg:h-[500px]">
@@ -84,12 +84,12 @@ export default function PackagesPage() {
         </div>
   </section>
   {/* Dividing fader below hero section */}
-  <div className="absolute inset-x-0 top-full h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent" style={{ position: 'relative', zIndex: 1 }} />
+  <div className="absolute inset-x-0 top-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" style={{ position: 'relative', zIndex: 1 }} />
 
       {/* Package Categories - removed blue part between hero and next section */}
       <section className="py-20 relative bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-hidden">
-        <div className="absolute -top-24 -right-10 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-200/30 rounded-full blur-3xl" />
+        <div className="absolute -top-24 -right-10 w-72 h-72 bg-slate-200/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-slate-200/30 rounded-full blur-3xl" />
         <div className="relative container mx-auto lg:px-24 px-4">
           {/* ...removed 'Choose Your Adventure' heading and description... */}
           {loading ? (
@@ -106,7 +106,7 @@ export default function PackagesPage() {
                           {/* Removed colored line on hover */}
                       </div>
                       <CardHeader className="space-y-2">
-                        <CardTitle className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{category.name}</CardTitle>
+                        <CardTitle className="text-lg font-semibold text-gray-900 group-hover:text-primary transition-colors">{category.name}</CardTitle>
                         <CardDescription className="text-gray-600 leading-relaxed line-clamp-3">{category.description}</CardDescription>
                       </CardHeader>
                     </Card>
@@ -120,7 +120,7 @@ export default function PackagesPage() {
 
       {/* Why Choose Our Packages */}
       <section className="py-24 bg-white relative">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
         <div className="container mx-auto px-4 lg:px-24">
           <Reveal className="text-center mb-14">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Our Travel Packages?</h2>
@@ -128,29 +128,29 @@ export default function PackagesPage() {
           </Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             <Reveal className="text-center group">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                <MapPin className="h-8 w-8 text-emerald-600" />
+              <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <MapPin className="h-8 w-8 text-secondary" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Expert Local Guides</h3>
               <p className="text-gray-600 text-sm">Knowledgeable guides who bring Sri Lanka's history and culture to life</p>
             </Reveal>
             <Reveal className="text-center group delay-75">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                <Users className="h-8 w-8 text-emerald-600" />
+              <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Users className="h-8 w-8 text-secondary" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Small Group Sizes</h3>
               <p className="text-gray-600 text-sm">Intimate group experiences for personalized attention and flexibility</p>
             </Reveal>
             <Reveal className="text-center group delay-100">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                <Star className="h-8 w-8 text-emerald-600" />
+              <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Star className="h-8 w-8 text-secondary" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Premium Quality</h3>
               <p className="text-gray-600 text-sm">Carefully selected accommodations and experiences for maximum comfort</p>
             </Reveal>
             <Reveal className="text-center group delay-150">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                <Phone className="h-8 w-8 text-emerald-600" />
+              <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Phone className="h-8 w-8 text-secondary" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">24/7 Support</h3>
               <p className="text-gray-600 text-sm">Round-the-clock assistance throughout your entire journey</p>
