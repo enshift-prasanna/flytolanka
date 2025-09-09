@@ -24,7 +24,7 @@ export function Navigation() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <Phone className="h-4 w-4" />
-              <span>+94 77 123 4567</span>
+              <span>+94 76 553 3874</span>
             </div>
             <div className="flex items-center gap-1">
               <Mail className="h-4 w-4" />

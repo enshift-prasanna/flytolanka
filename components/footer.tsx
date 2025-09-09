@@ -71,7 +71,9 @@ export function Footer() {
         <div className="container mx-auto px-4 lg:px-24">
             <div className="flex flex-col items-center justify-center text-center py-4 lg:py-10">
               <h2 className="text-4xl lg:text-6xl font-bold color-white">Contact Us</h2>
-              <h2 className="text-4xl lg:text-8xl font-bold color-white">+94765533874</h2>
+                <a href="tel:+94765533874" className="block">
+                <h2 className="text-4xl lg:text-8xl font-bold color-white">+94765533874</h2>
+                </a>
             </div>
         </div>
         <div className="container mx-auto px-4 lg:px-24 py-10">

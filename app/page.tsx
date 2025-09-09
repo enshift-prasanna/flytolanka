@@ -103,11 +103,16 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button aria-label="Book your private driver now" size="lg" className="group bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Button
+                  aria-label="Book your private driver now"
+                  size="lg"
+                  className="group bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                  onClick={() => window.location.href = '/drivers'}
+                >
                   <span className="flex items-center gap-2">Book Your Driver Now <span className="transition-transform group-hover:translate-x-1">→</span></span>
                 </Button>
-              </div>
+                </div>
             </Reveal>
             <Reveal className="relative lg:mt-0 mt-12 delay-150">
               <div className="absolute -inset-4 bg-gradient-to-r from-yellow-400/20 to-blue-400/20 blur-xl rounded-2xl"></div>
@@ -263,12 +268,17 @@ export default function HomePage() {
               ))
             )}
           </div>
-          <Reveal className="text-center">
-            <Button aria-label="Book your private driver now" size="lg" className="group bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-bold text-lg px-10 py-4 rounded-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-              <span className="flex items-center gap-2">Book Your Driver Now <span className="group-hover:translate-x-1 transition-transform">→</span></span>
+            <Reveal className="text-center">
+            <Button
+              aria-label="View other vehicles"
+              size="lg"
+              className="group bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-bold text-lg px-10 py-4 rounded-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+              onClick={() => window.location.href = '/vehicles'}
+            >
+              <span className="flex items-center gap-2">View Other Vehicles <span className="group-hover:translate-x-1 transition-transform">→</span></span>
             </Button>
             <p className="text-black mt-4 text-sm">✨ No advance payment required • 24/7 support • Best rates guaranteed</p>
-          </Reveal>
+            </Reveal>
         </div>
       </section>
 
@@ -321,7 +331,14 @@ export default function HomePage() {
             ))}
           </div>
           <Reveal className="text-center">
-            <Button className="bg-white text-emerald-600 hover:bg-emerald-50 font-bold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">Read Our Excellent Reviews On Tripadvisor</Button>
+            <a
+              className="bg-white text-emerald-600 hover:bg-emerald-50 font-bold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 inline-block"
+              href="https://www.tripadvisor.com/Attraction_Review-g293962-d23803919-Reviews-Fly_To_Lanka_Tours-Colombo_Western_Province.html"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Read Our Excellent Reviews On Tripadvisor
+            </a>
             <div className="flex flex-col sm:flex-row items-center justify-center mt-4 sm:mt-6 space-y-2 sm:space-y-0 sm:space-x-2">
               <div className="flex text-yellow-400 text-xl sm:text-2xl">⭐⭐⭐⭐⭐</div>
               <span className="text-white font-semibold text-sm sm:text-base">4.9/5 from 2,500+ reviews</span>
