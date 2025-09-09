@@ -292,8 +292,17 @@ export default function HomePage() {
         <div className="relative container mx-auto px-2 sm:px-4 lg:px-24">
           <Reveal className="text-center mb-10 sm:mb-16">
             <div className="inline-flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-white/20 text-white rounded-full text-xs sm:text-sm font-medium mb-3 sm:mb-4 backdrop-blur-sm border border-white/30">🏆 Award Winning Service</div>
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">Excellent Reviews On Tripadvisor</h2>
-            <p className="text-base sm:text-xl text-white/70 max-w-xl sm:max-w-3xl mx-auto">Recognized for outstanding service and customer satisfaction year after year</p>
+            <div className="flex items-center justify-center gap-3 mb-4 sm:mb-6">
+              <div className="bg-white rounded-lg px-4 py-2">
+                <img 
+                  src="https://static.tacdn.com/img2/brand_refresh/Tripadvisor_lockup_horizontal_secondary_registered.svg" 
+                  alt="TripAdvisor" 
+                  className="h-6 sm:h-8"
+                />
+              </div>
+            </div>
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">Excellence Awards</h2>
+            <p className="text-base sm:text-xl text-white/70 max-w-xl sm:max-w-2xl mx-auto">Award-winning service recognized year after year</p>
           </Reveal>
           <div className="flex flex-col lg:flex-row justify-center items-center gap-6 sm:gap-12 mb-8 sm:mb-12">
             {[
@@ -317,14 +326,14 @@ export default function HomePage() {
               }
             ].map((award, i) => (
               <Reveal key={award.year} className={`w-full sm:w-auto flex-1 ${i === 1 ? 'delay-100' : i === 2 ? 'delay-150' : ''}`}>
-                <div className={`group ${i === 1 ? 'bg-white/15 border-white/30 p-6 sm:p-12 hover:bg-white/25 hover:scale-105' : 'bg-white/10 border-white/20 p-5 sm:p-10 hover:bg-white/20 hover:scale-102'} backdrop-blur-lg text-white rounded-2xl text-center border transition-all duration-300 hover:shadow-2xl relative`}
+                <div className={`group bg-white/10 border-white/20 p-5 sm:p-10 hover:bg-white/20 hover:scale-102 backdrop-blur-lg text-white rounded-2xl text-center border transition-all duration-300 hover:shadow-2xl relative`}
                   style={{ minWidth: 0 }}>
                   {i === 1 && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold">LATEST AWARD</div>}
                   <div className="flex justify-center mb-3 sm:mb-4">
-                    <img src={award.img} alt={`Award ${award.year}`} className={`rounded-xl shadow-lg ${i === 1 ? 'w-32 h-32 sm:w-48 sm:h-48' : 'w-28 h-28 sm:w-40 sm:h-40'}`} style={{objectFit: 'cover'}} />
+                    <img src={award.img} alt={`Award ${award.year}`} className="w-28 h-28 sm:w-40 sm:h-40 rounded-xl shadow-lg" style={{objectFit: 'cover'}} />
                   </div>
                   <div className="font-bold text-base sm:text-lg mb-1 sm:mb-2">{award.title}</div>
-                  <div className={`${i === 1 ? 'text-2xl sm:text-4xl' : 'text-xl sm:text-3xl'} font-bold text-yellow-300 mb-1`}>{award.year}</div>
+                  <div className="text-xl sm:text-3xl font-bold text-yellow-300 mb-1">{award.year}</div>
                   <div className="text-xs sm:text-sm text-white/70 mt-2">{award.desc}</div>
                 </div>
               </Reveal>
@@ -332,7 +341,7 @@ export default function HomePage() {
           </div>
           <Reveal className="text-center">
             <a
-              className="bg-white text-secondary hover:bg-primary/10 font-bold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 inline-block"
+              className="bg-white text-secondary  font-bold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 inline-block"
               href="https://www.tripadvisor.com/Attraction_Review-g293962-d23803919-Reviews-Fly_To_Lanka_Tours-Colombo_Western_Province.html"
               target="_blank"
               rel="noopener noreferrer"
@@ -341,7 +350,7 @@ export default function HomePage() {
             </a>
             <div className="flex flex-col sm:flex-row items-center justify-center mt-4 sm:mt-6 space-y-2 sm:space-y-0 sm:space-x-2">
               <div className="flex text-yellow-400 text-xl sm:text-2xl">⭐⭐⭐⭐⭐</div>
-              <span className="text-white font-semibold text-sm sm:text-base">4.9/5 from 2,500+ reviews</span>
+              <span className="text-white font-semibold text-sm sm:text-base">5/5 from reviews</span>
             </div>
           </Reveal>
         </div>
