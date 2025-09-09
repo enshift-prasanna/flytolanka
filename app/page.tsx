@@ -118,7 +118,7 @@ export default function HomePage() {
               <div className="absolute -inset-4 bg-gradient-to-r from-yellow-400/20 to-blue-400/20 blur-xl rounded-2xl"></div>
               <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-2 border border-white/20">
                 <Image
-                  src="https://res.cloudinary.com/dgyxftryr/image/upload/v1757409918/d9a-lake-gregory-nuwara-eliya-1_iqllsm_k776xy.jpg"
+                  src="https://miro.medium.com/v2/resize:fit:1400/0*49rWwR59OahKWF3h"
                   alt="Lake Gregory, Nuwara Eliya - Scenic Sri Lanka"
                   width={400}
                   height={300}
