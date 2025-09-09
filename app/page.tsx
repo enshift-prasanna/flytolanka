@@ -506,7 +506,7 @@ export default function HomePage() {
                     <p className="text-lg leading-relaxed">Are you planning your dream holiday to Sri Lanka? One of the best ways to explore this beautiful island is by hiring a Sri Lanka private driver tour guide. With a local expert behind the wheel, you can travel stress-free, discover hidden gems, and enjoy a tailor-made experience that goes beyond standard tour packages.</p>
                   </div>
                 </Reveal>
-                <Reveal className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-8 rounded-xl">
+                <Reveal className="bg-gradient-to-r from-secondary via-primary/90 to-secondary text-white p-8 rounded-xl">
                   <div>
                     <h4 className="text-2xl font-bold mb-6">Why Choose Fly To Lanka Tours?</h4>
                     <div className="grid md:grid-cols-2 gap-6">
@@ -572,7 +572,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <Reveal className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-8 rounded-xl text-center">
+                <Reveal className="bg-gradient-to-r from-secondary via-primary/90 to-secondary text-white p-8 rounded-xl text-center">
                   <div>
                     <h4 className="text-2xl font-bold mb-4">Final Thoughts</h4>
                     <p className="text-lg text-emerald-100">Fly To Lanka Tours is the perfect choice for travelers who want comfort, safety, and a personalized travel experience. Whether you are on a short trip or a long holiday, having a local driver guide will make your journey unforgettable.</p>
