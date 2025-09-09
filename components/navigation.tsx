@@ -20,7 +20,7 @@ export function Navigation() {
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       {/* Top contact bar */}
       <div className="bg-emerald-600 text-white py-2">
-        <div className="container mx-auto px-4 flex justify-between items-center text-sm">
+        <div className="container mx-auto px-4 lg:px-24 flex justify-between items-center text-sm">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <Phone className="h-4 w-4" />
@@ -38,7 +38,7 @@ export function Navigation() {
       </div>
 
       {/* Main navigation */}
-      <nav className="container mx-auto px-4 py-4">
+      <nav className="container mx-auto px-4 lg:px-24 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
@@ -60,7 +60,7 @@ export function Navigation() {
                 {item.label}
               </Link>
             ))}
-            <Button className="bg-emerald-600 hover:bg-emerald-700">Book Now</Button>
+            <Button className="bg-emerald-600 hover:bg-emerald-700">Tailor Made</Button>
           </div>
 
           {/* Mobile menu button */}
@@ -83,7 +83,7 @@ export function Navigation() {
                   {item.label}
                 </Link>
               ))}
-              <Button className="bg-emerald-600 hover:bg-emerald-700 w-fit">Book Now</Button>
+              <Button className="bg-emerald-600 hover:bg-emerald-700 w-fit">Tailor Made</Button>
             </div>
           </div>
         )}

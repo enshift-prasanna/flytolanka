@@ -28,40 +28,7 @@ function Reveal({ children, className = "" }: { children: React.ReactNode; class
   return <div ref={ref} className={`transition-all duration-700 ease-out will-change-transform ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"} ${className}`}>{children}</div>
 }
 
-const vehicleTypes = [
-  {
-    name: "Mini Car & Driver",
-    image: "/mini-car-vehicle.png",
-  },
-  {
-    name: "Sedan Car & Driver",
-    image: "/sedan-car-vehicle.png",
-  },
-  {
-    name: "Luxury Car & Driver",
-    image: "/luxury-car-vehicle.png",
-  },
-  {
-    name: "SUV & Driver",
-    image: "/suv-vehicle.png",
-  },
-  {
-    name: "Van & Driver",
-    image: "/van-vehicle.png",
-  },
-  {
-    name: "Luxury Van & Driver",
-    image: "/luxury-van-vehicle.png",
-  },
-  {
-    name: "Mini Coach & Driver",
-    image: "/mini-coach-bus.png",
-  },
-  {
-    name: "Luxury Coach & Driver",
-    image: "/luxury-coach-bus.png",
-  },
-]
+
 
 const features = [
   {
@@ -114,68 +81,78 @@ const features = [
 
 export default function VehiclesPage() {
   const [showScrollTop, setShowScrollTop] = useState(false)
+  const [vehicles, setVehicles] = useState<Array<{ id: string; title: string; image?: string }>>([])
   useEffect(() => {
     const onScroll = () => setShowScrollTop(window.scrollY > 500)
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useEffect(() => {
+    async function fetchVehicles() {
+      try {
+        const res = await fetch('/api/vehicle')
+        if (!res.ok) throw new Error('Failed to fetch vehicles')
+        const data = await res.json()
+        setVehicles(data)
+      } catch (err) {
+        setVehicles([])
+      }
+    }
+    fetchVehicles()
+  }, [])
+
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      {/* Hero */}
-      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-20 lg:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(255,255,255,0.15),transparent_60%)]"></div>
-        <div className="absolute inset-0 bg-[url('/modern-luxury-car-in-sri-lanka-with-palm-trees-and.png')] bg-cover bg-center opacity-5"></div>
-        <div className="relative container mx-auto px-6">
-          <Reveal className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-sm font-medium text-white mb-6">🚗 Premium Fleet & Professional Drivers</div>
-            <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
-              Hire Your <span className="text-yellow-300">Private Driver & Vehicle</span> in Sri Lanka
-            </h1>
-            <p className="text-lg lg:text-xl text-blue-100 mb-8">Comfortable, safe and flexible transport for tours, transfers & multi-day journeys across the island.</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-10 rounded-full shadow-lg hover:shadow-2xl transition">Get a Free Quote</Button>
-              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-blue-700 font-semibold px-10 rounded-full backdrop-blur-sm">View Tour Packages</Button>
+      {/* Hero Section - styled like package[id] */}
+      <section className="relative overflow-hidden" id="top">
+        <div className="relative h-[460px] lg:h-[520px]">
+          <Image
+            src="/modern-luxury-car-in-sri-lanka-with-palm-trees-and.png"
+            alt="Vehicles Hero"
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* Layered overlays */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/40 to-black/70" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_25%,rgba(255,255,255,0.18),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_75%,rgba(255,255,255,0.12),transparent_55%)]" />
+          {/* Centered Content */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="max-w-3xl w-full text-center mx-auto px-4">
+              <Reveal>
+                <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-sm font-medium text-white mb-6">🚗 Premium Fleet & Professional Drivers</div>
+                <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
+                  Hire Your <span className="text-yellow-300">Private Driver & Vehicle</span> in Sri Lanka
+                </h1>
+                <p className="text-lg lg:text-xl text-blue-100 mb-8">Comfortable, safe and flexible transport for tours, transfers & multi-day journeys across the island.</p>
+              </Reveal>
             </div>
-          </Reveal>
+          </div>
         </div>
-        <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent via-white/10 to-white/20"></div>
+        <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent to-white" />
       </section>
 
       {/* Vehicle Types Grid */}
       <section className="py-20">
-        <div className="container mx-auto px-6">
-          <Reveal className="text-center mb-14">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Choose the Perfect Vehicle</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto text-lg">All vehicles are well-maintained, insured and driven by professional English-speaking chauffeurs.</p>
-          </Reveal>
+        <div className="container mx-auto px-4 lg:px-24">
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8">
-            {vehicleTypes.map((vehicle, i) => (
-              <Reveal key={vehicle.name} className={i % 2 === 0 ? "delay-75" : ""}>
-                <Card className="group relative bg-white border border-gray-100 rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden hover:-translate-y-1">
-                  <span className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  <CardHeader className="pb-0 px-0">
-                    <div className="relative mx-6 mt-4 mb-6 h-40 flex items-center justify-center rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 overflow-hidden">
-                      <Image src={vehicle.image} alt={vehicle.name} width={180} height={120} className="object-contain drop-shadow" />
-                      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_70%_30%,rgba(59,130,246,0.08),transparent_60%)]" />
-                    </div>
-                    <CardTitle className="text-center text-lg font-semibold text-gray-900 px-6 leading-snug group-hover:text-blue-600 transition-colors min-h-[3rem] flex items-center justify-center">
-                      {vehicle.name}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-6 pb-6 mt-4">
-                    <div className="flex items-center justify-center gap-1 text-yellow-500 text-sm mb-4" aria-label="5 star rating">
-                      {Array.from({ length: 5 }).map((_, s) => <span key={s}>★</span>)}
-                    </div>
-                    {(i === 3 || i === 7) ? (
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700 rounded-full font-medium shadow-sm hover:shadow-md transition">Book Now</Button>
-                    ) : (
-                      <Button variant="outline" className="w-full rounded-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-medium transition">Get Quote</Button>
-                    )}
-                  </CardContent>
+            {vehicles.length === 0 ? (
+              <div className="col-span-full text-center text-gray-500 py-10">No vehicles found.</div>
+            ) : (
+              vehicles.map((vehicle, i) => (
+                <Card key={vehicle.id} className="relative bg-white border border-gray-100 rounded-2xl shadow-md overflow-hidden p-0 h-64 flex">
+                  {vehicle.image ? (
+                    <Image src={vehicle.image} alt={vehicle.title} fill sizes="100vw" className="object-cover w-full h-full" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">No image</div>
+                  )}
+                  <div className="absolute bottom-0 left-0 w-full bg-black/60 text-white text-center text-lg font-semibold px-4 py-3">{vehicle.title}</div>
                 </Card>
-              </Reveal>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -184,7 +161,7 @@ export default function VehiclesPage() {
       <section className="py-24 bg-gradient-to-br from-gray-50 via-white to-blue-50 relative overflow-hidden">
         <div className="absolute -top-20 -right-10 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-200/20 rounded-full blur-3xl"></div>
-        <div className="relative container mx-auto px-6">
+        <div className="relative container mx-auto px-4 lg:px-24">
           <Reveal className="text-center mb-14">
             <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">🚖 Vehicle Standards</div>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Our Vehicles Standard Features</h2>
@@ -193,54 +170,30 @@ export default function VehiclesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {features.map(f => (
               <Reveal key={f.category} className="h-full">
-                <Card className="h-full border border-gray-100 rounded-2xl shadow-sm hover:shadow-lg transition-all">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base font-semibold text-blue-700 flex items-start gap-2">
-                      <span>{f.category}</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pb-6">
-                    <ul className="space-y-2 text-sm text-gray-600">
-                      {f.items.map(it => (
-                        <li key={it} className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">✓</span><span>{it}</span></li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
+                  <Card className="h-full border border-gray-100 rounded-2xl shadow-sm hover:shadow-lg transition-all">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg lg:text-xl font-semibold text-blue-700 flex items-start gap-2">
+                        <span>{f.category}</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pb-6">
+                      <ul className="space-y-2 text-base lg:text-lg text-gray-700">
+                        {f.items.map(it => (
+                          <li key={it} className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">✓</span><span>{it}</span></li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Vehicle Options */}
-
-      {/* Trusted Drivers */}
-      <section className="py-24 bg-white relative">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent" />
-        <div className="container mx-auto px-6 text-center relative">
-          <Reveal>
-            <div className="inline-flex items-center px-4 py-2 bg-yellow-400/20 text-yellow-600 rounded-full text-sm font-medium mb-6">👨‍✈️ Expert Chauffeur Guides</div>
-          </Reveal>
-          <Reveal className="max-w-3xl mx-auto">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-6 text-gray-900">Our Trusted Driver Guides</h2>
-            <p className="text-gray-600 text-lg">Friendly, English-speaking professionals who know Sri Lanka's roads, culture, history and hidden gems – ensuring your journey is safe, insightful and enjoyable.</p>
-          </Reveal>
-          <Reveal className="mt-10 grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {["Licensed & Insured","5★ Rated Service","Flexible & Reliable"].map(b => (
-              <div key={b} className="bg-gradient-to-br from-gray-50 to-white border border-gray-100 rounded-xl px-6 py-6 shadow-sm flex flex-col items-center text-center hover:shadow-md transition">
-                <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center mb-3 text-lg font-semibold">✓</div>
-                <p className="font-medium text-gray-800">{b}</p>
-              </div>
-            ))}
-          </Reveal>
-        </div>
-      </section>
-
       {/* Booking Form */}
-      <section className="py-28 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[url('/modern-luxury-car-in-sri-lanka-with-palm-trees-and.png')] bg-cover bg-center" />
-        <div className="relative container mx-auto px-6">
+  <section className="py-28 bg-emerald-600 relative overflow-hidden">
+        {/* Removed background image. Changed background to green. */}
+        <div className="relative container mx-auto px-4 lg:px-24">
           <div className="max-w-3xl mx-auto">
             <Reveal className="text-center mb-12">
               <div className="inline-flex items-center px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium mb-5 backdrop-blur-sm border border-white/30">📅 Quick Booking Form</div>
@@ -270,8 +223,8 @@ export default function VehiclesPage() {
                       <SelectValue placeholder="Select vehicle" />
                     </SelectTrigger>
                     <SelectContent>
-                      {vehicleTypes.map(v => (
-                        <SelectItem key={v.name} value={v.name}>{v.name}</SelectItem>
+                      {vehicles.map(v => (
+                        <SelectItem key={v.id} value={v.title}>{v.title}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -307,11 +260,6 @@ export default function VehiclesPage() {
           </div>
         </div>
       </section>
-      {showScrollTop && (
-        <button aria-label="Scroll to top" onClick={scrollToTop} className="fixed bottom-6 right-6 z-50 group bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 text-white rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
-          <span className="block group-hover:scale-110 transition-transform">↑</span>
-        </button>
-      )}
     </div>
   )
 }

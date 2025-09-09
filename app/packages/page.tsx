@@ -50,32 +50,48 @@ export default function PackagesPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-20 lg:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(255,255,255,0.15),transparent_60%)]" />
-        <div className="relative container mx-auto px-6">
-          <Reveal className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6 text-balance">Sri Lanka Travel Packages</h1>
-            <p className="text-xl text-blue-100 mb-8 text-pretty">Discover the wonders of Sri Lanka with our carefully crafted travel packages. From cultural heritage to pristine beaches, wildlife adventures to wellness retreats - we have the perfect journey for you.</p>
-            <Button size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full px-10 shadow-lg hover:shadow-2xl transition">
-              <Phone className="mr-2 h-5 w-5" />
-              Plan My Trip
-            </Button>
-          </Reveal>
+      {/* Hero Section - matches [id] style, static image, centered content */}
+      <section className="relative overflow-hidden" id="top">
+        <div className="relative h-[420px] lg:h-[500px]">
+          <Image
+            src="/modern-luxury-car-in-sri-lanka-with-palm-trees-and.png"
+            alt="Sri Lanka Travel Packages"
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* Layered overlays */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/40 to-black/70" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_25%,rgba(255,255,255,0.18),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_75%,rgba(255,255,255,0.12),transparent_55%)]" />
+          {/* Centered Content */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="container mx-auto px-4 lg:px-24">
+                <Reveal>
+                  <div className="max-w-3xl mx-auto text-center text-white pt-8 lg:pt-12">
+                    <h1 className="text-4xl lg:text-5xl font-bold mb-5 leading-tight tracking-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]">
+                      Sri Lanka Travel Packages
+                    </h1>
+                    <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed max-w-2xl mx-auto">
+                      Discover the wonders of Sri Lanka with our carefully crafted travel packages. From cultural heritage to pristine beaches, wildlife adventures to wellness retreats - we have the perfect journey for you.
+                    </p>
+                  </div>
+                </Reveal>
+            </div>
+          </div>
+          {/* White bottom-to-top gradient overlay, matching [id] hero */}
+          <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-white to-transparent" />
         </div>
-        <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-b from-transparent via-white/10 to-white/20" />
-      </section>
+  </section>
+  {/* Dividing fader below hero section */}
+  <div className="absolute inset-x-0 top-full h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent" style={{ position: 'relative', zIndex: 1 }} />
 
-      {/* Package Categories */}
-      <section className="py-20 relative bg-gradient-to-br from-gray-50 via-white to-blue-50 overflow-hidden">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent" />
+      {/* Package Categories - removed blue part between hero and next section */}
+      <section className="py-20 relative bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-hidden">
         <div className="absolute -top-24 -right-10 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-200/30 rounded-full blur-3xl" />
-        <div className="relative container mx-auto px-6">
-          <Reveal className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Adventure</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">Select from our specialized tour categories designed to match your interests and travel style</p>
-          </Reveal>
+        <div className="relative container mx-auto lg:px-24 px-4">
+          {/* ...removed 'Choose Your Adventure' heading and description... */}
           {loading ? (
             <Reveal className="text-center py-16">Loading categories...</Reveal>
           ) : (
@@ -83,11 +99,11 @@ export default function PackagesPage() {
               {categories.map((category: any, idx) => (
                 <Reveal key={category.id} className={idx % 2 === 0 ? 'delay-75' : ''}>
                   <Link href={`/packages/category/${category.id}`}>
-                    <Card className="group overflow-hidden cursor-pointer h-full bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
+                    <Card className="pt-0 group overflow-hidden cursor-pointer h-full bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
                       <div className="relative h-48 w-full overflow-hidden">
                         <Image src={category.image || "/placeholder.svg"} alt={category.name} width={400} height={300} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <span className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          {/* Removed colored line on hover */}
                       </div>
                       <CardHeader className="space-y-2">
                         <CardTitle className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{category.name}</CardTitle>
@@ -102,17 +118,10 @@ export default function PackagesPage() {
         </div>
       </section>
 
-      {/* Filter Section */}
-      <section className="py-8 bg-white/70 backdrop-blur-sm border-y border-gray-100">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-wrap gap-2 justify-center" />
-        </div>
-      </section>
-
       {/* Why Choose Our Packages */}
       <section className="py-24 bg-white relative">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent" />
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-4 lg:px-24">
           <Reveal className="text-center mb-14">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Our Travel Packages?</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">We create unforgettable experiences with attention to every detail</p>
@@ -149,31 +158,6 @@ export default function PackagesPage() {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.15),transparent_60%)]" />
-        <div className="relative container mx-auto px-6 text-center">
-          <Reveal>
-            <h2 className="text-3xl font-bold text-white mb-4">Ready to Start Your Sri Lankan Adventure?</h2>
-            <p className="text-emerald-100 mb-8 max-w-2xl mx-auto">Contact us to customize any package according to your preferences or create a completely personalized itinerary.</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-emerald-600 hover:bg-gray-100 rounded-full shadow-md hover:shadow-lg transition">
-                <Phone className="mr-2 h-5 w-5" />
-                Call +94 77 123 4567
-              </Button>
-              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-emerald-700 bg-transparent rounded-full backdrop-blur-sm">
-                Request Custom Package
-              </Button>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-      {showScrollTop && (
-        <button aria-label="Scroll to top" onClick={scrollToTop} className="fixed bottom-6 right-6 z-50 group bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 text-white rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300">
-          <span className="block group-hover:scale-110 transition-transform">↑</span>
-        </button>
-      )}
     </div>
   );
 }

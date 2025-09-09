@@ -1,99 +1,112 @@
+"use client"
 import Link from "next/link"
-import { Phone, Mail, MapPin, Facebook, Instagram, Twitter } from "lucide-react"
+import { useEffect, useRef, useState } from 'react'
+import { Button } from "@/components/ui/button"
+import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Car, ShieldCheck, ShoppingCart, Route, Smile, Users, UserCheck } from "lucide-react"
+
+// Reusable reveal animation wrapper
+function Reveal({ children, className = '' }: { children: React.ReactNode, className?: string }) {
+  const ref = useRef<HTMLDivElement | null>(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    if (!ref.current) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setVisible(true)
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.15 }
+    )
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out will-change-transform ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'} ${className}`}
+    >
+      {children}
+    </div>
+  )
+}
 
 export function Footer() {
   return (
     <footer className="bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Company Info */}
-          <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="bg-emerald-600 text-white px-3 py-2 rounded-lg font-bold text-xl">FTL</div>
-              <div className="flex flex-col">
-                <span className="font-bold text-xl">FlyToLanka</span>
-                <span className="text-sm text-gray-400">Travel & Transport</span>
+      <section id="contact" className="py-10 pb-0 bg-black text-white relative overflow-hidden scroll-mt-24">
+
+        <div className="relative container mx-auto px-4 lg:px-24 text-center">
+          <div className="mx-auto">
+            <Reveal className="delay-75">
+              <h2 className="text-4xl lg:text-6xl font-bold leading-tight">Fly To Lanka Tours</h2>
+              <span className="text-base lg:text-lg text-blue-200 font-normal">100% Trusted Travel Service with Professional Tour Guides &amp; Private Drivers for Round Trips</span>
+              {/* Service Features Horizontal Row: icon and text side by side */}
+              <div className="flex flex-wrap justify-center items-stretch mb-10 mt-8 w-full gap-y-4 gap-x-2 sm:gap-x-4">
+                {/* Responsive: 2 per row on xs, 3 per row on sm, all in one row on md+ */}
+                {[
+                  { icon: <Car className="h-6 w-6 text-emerald-400 mb-2" />, text: 'Private Chauffeur Service' },
+                  { icon: <ShieldCheck className="h-6 w-6 text-emerald-400 mb-2" />, text: 'Comfortable & Well-Maintained Vehicles' },
+                  { icon: <ShoppingCart className="h-6 w-6 text-emerald-400 mb-2" />, text: 'No Compulsory Shopping Stops' },
+                  { icon: <Route className="h-6 w-6 text-emerald-400 mb-2" />, text: 'Unlimited Kilometers Per Day' },
+                  { icon: <Smile className="h-6 w-6 text-emerald-400 mb-2" />, text: 'Customer Satisfaction Guaranteed' },
+                  { icon: <Users className="h-6 w-6 text-emerald-400 mb-2" />, text: 'Experienced Local Guides' },
+                  { icon: <UserCheck className="h-6 w-6 text-emerald-400 mb-2" />, text: 'Your Safety is Our Top Concern' }
+                ].map(({ icon, text }, idx, arr) => (
+                  <div
+                    key={text}
+                    className="flex flex-col items-center justify-center min-w-0 flex-1 px-1 border-l border-emerald-400 first:border-l-0 basis-1/2 sm:basis-1/3 md:basis-0 md:flex-1 max-w-full"
+                  >
+                    {icon}
+                    <span className="text-base font-semibold text-emerald-400 text-center break-words">{text}</span>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 lg:px-24">
+            <div className="flex flex-col items-center justify-center text-center py-4 lg:py-10">
+              <h2 className="text-4xl lg:text-6xl font-bold color-white">Contact Us</h2>
+              <h2 className="text-4xl lg:text-8xl font-bold color-white">+94765533874</h2>
+            </div>
+        </div>
+        <div className="container mx-auto px-4 lg:px-24 py-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {/* Mail Us */}
+            <div>
+              <div className="font-bold text-lg mb-2">Mail Us</div>
+              <div className="text-emerald-400 text-base">info@flytolanka.com</div>
+            </div>
+            {/* Meet Us */}
+            <div>
+              <div className="font-bold text-lg mb-2">Meet Us</div>
+              <div className="text-emerald-400 text-base">Ihala Karagahamuna, Kadawata</div>
+            </div>
+            {/* Follow Us */}
+            <div>
+              <div className="font-bold text-lg mb-2">Follow Us</div>
+              <div className="flex flex-wrap justify-center items-center gap-3 mt-2">
+                <a href="#" className="text-gray-400 hover:text-emerald-400 flex items-center"><span className="mr-1">Tripadvisor</span></a>
+                <a href="#" className="text-gray-400 hover:text-emerald-400 flex items-center"><Facebook className="h-5 w-5 mr-1" />Facebook</a>
+                <a href="#" className="text-gray-400 hover:text-emerald-400 flex items-center"><Instagram className="h-5 w-5 mr-1" />Instagram</a>
+                <a href="#" className="text-gray-400 hover:text-emerald-400 flex items-center"><span className="mr-1">Google Review</span></a>
+                <a href="#" className="text-gray-400 hover:text-emerald-400 flex items-center"><span className="mr-1">Youtube</span></a>
+                <a href="#" className="text-gray-400 hover:text-emerald-400 flex items-center"><span className="mr-1">Tiktok</span></a>
               </div>
             </div>
-            <p className="text-gray-400 mb-4">
-              Your trusted partner for transportation and travel services in Sri Lanka. Experience the beauty of the
-              island with our professional drivers and quality vehicles.
-            </p>
-            <div className="flex space-x-4">
-              <Facebook className="h-5 w-5 text-gray-400 hover:text-emerald-400 cursor-pointer" />
-              <Instagram className="h-5 w-5 text-gray-400 hover:text-emerald-400 cursor-pointer" />
-              <Twitter className="h-5 w-5 text-gray-400 hover:text-emerald-400 cursor-pointer" />
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/" className="text-gray-400 hover:text-emerald-400">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/vehicles" className="text-gray-400 hover:text-emerald-400">
-                  Vehicles
-                </Link>
-              </li>
-              <li>
-                <Link href="/drivers" className="text-gray-400 hover:text-emerald-400">
-                  Drivers
-                </Link>
-              </li>
-              <li>
-                <Link href="/packages" className="text-gray-400 hover:text-emerald-400">
-                  Packages
-                </Link>
-              </li>
-              <li>
-                <Link href="/sri-lanka" className="text-gray-400 hover:text-emerald-400">
-                  Sri Lanka
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Services</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>Airport Transfers</li>
-              <li>City Tours</li>
-              <li>Long Distance Travel</li>
-              <li>Wedding Transportation</li>
-              <li>Corporate Services</li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Contact Us</h3>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-emerald-400" />
-                <span className="text-gray-400">+94 77 123 4567</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Mail className="h-5 w-5 text-emerald-400" />
-                <span className="text-gray-400">info@flytolanka.com</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <MapPin className="h-5 w-5 text-emerald-400" />
-                <span className="text-gray-400">Colombo, Sri Lanka</span>
-              </div>
+            {/* T&C / Privacy Policy */}
+            <div>
+              <div className="font-bold text-lg mb-2">T &amp; C</div>
+              <a href="#" className="text-emerald-400 block mb-1">Terms &amp; Conditions</a>
+              <a href="#" className="text-emerald-400 block">Privacy Policy</a>
             </div>
           </div>
         </div>
-
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 FlyToLanka. All rights reserved.</p>
-        </div>
-      </div>
+      </section>
     </footer>
   )
 }

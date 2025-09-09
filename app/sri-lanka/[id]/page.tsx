@@ -156,7 +156,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
           <Image src={post.image || "/placeholder.svg"} alt={post.title} fill className="object-cover" />
           <div className="absolute inset-0 bg-black bg-opacity-50" />
           <div className="absolute inset-0 flex items-center">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 lg:px-24">
               <div className="max-w-4xl text-white">
                 <Link href="/sri-lanka" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4">
                   <ArrowLeft className="h-4 w-4" />
@@ -187,7 +187,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
 
       {/* Content Section */}
       <section className="py-16">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 lg:px-24">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
             {/* Main Content */}
             <div className="lg:col-span-3">

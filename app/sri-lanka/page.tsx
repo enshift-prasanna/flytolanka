@@ -61,25 +61,40 @@ export default function SriLankaPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      {/* Hero Section */}
-      <section className="relative py-20 lg:py-28 overflow-hidden bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_35%,rgba(255,255,255,0.18),transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_65%,rgba(255,255,255,0.12),transparent_55%)]" />
-        <div className="relative container mx-auto px-5">
-          <Reveal className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight leading-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]">Discover Sri Lanka</h1>
-            <p className="text-xl text-emerald-100 mb-8 text-pretty">
-              Explore the Pearl of the Indian Ocean through our comprehensive travel guides, cultural insights, and
-              insider tips to make your Sri Lankan adventure unforgettable.
-            </p>
-            {/* Search Bar */}
-            <div className="max-w-md mx-auto relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-300 h-5 w-5" />
-              <Input placeholder="Search articles..." className="pl-10 pr-4 py-3 text-lg bg-white/95 backdrop-blur-sm border-white/40 focus-visible:ring-emerald-500" />
+      {/* Hero Section - Styled like drivers page with provided image */}
+      <section className="relative overflow-hidden" id="top">
+        <div className="relative h-[420px] lg:h-[500px]">
+          <Image
+            src="https://media.cntravellerme.com/photos/67d18d96d34064451a14d52e/16:9/w_1280,c_limit/SRI%20LANKA%202025%20GettyImages-1643739335.jpg"
+            alt="Discover Sri Lanka"
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* Layered overlays */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/40 to-black/70" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_25%,rgba(255,255,255,0.18),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_75%,rgba(255,255,255,0.12),transparent_55%)]" />
+          {/* Centered Content */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="container mx-auto px-4 lg:px-24 flex flex-col items-center">
+              <Reveal>
+                <div className="max-w-3xl text-center text-white mx-auto">
+                  <div className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm backdrop-blur-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 transition-colors mb-5">
+                    🌴 Explore Sri Lanka
+                  </div>
+                  <h1 className="text-4xl lg:text-5xl font-bold mb-5 leading-tight tracking-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]">
+                    Discover the Pearl of the Indian Ocean
+                  </h1>
+                  <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed max-w-2xl mx-auto">
+                    Explore Sri Lanka's vibrant culture, stunning landscapes, and hidden gems with our expert guides and travel tips.
+                  </p>
+                </div>
+              </Reveal>
             </div>
-          </Reveal>
+          </div>
+          <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent to-white" />
         </div>
-        <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent to-white" />
       </section>
 
       {/* Combined Articles Section */}
@@ -88,14 +103,14 @@ export default function SriLankaPage() {
           <div className="absolute -top-32 -right-16 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-200/30 rounded-full blur-3xl" />
         </div>
-        <div className="relative container mx-auto px-5">
+        <div className="relative container mx-auto lg:px-24 px-4">
           {loading ? (
             <Reveal className="text-center py-20 text-gray-600">Loading articles...</Reveal>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {posts.map((post: any, idx) => (
                 <Reveal key={post.id} className={idx % 2 === 0 ? "delay-75" : ""}>
-                  <Card className="group overflow-hidden h-full bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
+                  <Card className="pt-0 group overflow-hidden h-full bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
                     <div className="relative h-48 w-full overflow-hidden">
                       <Image
                         src={post.image || "/placeholder.svg"}
@@ -105,7 +120,7 @@ export default function SriLankaPage() {
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <span className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      {/* Removed hover line */}
                     </div>
                     <CardHeader className="space-y-2">
                       <CardTitle className="text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-emerald-600 transition-colors">
@@ -125,35 +140,6 @@ export default function SriLankaPage() {
           )}
         </div>
       </section>
-
-      {/* Newsletter Signup */}
-      <section className="py-24 bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.15),transparent_60%)]" />
-        <div className="relative container mx-auto px-5 text-center">
-          <Reveal>
-            <h2 className="text-3xl font-bold text-white mb-4">Stay Updated</h2>
-            <p className="text-emerald-100 mb-8 max-w-2xl mx-auto">
-              Subscribe to our newsletter for the latest travel tips, destination guides, and exclusive offers for Sri
-              Lanka.
-            </p>
-            <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-4">
-              <Input placeholder="Enter your email" className="bg-white/95 backdrop-blur-sm" />
-              <Button className="bg-white text-emerald-600 hover:bg-gray-100 whitespace-nowrap rounded-full px-8 shadow-md hover:shadow-lg transition">
-                Subscribe
-              </Button>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-      {showScrollTop && (
-        <button
-          aria-label="Scroll to top"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-50 group bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 text-white rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300"
-        >
-          <span className="block group-hover:scale-110 transition-transform">↑</span>
-        </button>
-      )}
     </div>
   )
 }

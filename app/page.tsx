@@ -36,16 +36,23 @@ function Reveal({ children, className = '' }: { children: React.ReactNode, class
 
 export default function HomePage() {
   const [showScrollTop, setShowScrollTop] = useState(false)
+  const [vehicles, setVehicles] = useState<any[]>([]);
   useEffect(() => {
-    const onScroll = () => setShowScrollTop(window.scrollY > 600)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+    const onScroll = () => setShowScrollTop(window.scrollY > 600);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  useEffect(() => {
+    fetch('/api/vehicle')
+      .then(res => res.json())
+      .then(data => setVehicles(Array.isArray(data) ? data : []))
+      .catch(() => setVehicles([]));
+  }, []);
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 [scrollbar-width:thin] [scrollbar-color:#3b82f6_#e0f2fe]">
       {/* Hero Section */}
-      <section id="hero" className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-20 lg:py-32 overflow-hidden">
+      <section id="hero" className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-4 lg:py-12 overflow-hidden">
         {/* Animated subtle beams */}
         <div className="pointer-events-none absolute inset-0">
           <div className="animate-pulse-slow absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(255,255,255,0.12),transparent_60%)]" />
@@ -62,7 +69,7 @@ export default function HomePage() {
           <a href="#tours" className="text-white/80 hover:text-yellow-300 transition">Tours</a>
           <a href="#contact" className="text-white/80 hover:text-yellow-300 transition">Contact</a>
         </nav> */}
-        <div className="relative container mx-auto px-6 lg:px-8">
+        <div className="relative container mx-auto px-4 lg:px-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <Reveal className="space-y-8 text-white">
               <div className="space-y-4">
@@ -100,25 +107,19 @@ export default function HomePage() {
                 <Button aria-label="Book your private driver now" size="lg" className="group bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                   <span className="flex items-center gap-2">Book Your Driver Now <span className="transition-transform group-hover:translate-x-1">→</span></span>
                 </Button>
-                <Button aria-label="Get a free quote" size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-blue-700 font-semibold text-lg px-8 py-4 rounded-full backdrop-blur-sm">
-                  Get Free Quote
-                </Button>
               </div>
             </Reveal>
             <Reveal className="relative lg:mt-0 mt-12 delay-150">
               <div className="absolute -inset-4 bg-gradient-to-r from-yellow-400/20 to-blue-400/20 blur-xl rounded-2xl"></div>
               <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-2 border border-white/20">
                 <Image
-                  src="/person-standing-by-ocean-in-sri-lanka.png"
-                  alt="Traveler enjoying breathtaking Sri Lankan coastline"
-                  width={600}
-                  height={400}
+                  src="https://res.cloudinary.com/dgyxftryr/image/upload/v1757409918/d9a-lake-gregory-nuwara-eliya-1_iqllsm_k776xy.jpg"
+                  alt="Lake Gregory, Nuwara Eliya - Scenic Sri Lanka"
+                  width={400}
+                  height={300}
                   priority
                   className="rounded-xl shadow-2xl w-full h-auto"
                 />
-              </div>
-              <div className="absolute -bottom-6 -right-6 bg-yellow-400 text-black px-6 py-3 rounded-full font-bold text-lg shadow-lg">
-                🌟 5 Star Rated
               </div>
             </Reveal>
           </div>
@@ -130,7 +131,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/30"></div>
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-100/10 to-indigo-100/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-br from-cyan-100/10 to-blue-100/10 rounded-full blur-3xl"></div>
-        <div className="relative container mx-auto px-6 lg:px-8">
+        <div className="relative container mx-auto px-4 lg:px-24">
           <Reveal className="text-center mb-16">
             <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-medium mb-4">🎯 What We Offer</div>
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Our Premium Services</h2>
@@ -145,9 +146,9 @@ export default function HomePage() {
                   <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Customizable Tour Packages</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2"><span className="text-blue-500 mt-1">•</span><p><strong>Cultural Tours:</strong> Explore ancient temples, historic landmarks, and UNESCO World Heritage Sites.</p></div>
-                  <div className="flex items-start space-x-2"><span className="text-blue-500 mt-1">•</span><p><strong>Adventure Tours:</strong> Embark on thrilling activities like hiking, rafting, and wildlife safaris.</p></div>
-                  <div className="flex items-start space-x-2"><span className="text-blue-500 mt-1">•</span><p><strong>Relaxation Packages:</strong> Unwind on pristine beaches and serene hill stations.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-blue-500 mt-1">•</span><p><strong>Cultural Tours:</strong> Explore ancient temples, historic landmarks, and UNESCO World Heritage Sites.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-blue-500 mt-1">•</span><p><strong>Adventure Tours:</strong> Embark on thrilling activities like hiking, rafting, and wildlife safaris.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-blue-500 mt-1">•</span><p><strong>Relaxation Packages:</strong> Unwind on pristine beaches and serene hill stations.</p></div>
                 </CardContent>
               </Card>
             </Reveal>
@@ -158,8 +159,8 @@ export default function HomePage() {
                   <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Wildlife and Nature Excursions</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2"><span className="text-green-500 mt-1">•</span><p><strong>Wildlife Safaris:</strong> Witness majestic elephants, leopards, and exotic bird species.</p></div>
-                  <div className="flex items-start space-x-2"><span className="text-green-500 mt-1">•</span><p><strong>Nature Photography Tours:</strong> Capture the breathtaking landscapes and biodiversity of Sri Lanka.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-green-500 mt-1">•</span><p><strong>Wildlife Safaris:</strong> Witness majestic elephants, leopards, and exotic bird species.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-green-500 mt-1">•</span><p><strong>Nature Photography Tours:</strong> Capture the breathtaking landscapes and biodiversity of Sri Lanka.</p></div>
                 </CardContent>
               </Card>
             </Reveal>
@@ -170,8 +171,8 @@ export default function HomePage() {
                   <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">City and Heritage Tours</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2"><span className="text-orange-500 mt-1">•</span><p>Discover vibrant cities such as Colombo, Kandy, and Galle with expert guides.</p></div>
-                  <div className="flex items-start space-x-2"><span className="text-orange-500 mt-1">•</span><p>Immerse yourself in Sri Lanka's rich history, culture, and local traditions.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-orange-500 mt-1">•</span><p>Discover vibrant cities such as Colombo, Kandy, and Galle with expert guides.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-orange-500 mt-1">•</span><p>Immerse yourself in Sri Lanka's rich history, culture, and local traditions.</p></div>
                 </CardContent>
               </Card>
             </Reveal>
@@ -182,8 +183,8 @@ export default function HomePage() {
                   <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Transportation Services</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2"><span className="text-purple-500 mt-1">•</span><p>Comfortable and reliable airport transfers.</p></div>
-                  <div className="flex items-start space-x-2"><span className="text-purple-500 mt-1">•</span><p>Private vehicles with professional drivers for your entire journey.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-purple-500 mt-1">•</span><p>Comfortable and reliable airport transfers.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-purple-500 mt-1">•</span><p>Private vehicles with professional drivers for your entire journey.</p></div>
                 </CardContent>
               </Card>
             </Reveal>
@@ -194,7 +195,7 @@ export default function HomePage() {
                   <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Accommodation Arrangements</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2"><span className="text-cyan-500 mt-1">•</span><p>Handpicked hotels, resorts, and homestays to suit your budget and preferences.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-cyan-500 mt-1">•</span><p>Handpicked hotels, resorts, and homestays to suit your budget and preferences.</p></div>
                 </CardContent>
               </Card>
             </Reveal>
@@ -205,7 +206,7 @@ export default function HomePage() {
                   <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Eco-Tourism and Village Tours</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2"><span className="text-teal-500 mt-1">•</span><p>Experience sustainable tourism by visiting local communities and participating in traditional village activities.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-teal-500 mt-1">•</span><p>Experience sustainable tourism by visiting local communities and participating in traditional village activities.</p></div>
                 </CardContent>
               </Card>
             </Reveal>
@@ -216,7 +217,7 @@ export default function HomePage() {
                   <CardTitle className="text-blue-600 group-hover:text-blue-700 transition-colors">Honeymoon Packages</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2"><span className="text-pink-500 mt-1">•</span><p>Romantic getaways with special arrangements to make your trip truly memorable.</p></div>
+                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-pink-500 mt-1">•</span><p>Romantic getaways with special arrangements to make your trip truly memorable.</p></div>
                 </CardContent>
               </Card>
             </Reveal>
@@ -237,57 +238,36 @@ export default function HomePage() {
       </section>
 
       {/* Book With Us Section */}
-      <section id="fleet" className="py-20 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 relative overflow-hidden scroll-mt-24">
-        <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-white/20 via-white/5 to-transparent pointer-events-none"></div>
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-400 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-cyan-400 rounded-full blur-3xl"></div>
-        </div>
-        <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent via-emerald-600/5 to-emerald-600/20 pointer-events-none"></div>
-        <div className="relative container mx-auto px-6 lg:px-8">
+      <section id="fleet" className="py-20 bg-white relative scroll-mt-24">
+        <div className="relative container mx-auto px-4 lg:px-24">
           <Reveal className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 bg-yellow-400/20 text-yellow-300 rounded-full text-sm font-medium mb-4 backdrop-blur-sm border border-yellow-400/30">🚗 Fleet Selection</div>
-            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">Book Your Perfect Vehicle in Sri Lanka</h2>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">Choose from our premium fleet of well-maintained vehicles with professional drivers</p>
+            <div className="inline-flex items-center px-4 py-2 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium mb-4 border border-yellow-200">🚗 Fleet Selection</div>
+            <h2 className="text-4xl lg:text-5xl font-bold text-black mb-6">Book Your Perfect Vehicle in Sri Lanka</h2>
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto">Choose from our premium fleet of well-maintained vehicles with professional drivers</p>
           </Reveal>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            { [
-              ['Mini Car & Driver', 'Perfect for couples or solo travelers', '/mini-car-vehicle.png'],
-              ['Sedan Car & Driver', 'Comfortable for small families', '/sedan-car-vehicle.png'],
-              ['Luxury Car & Driver', 'Premium comfort and style', '/luxury-car-vehicle.png'],
-              ['SUV & Driver', 'Spacious and versatile', '/suv-vehicle.png', 'POPULAR'],
-              ['Van & Driver', 'Perfect for group travel', '/van-vehicle.png'],
-              ['Luxury Van & Driver', 'Premium group transport', '/luxury-van-vehicle.png', 'LUXURY'],
-              ['Mini Coach & Driver', 'Ideal for larger groups', '/mini-coach-bus.png'],
-              ['Luxury Coach & Driver', 'Ultimate group luxury', '/luxury-coach-bus.png']
-            ].map(([title, subtitle, img, badge], idx) => (
-              <Reveal key={title as string} className={`delay-[${idx * 40}ms]`}>
-                <Card className="group bg-white hover:bg-gradient-to-br hover:from-white hover:to-blue-50 text-center transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border-0 shadow-lg relative">
-                  {badge && (
-                    <div className={`absolute -top-3 -right-3 ${badge === 'LUXURY' ? 'bg-gradient-to-r from-yellow-400 to-orange-400' : 'bg-yellow-400'} text-black px-3 py-1 rounded-full text-xs font-bold`}>{badge}</div>
-                  )}
-                  <CardContent className="p-8">
-                    <div className="relative mb-6">
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-xl rounded-lg"></div>
-                      <Image src={img as string} alt={title as string} width={150} height={100} className="relative mx-auto rounded-lg shadow-lg group-hover:scale-105 transition-transform" />
-                    </div>
-                    <h3 className="font-bold text-lg text-gray-900 mb-2">{title}</h3>
-                    <p className="text-sm text-gray-600 mb-4">{subtitle}</p>
-                    <div className="flex items-center justify-center text-yellow-500 mb-4">⭐⭐⭐⭐⭐</div>
-                    {(badge === 'POPULAR' || badge === 'LUXURY') && (
-                      <Button size="sm" className={`${badge === 'POPULAR' ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700' : 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'} text-white font-semibold rounded-full px-6 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all`}>Book Now</Button>
+            {vehicles.length === 0 ? (
+              <div className="col-span-full text-center text-blue-200 py-12">No vehicles available at the moment.</div>
+            ) : (
+              vehicles.map((vehicle, i) => (
+                <Reveal key={vehicle.id || i}>
+                  <Card className="relative bg-white border border-gray-100 rounded-2xl shadow-md overflow-hidden p-0 h-64 flex">
+                    {vehicle.image ? (
+                      <Image src={vehicle.image} alt={vehicle.title || 'Vehicle'} fill sizes="100vw" className="object-cover w-full h-full" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">No image</div>
                     )}
-                  </CardContent>
-                </Card>
-              </Reveal>
-            ))}
+                    <div className="absolute bottom-0 left-0 w-full bg-black/60 text-white text-center text-lg font-semibold px-4 py-3">{vehicle.title || vehicle.name}</div>
+                  </Card>
+                </Reveal>
+              ))
+            )}
           </div>
           <Reveal className="text-center">
             <Button aria-label="Book your private driver now" size="lg" className="group bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-bold text-lg px-10 py-4 rounded-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
               <span className="flex items-center gap-2">Book Your Driver Now <span className="group-hover:translate-x-1 transition-transform">→</span></span>
             </Button>
-            <p className="text-blue-100 mt-4 text-sm">✨ No advance payment required • 24/7 support • Best rates guaranteed</p>
+            <p className="text-black mt-4 text-sm">✨ No advance payment required • 24/7 support • Best rates guaranteed</p>
           </Reveal>
         </div>
       </section>
@@ -296,33 +276,55 @@ export default function HomePage() {
       <section id="awards" className="py-20 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 relative overflow-hidden scroll-mt-24">
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-yellow-400/10 to-orange-400/10"></div>
-          <div className="absolute top-20 left-20 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-20 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-10 left-4 w-40 h-40 bg-white/5 rounded-full blur-2xl sm:top-20 sm:left-20 sm:w-64 sm:h-64 sm:blur-3xl"></div>
+          <div className="absolute bottom-10 right-4 w-48 h-48 bg-yellow-400/10 rounded-full blur-2xl sm:bottom-20 sm:right-20 sm:w-80 sm:h-80 sm:blur-3xl"></div>
         </div>
-        <div className="relative container mx-auto px-6 lg:px-8">
-          <Reveal className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium mb-4 backdrop-blur-sm border border-white/30">🏆 Award Winning Service</div>
-            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">Excellent Reviews On Tripadvisor</h2>
-            <p className="text-xl text-emerald-100 max-w-3xl mx-auto">Recognized for outstanding service and customer satisfaction year after year</p>
+        <div className="relative container mx-auto px-2 sm:px-4 lg:px-24">
+          <Reveal className="text-center mb-10 sm:mb-16">
+            <div className="inline-flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-white/20 text-white rounded-full text-xs sm:text-sm font-medium mb-3 sm:mb-4 backdrop-blur-sm border border-white/30">🏆 Award Winning Service</div>
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">Excellent Reviews On Tripadvisor</h2>
+            <p className="text-base sm:text-xl text-emerald-100 max-w-xl sm:max-w-3xl mx-auto">Recognized for outstanding service and customer satisfaction year after year</p>
           </Reveal>
-          <div className="flex flex-col lg:flex-row justify-center items-center gap-12 mb-12">
-            {[2023, 2024, 2025].map((year, i) => (
-              <Reveal key={year} className={`flex-1 ${i === 1 ? 'delay-100' : i === 2 ? 'delay-150' : ''}`}>
-                <div className={`group ${i === 1 ? 'bg-white/15 border-white/30 p-12 hover:bg-white/25 hover:scale-110' : 'bg-white/10 border-white/20 p-10 hover:bg-white/20 hover:scale-105'} backdrop-blur-lg text-white rounded-2xl text-center border transition-all duration-300 hover:shadow-2xl relative`}>
-                  {i === 1 && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-4 py-1 rounded-full text-xs font-bold">LATEST AWARD</div>}
-                  <div className={`${i === 1 ? 'text-7xl' : 'text-6xl'} mb-4 group-hover:scale-110 transition-transform`}>🏆</div>
-                  <div className="font-bold text-lg mb-2">{year === 2024 ? "Tripadvisor Travellers' Choice Awards" : year === 2025 ? "Tripadvisor Travelers' Choice Awards" : "Travellers' Choice"}</div>
-                  <div className={`${i === 1 ? 'text-4xl' : 'text-3xl'} font-bold text-yellow-300 mb-1`}>{year}</div>
-                  <div className="mt-2 text-sm text-emerald-100">{year === 2023 ? 'Top 10% of attractions worldwide' : year === 2024 ? 'Exceptional service recognition' : 'Continued excellence'}</div>
+          <div className="flex flex-col lg:flex-row justify-center items-center gap-6 sm:gap-12 mb-8 sm:mb-12">
+            {[
+              {
+                year: 2023,
+                img: "https://res.cloudinary.com/dgyxftryr/image/upload/v1757408258/Adventure-Beach-Escape-_E2_80_93-15-Days-1_aaoekm.png",
+                title: "Travellers' Choice",
+                desc: "Top 10% of attractions worldwide"
+              },
+              {
+                year: 2024,
+                img: "https://res.cloudinary.com/dgyxftryr/image/upload/v1757408329/1_c3m2k6.png",
+                title: "Tripadvisor Travellers' Choice Awards",
+                desc: "Exceptional service recognition"
+              },
+              {
+                year: 2025,
+                img: "https://res.cloudinary.com/dgyxftryr/image/upload/v1757408352/2_eqkacz.png",
+                title: "Tripadvisor Travelers' Choice Awards",
+                desc: "Continued excellence"
+              }
+            ].map((award, i) => (
+              <Reveal key={award.year} className={`w-full sm:w-auto flex-1 ${i === 1 ? 'delay-100' : i === 2 ? 'delay-150' : ''}`}>
+                <div className={`group ${i === 1 ? 'bg-white/15 border-white/30 p-6 sm:p-12 hover:bg-white/25 hover:scale-105' : 'bg-white/10 border-white/20 p-5 sm:p-10 hover:bg-white/20 hover:scale-102'} backdrop-blur-lg text-white rounded-2xl text-center border transition-all duration-300 hover:shadow-2xl relative`}
+                  style={{ minWidth: 0 }}>
+                  {i === 1 && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold">LATEST AWARD</div>}
+                  <div className="flex justify-center mb-3 sm:mb-4">
+                    <img src={award.img} alt={`Award ${award.year}`} className={`rounded-xl shadow-lg ${i === 1 ? 'w-32 h-32 sm:w-48 sm:h-48' : 'w-28 h-28 sm:w-40 sm:h-40'}`} style={{objectFit: 'cover'}} />
+                  </div>
+                  <div className="font-bold text-base sm:text-lg mb-1 sm:mb-2">{award.title}</div>
+                  <div className={`${i === 1 ? 'text-2xl sm:text-4xl' : 'text-xl sm:text-3xl'} font-bold text-yellow-300 mb-1`}>{award.year}</div>
+                  <div className="text-xs sm:text-sm text-emerald-100 mt-2">{award.desc}</div>
                 </div>
               </Reveal>
             ))}
           </div>
           <Reveal className="text-center">
-            <Button className="bg-white text-emerald-600 hover:bg-emerald-50 font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">Read Our Excellent Reviews On Tripadvisor</Button>
-            <div className="flex items-center justify-center mt-6 space-x-2">
-              <div className="flex text-yellow-400 text-2xl">⭐⭐⭐⭐⭐</div>
-              <span className="text-white font-semibold">4.9/5 from 2,500+ reviews</span>
+            <Button className="bg-white text-emerald-600 hover:bg-emerald-50 font-bold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">Read Our Excellent Reviews On Tripadvisor</Button>
+            <div className="flex flex-col sm:flex-row items-center justify-center mt-4 sm:mt-6 space-y-2 sm:space-y-0 sm:space-x-2">
+              <div className="flex text-yellow-400 text-xl sm:text-2xl">⭐⭐⭐⭐⭐</div>
+              <span className="text-white font-semibold text-sm sm:text-base">4.9/5 from 2,500+ reviews</span>
             </div>
           </Reveal>
         </div>
@@ -330,14 +332,14 @@ export default function HomePage() {
 
       {/* Our Private Tours Section */}
       <section id="tours" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 scroll-mt-24">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
+        <div className="container mx-auto px-4 lg:px-24">
+          <div className="mx-auto">
             <Reveal className="text-center mb-16">
               <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-medium mb-4">🗺️ Our Experience</div>
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Our Private Tours</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">Discover the authentic beauty of Sri Lanka with our personalized travel experiences</p>
             </Reveal>
-            <div className="bg-white rounded-2xl shadow-xl p-8 lg:p-12 mb-12">
+            <div className="bg-transparent rounded-2xl p-4 lg:p-12">
               <div className="grid lg:grid-cols-2 gap-12 items-center mb-12">
                 <Reveal>
                   <div>
@@ -351,7 +353,7 @@ export default function HomePage() {
                 <Reveal className="delay-100">
                   <div className="relative">
                     <div className="absolute -inset-4 bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-xl rounded-2xl"></div>
-                    <Image src="/modern-luxury-car-in-sri-lanka-with-palm-trees-and.png" alt="Luxury car in Sri Lanka" width={500} height={300} className="relative rounded-xl shadow-lg w-full h-auto" />
+                    <Image src="https://res.cloudinary.com/dgyxftryr/image/upload/v1757409607/driving-in-sri-lanka-driving-permit-information_j07etj.webp" alt="Driving in Sri Lanka" width={500} height={180} className="relative rounded-xl shadow-lg w-full h-auto" />
                   </div>
                 </Reveal>
               </div>
@@ -378,7 +380,7 @@ export default function HomePage() {
                 </Reveal>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-xl p-8 lg:p-12">
+            <div className="bg-transparent rounded-2xl p-4 lg:p-12">
               <div className="space-y-8 text-gray-700">
                 <Reveal>
                   <div>
@@ -464,60 +466,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section id="contact" className="py-20 bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 text-white relative overflow-hidden scroll-mt-24">
-        <div className="absolute inset-0 bg-black/40"></div>
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('/modern-luxury-car-in-sri-lanka-with-palm-trees-and.png')] bg-cover bg-center opacity-10"></div>
-        </div>
-        <div className="absolute top-20 left-20 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-80 h-80 bg-purple-400/10 rounded-full blur-3xl"></div>
-        <div className="relative container mx-auto px-6 lg:px-8 text-center">
-          <div className="max-w-5xl mx-auto">
-            <Reveal>
-              <div className="inline-flex items-center px-4 py-2 bg-yellow-400/20 text-yellow-300 rounded-full text-sm font-medium mb-6 backdrop-blur-sm border border-yellow-400/30">🌟 Start Your Journey Today</div>
-            </Reveal>
-            <Reveal className="delay-75">
-              <h2 className="text-4xl lg:text-6xl font-bold mb-8 leading-tight">Sri Lanka Private Driver Tour Guide With <span className="text-yellow-400"> Fly To Lanka Tours</span><br /><span className="text-2xl lg:text-3xl text-blue-200 font-normal">The Best Way to Explore the Island</span></h2>
-            </Reveal>
-            <Reveal className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-10 border border-white/20">
-              <p className="text-xl lg:text-2xl mb-6 max-w-4xl mx-auto leading-relaxed text-gray-100">Are you planning your dream holiday to Sri Lanka? One of the best ways to explore this beautiful island is by hiring a <strong className="text-yellow-400">Sri Lanka private driver tour guide</strong> with Fly to Lanka Tours. You can travel across the island, discover hidden gems, and enjoy a tailor-made experience that goes beyond ordinary tourism.</p>
-              <div className="grid md:grid-cols-3 gap-6 mt-8">
-                { [
-                  ['🚗','Premium Vehicles','Comfortable & well-maintained fleet'],
-                  ['👨‍💼','Expert Guides','Licensed & experienced drivers'],
-                  ['⭐','5-Star Service','Award-winning customer service']
-                ].map(([icon, title, desc]) => (
-                  <div key={title} className="text-center">
-                    <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4"><span className="text-2xl">{icon}</span></div>
-                    <h3 className="font-bold text-lg mb-2">{title}</h3>
-                    <p className="text-blue-200 text-sm">{desc}</p>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-            <Reveal className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Button size="lg" className="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-bold text-xl px-12 py-5 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300">Start Planning Your Trip</Button>
-              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-gray-900 font-bold text-xl px-12 py-5 rounded-full backdrop-blur-sm">Contact Us Today</Button>
-            </Reveal>
-            <Reveal className="flex items-center justify-center mt-8 space-x-8 text-blue-200">
-              <div className="flex items-center space-x-2"><span className="text-yellow-400">✓</span><span>No advance payment</span></div>
-              <div className="flex items-center space-x-2"><span className="text-yellow-400">✓</span><span>24/7 support</span></div>
-              <div className="flex items-center space-x-2"><span className="text-yellow-400">✓</span><span>Best price guarantee</span></div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {showScrollTop && (
-        <button
-          aria-label="Scroll to top"
-          onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-50 group bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 text-white rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
-        >
-          <span className="block group-hover:scale-110 transition-transform">↑</span>
-        </button>
-      )}
     </div>
   )
 }

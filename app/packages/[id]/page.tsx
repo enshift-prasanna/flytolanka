@@ -39,39 +39,7 @@ function Reveal({ children, className = "" }: { children: React.ReactNode; class
   );
 }
 
-// Package categories with default text
-const packageCategories = [
-  {
-    id: 1,
-    name: "Cultural Tours",
-    defaultText:
-      "All cultural tours include professional English-speaking guides, entrance fees to historical sites, and traditional cultural experiences. Transportation in air-conditioned vehicles with complimentary water bottles.",
-  },
-  {
-    id: 2,
-    name: "Adventure Tours",
-    defaultText:
-      "Adventure packages include safety equipment, experienced guides, and emergency support. All activities are weather dependent and safety briefings are provided before each adventure.",
-  },
-  {
-    id: 3,
-    name: "Beach & Coastal Tours",
-    defaultText:
-      "Beach tours include coastal transportation, beach activities, and marine life experiences. Snorkeling equipment and life jackets provided where applicable.",
-  },
-  {
-    id: 4,
-    name: "Wildlife Safari Tours",
-    defaultText:
-      "Safari tours include park entrance fees, 4WD safari vehicles, and expert naturalist guides. Binoculars provided and photography assistance available.",
-  },
-  {
-    id: 5,
-    name: "Wellness & Ayurveda",
-    defaultText:
-      "Wellness packages include authentic Ayurvedic treatments, organic meals, yoga sessions, and meditation guidance. All treatments are performed by certified practitioners.",
-  },
-]
+// ...existing code...
 
 // ...existing code...
 
@@ -83,14 +51,26 @@ async function fetchPackage(id: string) {
 
 export default function PackageDetailPage({ params }: { params: { id: string } }) {
   const [packageData, setPackageData] = useState<any>(null);
+  const [category, setCategory] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
-    fetchPackage(params.id).then((data) => {
-      setPackageData(data);
+    async function fetchData() {
+      const pkg = await fetchPackage(params.id);
+      setPackageData(pkg);
+      if (pkg && pkg.categoryId) {
+        const res = await fetch(`/api/category/${pkg.categoryId}`);
+        if (res.ok) {
+          const cat = await res.json();
+          setCategory(cat);
+        } else {
+          setCategory(null);
+        }
+      }
       setLoading(false);
-    });
+    }
+    fetchData();
   }, [params.id]);
 
   useEffect(() => {
@@ -100,13 +80,11 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
   }, []);
 
   if (loading) {
-    return <div className="container mx-auto px-4 py-16 text-center">Loading package details...</div>;
+    return <div className="container mx-auto px-4 lg:px-24 py-16 text-center">Loading package details...</div>;
   }
   if (!packageData || packageData.error) {
     notFound();
   }
-
-  const category = packageCategories.find((cat) => cat.id === Number(packageData.categoryId));
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
@@ -126,14 +104,14 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_75%,rgba(255,255,255,0.12),transparent_55%)]" />
           {/* Content */}
           <div className="absolute inset-0 flex items-end pb-12 lg:items-center lg:pb-0">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 lg:px-24">
               <Reveal>
                 <div className="max-w-4xl text-white">
                   <div className="flex flex-wrap items-center gap-3 mb-5">
                     <Link href="/packages" className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm backdrop-blur-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 transition-colors">
                       <ArrowLeft className="h-4 w-4" /> Back
                     </Link>
-                    <Badge className="bg-emerald-600/90 backdrop-blur-sm px-3 py-1 rounded-full shadow shadow-emerald-900/30">{category?.name}</Badge>
+                    {/* <Badge className="bg-emerald-600/90 backdrop-blur-sm px-3 py-1 rounded-full shadow shadow-emerald-900/30">{category?.name}</Badge> */}
                   </div>
                   <h1 className="text-4xl lg:text-5xl font-bold mb-5 leading-tight tracking-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]">
                     {packageData.title}
@@ -160,11 +138,11 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                       <Star className="h-6 w-6 text-yellow-400 fill-current" />
                       <div>
                         <p className="text-xs uppercase tracking-wide text-white/70">Rating</p>
-                        <p className="font-semibold">{packageData.rating} <span className="text-white/60 text-xs">({packageData.reviews})</span></p>
+                        <p className="font-semibold">5</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
-                      <Badge className="bg-emerald-500 text-white hover:bg-emerald-500">{category?.name?.split(' ')[0]}</Badge>
+                      {/* Badge removed */}
                       <div>
                         <p className="text-xs uppercase tracking-wide text-white/70">Category</p>
                         <p className="font-semibold">{category?.name}</p>
@@ -189,7 +167,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
             </div>
             <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
               <Star className="h-5 w-5 text-yellow-500 fill-current" />
-              <span className="text-sm font-medium">{packageData.rating}</span>
+              <span className="text-sm font-medium">5</span>
             </div>
             <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
               <span className="text-xs font-semibold tracking-wide bg-emerald-100 text-emerald-700 px-2 py-1 rounded">{category?.name?.split(' ')[0]}</span>
@@ -200,17 +178,6 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
         <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent to-white" />
       </section>
 
-      {/* Anchor Navigation (desktop) */}
-      <nav className="hidden lg:block sticky top-0 z-30 bg-white/70 backdrop-blur-md border-b border-gray-200/70 shadow-sm">
-        <div className="container mx-auto px-4">
-          <ul className="flex items-center gap-8 text-sm font-medium">
-            <li><a href="#overview" className="py-4 inline-block hover:text-emerald-600 transition-colors">Overview</a></li>
-            <li><a href="#info" className="py-4 inline-block hover:text-emerald-600 transition-colors">Information</a></li>
-            <li><a href="#inquiry" className="py-4 inline-block hover:text-emerald-600 transition-colors">Inquiry</a></li>
-            <li className="ml-auto"><a href="#top" className="py-4 inline-block text-gray-500 hover:text-emerald-600 transition-colors">Back to top</a></li>
-          </ul>
-        </div>
-      </nav>
 
       {/* Content Section */}
       <section className="py-20 relative overflow-hidden" id="overview">
@@ -218,14 +185,14 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
           <div className="absolute -top-32 -right-16 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-200/30 rounded-full blur-3xl" />
         </div>
-        <div className="relative container mx-auto px-4">
+        <div className="relative container mx-auto px-4 lg:px-24">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-10">
               {/* Package Description */}
               <Reveal>
                 <Card className="group border-gray-200/70 shadow-sm hover:shadow-xl transition-shadow rounded-2xl overflow-hidden">
-                  <div className="h-1 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500" />
+                  
                   <CardHeader className="pb-2">
                     <CardTitle className="text-2xl">Package Details</CardTitle>
                   </CardHeader>
@@ -242,7 +209,10 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                       <CardTitle>Important Information</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-gray-600 leading-relaxed">{category.defaultText}</p>
+                      <div
+                        className="text-gray-600 leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: category.defaultText }}
+                      />
                     </CardContent>
                   </Card>
                 </Reveal>
@@ -376,26 +346,6 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
           </div>
         </div>
       </section>
-      {/* Mobile sticky CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-gray-200 shadow-lg px-4 py-3 flex items-center gap-4">
-        <div className="flex-1 text-sm">
-          <p className="font-semibold leading-tight">Interested in this tour?</p>
-          <p className="text-xs text-gray-500">Send us your inquiry now</p>
-        </div>
-        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 rounded-full" onClick={() => {
-          const el = document.getElementById('inquiry');
-          el?.scrollIntoView({ behavior: 'smooth' });
-        }}>Inquire</Button>
-      </div>
-      {showScrollTop && (
-        <button
-          aria-label="Scroll to top"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-50 group bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 text-white rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300"
-        >
-          <span className="block group-hover:scale-110 transition-transform">↑</span>
-        </button>
-      )}
     </div>
   )
 }
