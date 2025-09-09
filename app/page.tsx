@@ -142,99 +142,191 @@ export default function HomePage() {
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Our Premium Services</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">Discover Sri Lanka with our comprehensive tour packages designed to create unforgettable memories</p>
           </Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[...Array(8)].map((_, i) => null) /* placeholder to keep structure below explicit */}
-            <Reveal className="[grid-area:1/1] lg:[grid-area:auto]">
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white">
-                <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🏛️</span></div>
-                  <CardTitle className="text-primary group-hover:text-primary/80 transition-colors">Customizable Tour Packages</CardTitle>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Reveal className="h-full">
+              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
+                <CardHeader className="text-center pb-4 flex-shrink-0">
+                  <div className="w-14 h-14 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <span className="text-xl text-white">🏛️</span>
+                  </div>
+                  <CardTitle className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors leading-tight">Customizable Tour Packages</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-primary mt-1">•</span><p><strong>Cultural Tours:</strong> Explore ancient temples, historic landmarks, and UNESCO World Heritage Sites.</p></div>
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-primary mt-1">•</span><p><strong>Adventure Tours:</strong> Embark on thrilling activities like hiking, rafting, and wildlife safaris.</p></div>
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-primary mt-1">•</span><p><strong>Relaxation Packages:</strong> Unwind on pristine beaches and serene hill stations.</p></div>
+                <CardContent className="flex-grow flex flex-col justify-between text-sm text-gray-600">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Cultural Tours:</strong> Ancient temples & UNESCO sites</p>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Adventure Tours:</strong> Hiking, rafting & wildlife safaris</p>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Relaxation:</strong> Pristine beaches & hill stations</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </Reveal>
-            <Reveal className="delay-75">
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white">
-                <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🐘</span></div>
-                  <CardTitle className="text-secondary group-hover:text-secondary/80 transition-colors">Wildlife and Nature Excursions</CardTitle>
+            
+            <Reveal className="delay-75 h-full">
+              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
+                <CardHeader className="text-center pb-4 flex-shrink-0">
+                  <div className="w-14 h-14 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <span className="text-xl text-white">🐘</span>
+                  </div>
+                  <CardTitle className="text-lg font-bold text-secondary group-hover:text-secondary/80 transition-colors leading-tight">Wildlife & Nature</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-green-500 mt-1">•</span><p><strong>Wildlife Safaris:</strong> Witness majestic elephants, leopards, and exotic bird species.</p></div>
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-green-500 mt-1">•</span><p><strong>Nature Photography Tours:</strong> Capture the breathtaking landscapes and biodiversity of Sri Lanka.</p></div>
+                <CardContent className="flex-grow flex flex-col justify-between text-sm text-gray-600">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Wildlife Safaris:</strong> Elephants, leopards & exotic birds</p>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Photography Tours:</strong> Capture stunning landscapes</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </Reveal>
-            <Reveal className="delay-100">
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white">
-                <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🏰</span></div>
-                  <CardTitle className="text-primary group-hover:text-primary/80 transition-colors">City and Heritage Tours</CardTitle>
+            
+            <Reveal className="delay-100 h-full">
+              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
+                <CardHeader className="text-center pb-4 flex-shrink-0">
+                  <div className="w-14 h-14 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <span className="text-xl text-white">🏰</span>
+                  </div>
+                  <CardTitle className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors leading-tight">City & Heritage Tours</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-orange-500 mt-1">•</span><p>Discover vibrant cities such as Colombo, Kandy, and Galle with expert guides.</p></div>
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-orange-500 mt-1">•</span><p>Immerse yourself in Sri Lanka's rich history, culture, and local traditions.</p></div>
+                <CardContent className="flex-grow flex flex-col justify-between text-sm text-gray-600">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">City Tours:</strong> Colombo, Kandy & Galle with expert guides</p>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Heritage:</strong> Rich history, culture & traditions</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </Reveal>
-            <Reveal className="delay-150">
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white">
-                <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🚗</span></div>
-                  <CardTitle className="text-primary group-hover:text-primary/80 transition-colors">Transportation Services</CardTitle>
+            
+            <Reveal className="delay-150 h-full">
+              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
+                <CardHeader className="text-center pb-4 flex-shrink-0">
+                  <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <span className="text-xl text-white">🚗</span>
+                  </div>
+                  <CardTitle className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors leading-tight">Transportation Services</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-purple-500 mt-1">•</span><p>Comfortable and reliable airport transfers.</p></div>
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-purple-500 mt-1">•</span><p>Private vehicles with professional drivers for your entire journey.</p></div>
+                <CardContent className="flex-grow flex flex-col justify-between text-sm text-gray-600">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Airport Transfers:</strong> Comfortable & reliable service</p>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Private Vehicles:</strong> Professional drivers for your journey</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </Reveal>
-            <Reveal>
-              <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-2 bg-white/80 backdrop-blur-sm">
-                <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🏨</span></div>
-                  <CardTitle className="text-primary group-hover:text-primary/80 transition-colors">Accommodation Arrangements</CardTitle>
+            
+            <Reveal className="h-full">
+              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
+                <CardHeader className="text-center pb-4 flex-shrink-0">
+                  <div className="w-14 h-14 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <span className="text-xl text-white">🏨</span>
+                  </div>
+                  <CardTitle className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors leading-tight">Accommodation</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-cyan-500 mt-1">•</span><p>Handpicked hotels, resorts, and homestays to suit your budget and preferences.</p></div>
+                <CardContent className="flex-grow flex flex-col justify-between text-sm text-gray-600">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-cyan-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Hotels & Resorts:</strong> Handpicked for your budget</p>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-cyan-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Homestays:</strong> Authentic local experiences</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </Reveal>
-            <Reveal className="delay-75">
-              <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-2 bg-white/80 backdrop-blur-sm">
-                <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">🌿</span></div>
-                  <CardTitle className="text-secondary group-hover:text-secondary/80 transition-colors">Eco-Tourism and Village Tours</CardTitle>
+            
+            <Reveal className="delay-75 h-full">
+              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
+                <CardHeader className="text-center pb-4 flex-shrink-0">
+                  <div className="w-14 h-14 bg-gradient-to-r from-teal-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <span className="text-xl text-white">🌿</span>
+                  </div>
+                  <CardTitle className="text-lg font-bold text-secondary group-hover:text-secondary/80 transition-colors leading-tight">Eco-Tourism & Village Tours</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-teal-500 mt-1">•</span><p>Experience sustainable tourism by visiting local communities and participating in traditional village activities.</p></div>
+                <CardContent className="flex-grow flex flex-col justify-between text-sm text-gray-600">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-teal-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Sustainable Tourism:</strong> Visit local communities</p>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-teal-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Village Activities:</strong> Traditional cultural experiences</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </Reveal>
-            <Reveal className="delay-100">
-              <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-2 bg-white/80 backdrop-blur-sm">
-                <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">💕</span></div>
-                  <CardTitle className="text-primary group-hover:text-primary/80 transition-colors">Honeymoon Packages</CardTitle>
+            
+            <Reveal className="delay-100 h-full">
+              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
+                <CardHeader className="text-center pb-4 flex-shrink-0">
+                  <div className="w-14 h-14 bg-gradient-to-r from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <span className="text-xl text-white">💕</span>
+                  </div>
+                  <CardTitle className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors leading-tight">Honeymoon Packages</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2 text-base lg:text-lg"><span className="text-pink-500 mt-1">•</span><p>Romantic getaways with special arrangements to make your trip truly memorable.</p></div>
+                <CardContent className="flex-grow flex flex-col justify-between text-sm text-gray-600">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-pink-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Romantic Getaways:</strong> Special arrangements for couples</p>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-pink-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Memorable Trips:</strong> Create lasting memories together</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </Reveal>
-            <Reveal className="delay-150">
-              <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-2 bg-white/80 backdrop-blur-sm">
-                <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"><span className="text-2xl">📞</span></div>
-                  <CardTitle className="text-primary group-hover:text-primary/80 transition-colors">Travel Assistance</CardTitle>
+            
+            <Reveal className="delay-150 h-full">
+              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
+                <CardHeader className="text-center pb-4 flex-shrink-0">
+                  <div className="w-14 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <span className="text-xl text-white">📞</span>
+                  </div>
+                  <CardTitle className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors leading-tight">Travel Assistance</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm space-y-3 text-gray-700">
-                  <div className="flex items-start space-x-2"><span className="text-indigo-500 mt-1">•</span><p>24/7 customer support for a hassle-free travel experience.</p></div>
-                  <div className="flex items-start space-x-2"><span className="text-indigo-500 mt-1">•</span><p>Visa assistance, travel insurance, and more.</p></div>
+                <CardContent className="flex-grow flex flex-col justify-between text-sm text-gray-600">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">24/7 Support:</strong> Hassle-free travel experience</p>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0 mt-1"></span>
+                      <p className="text-sm"><strong className="text-gray-800">Visa & Insurance:</strong> Complete travel assistance</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </Reveal>
