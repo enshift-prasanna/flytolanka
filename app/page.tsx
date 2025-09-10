@@ -173,7 +173,7 @@ export default function HomePage() {
             <Reveal className="delay-75 h-full">
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
                 <CardHeader className="text-center pb-4 flex-shrink-0">
-                  <div className="w-14 h-14 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <div className="w-14 h-14 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <span className="text-xl text-white">🐘</span>
                   </div>
                   <CardTitle className="text-lg font-bold text-secondary group-hover:text-secondary/80 transition-colors leading-tight">Wildlife & Nature</CardTitle>
@@ -196,7 +196,7 @@ export default function HomePage() {
             <Reveal className="delay-100 h-full">
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
                 <CardHeader className="text-center pb-4 flex-shrink-0">
-                  <div className="w-14 h-14 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <div className="w-14 h-14 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <span className="text-xl text-white">🏰</span>
                   </div>
                   <CardTitle className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors leading-tight">City & Heritage Tours</CardTitle>
@@ -219,7 +219,7 @@ export default function HomePage() {
             <Reveal className="delay-150 h-full">
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
                 <CardHeader className="text-center pb-4 flex-shrink-0">
-                  <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <div className="w-14 h-14 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <span className="text-xl text-white">🚗</span>
                   </div>
                   <CardTitle className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors leading-tight">Transportation Services</CardTitle>
@@ -242,7 +242,7 @@ export default function HomePage() {
             <Reveal className="h-full">
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
                 <CardHeader className="text-center pb-4 flex-shrink-0">
-                  <div className="w-14 h-14 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <div className="w-14 h-14 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <span className="text-xl text-white">🏨</span>
                   </div>
                   <CardTitle className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors leading-tight">Accommodation</CardTitle>
@@ -265,7 +265,7 @@ export default function HomePage() {
             <Reveal className="delay-75 h-full">
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
                 <CardHeader className="text-center pb-4 flex-shrink-0">
-                  <div className="w-14 h-14 bg-gradient-to-r from-teal-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <div className="w-14 h-14 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <span className="text-xl text-white">🌿</span>
                   </div>
                   <CardTitle className="text-lg font-bold text-secondary group-hover:text-secondary/80 transition-colors leading-tight">Eco-Tourism & Village Tours</CardTitle>
@@ -288,7 +288,7 @@ export default function HomePage() {
             <Reveal className="delay-100 h-full">
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
                 <CardHeader className="text-center pb-4 flex-shrink-0">
-                  <div className="w-14 h-14 bg-gradient-to-r from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <div className="w-14 h-14 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <span className="text-xl text-white">💕</span>
                   </div>
                   <CardTitle className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors leading-tight">Honeymoon Packages</CardTitle>
@@ -311,7 +311,7 @@ export default function HomePage() {
             <Reveal className="delay-150 h-full">
               <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:-translate-y-1 bg-white h-full flex flex-col">
                 <CardHeader className="text-center pb-4 flex-shrink-0">
-                  <div className="w-14 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <div className="w-14 h-14 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <span className="text-xl text-white">📞</span>
                   </div>
                   <CardTitle className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors leading-tight">Travel Assistance</CardTitle>

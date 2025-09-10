@@ -35,7 +35,7 @@ const features = [
     category: "🛋️ Comfort & Convenience",
     items: [
       "Fully air-conditioned interiors",
-      "Comfortable reclining seats with ample legroom",
+      "Comfortable reclining seats",
       "Adjustable headrests and armrests",
       "Spacious luggage storage capacity",
       "Curtains or tinted windows for privacy and sun protection",
@@ -44,19 +44,17 @@ const features = [
   {
     category: "🎶 Entertainment & Connectivity",
     items: [
-      "High-quality sound system / FM radio",
+      "High-quality sound system / FM radio (on request in selected vehicles)",
       "USB charging ports for mobile devices",
       "Wi-Fi (on request in selected vehicles)",
-      "Microphone and PA system (for group tours, coaches & vans)",
+      "Microphone and PA system (on request in selected vehicles)",
     ],
   },
   {
     category: "🛡️ Safety & Security",
     items: [
       "Comprehensive seat belts for all passengers",
-      "First aid kit available onboard",
-      "Fire extinguisher and emergency exit facilities",
-      "GPS tracking for route safety",
+      "First aid kit available onboard (on request)",
       "Professional, licensed, and experienced drivers",
     ],
   },
@@ -66,7 +64,7 @@ const features = [
       "Daily cleaned and sanitized interiors",
       "Bottled drinking water provided",
       "Neat and well-maintained upholstery",
-      "Garbage bin for passenger convenience",
+      "Garbage bin for passenger convenience (on request in buses & coaches)",
     ],
   },
   {

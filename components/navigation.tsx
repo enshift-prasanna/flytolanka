@@ -42,7 +42,7 @@ export function Navigation() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="bg-primary text-white px-3 py-2 rounded-lg font-bold text-xl">FTL</div>
+            <div className="bg-primary text-white px-3 py-2 rounded-lg font-bold text-xl">FTLT</div>
             <div className="flex flex-col">
               <span className="font-bold text-xl text-gray-900">Fly To Lanka Tours</span>
               <span className="text-sm text-gray-600">Travel & Transport</span>

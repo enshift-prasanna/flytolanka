@@ -36,14 +36,14 @@ function Reveal({ children, className = '' }: { children: React.ReactNode, class
 
 export function Footer() {
   return (
-    <footer className="bg-gradient-to-r from-secondary via-primary/90 to-secondary text-white">
-      <section id="contact" className="py-10 pb-0 bg-gradient-to-r from-secondary via-primary/90 to-secondary text-white relative overflow-hidden scroll-mt-24">
+    <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
+      <section id="contact" className="py-10 pb-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden scroll-mt-24">
 
         <div className="relative container mx-auto px-4 lg:px-24 text-center">
           <div className="mx-auto">
             <Reveal className="delay-75">
               <h2 className="text-4xl lg:text-6xl font-bold  leading-tight">Fly To Lanka Tours</h2>
-              <span className="text-base lg:text-lg text-white/70 font-normal">100% Trusted Travel Service with Professional Tour Guides &amp; Private Drivers for Round Trips</span>
+              <span className="text-base lg:text-lg text-white font-normal">100% Trusted Travel Service with Professional Tour Guides &amp; Private Drivers for Round Trips</span>
               {/* Service Features Horizontal Row: icon and text side by side */}
               <div className="flex flex-wrap justify-center items-stretch mb-10 mt-8 w-full gap-y-4 gap-x-2 sm:gap-x-4">
                 {/* Responsive: 2 per row on xs, 3 per row on sm, all in one row on md+ */}
@@ -61,7 +61,7 @@ export function Footer() {
                     className="flex flex-col items-center justify-center min-w-0 flex-1 px-1 border-l border-secondary first:border-l-0 basis-1/2 sm:basis-1/3 md:basis-0 md:flex-1 max-w-full"
                   >
                     {icon}
-                    <span className="text-base font-semibold text-gray-400 text-center break-words">{text}</span>
+                    <span className="text-base font-semibold text-white text-center break-words">{text}</span>
                   </div>
                 ))}
               </div>

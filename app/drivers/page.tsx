@@ -86,7 +86,7 @@ export default function DriversPage() {
       </section>
 
       {/* Booking Form Section - emerald color moved to form card */}
-      <section className="py-28 relative overflow-hidden">
+      <section className="py-16 relative overflow-hidden">
         <div className="relative container mx-auto px-6">
           <div className="max-w-3xl mx-auto">
             <Reveal className="bg-secondary bg-opacity-95 backdrop-blur-md border border-white/20 rounded-2xl p-8 lg:p-10 shadow-xl">

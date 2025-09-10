@@ -72,7 +72,7 @@ export default function TailorMadePage() {
 			</section>
 
 			{/* Tailor-Made Tour Request Form */}
-			<section className="py-28 relative overflow-hidden">
+			<section className="py-16 relative overflow-hidden">
 				<div className="relative container mx-auto px-6">
 					<div className="max-w-3xl mx-auto">
 						<Reveal className="bg-secondary bg-opacity-95 backdrop-blur-md border border-white/20 rounded-2xl p-8 lg:p-10 shadow-xl">
@@ -85,8 +85,8 @@ export default function TailorMadePage() {
 										<Input id="name" type="text" required className="bg-white/80 focus-visible:ring-primary" />
 									</div>
 									<div className="space-y-2">
-										<Label htmlFor="nationality" className="text-white">Nationality</Label>
-										<Input id="nationality" type="text" className="bg-white/80 focus-visible:ring-primary" />
+										<Label htmlFor="country" className="text-white">Country</Label>
+										<Input id="country" type="text" className="bg-white/80 focus-visible:ring-primary" />
 									</div>
 								</div>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -184,7 +184,7 @@ export default function TailorMadePage() {
 								{/* Transportation */}
 								<h2 className="text-xl font-semibold text-white mb-2">🚗 Transportation</h2>
 								<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-									{["Mini Car & Driver","Sedan Car & Driver","Luxury Car & Driver","SUV & Driver","Van & Driver","Luxury Van & Driver","Mini Coach & Driver","Luxury Coach & Driver"].map((v,i) => (
+									{["Mini Car","Sedan Car","Luxury Car","SUV","Van","Luxury Van","Mini Coach","Luxury Coach"].map((v,i) => (
 										<label key={i} className="flex items-center gap-2 text-white">
 											<input type="checkbox" name="transport" value={v} className="accent-primary" />
 											{v}
@@ -201,9 +201,9 @@ export default function TailorMadePage() {
 											{v}
 										</label>
 									))}
-									<div className="space-y-2">
+									<div className="space-y-2 col-span-2">
 										<Label htmlFor="special-interest" className="text-white">Other Special Interest</Label>
-										<Input id="special-interest" type="text" className="bg-white/80 focus-visible:ring-primary" />
+										<Textarea id="special-interest" rows={8} className="bg-white/80 focus-visible:ring-primary min-h-[120px]" />
 									</div>
 								</div>
 
@@ -232,7 +232,12 @@ export default function TailorMadePage() {
 								{/* Special Requests */}
 								<h2 className="text-xl font-semibold text-white mb-2">📝 Special Requests</h2>
 								<div className="space-y-2">
-									<Textarea id="special-requests" rows={4} className="bg-white/80 focus-visible:ring-primary" placeholder="Let us know any special requests, needs, or details..." />
+									<Textarea
+										id="special-requests"
+										rows={8}
+										className="bg-white/80 focus-visible:ring-primary min-h-[160px]"
+										placeholder="Let us know any special requests, needs, or details..."
+									/>
 								</div>
 
 								{/* Submit */}
