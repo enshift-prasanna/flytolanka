@@ -19,6 +19,19 @@ import { useRouter } from "next/navigation";
 const AdminPage: React.FC = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState("categories")
+  const [categories, setCategories] = useState<any[]>([]);
+  const [categoryForm, setCategoryForm] = useState({ name: "", description: "", image: "", defaultText: "" });
+  const [editingCategory, setEditingCategory] = useState<string|null>(null)
+  const [packageForm, setPackageForm] = useState({ title: "", categoryId: "", days: "", shortDescription: "", detailedDescription: "", image: "" })
+  const [packages, setPackages] = useState<any[]>([])
+  const [editingPackage, setEditingPackage] = useState<string|null>(null)
+  const [blogForm, setBlogForm] = useState({ title: "", excerpt: "", content: "", image: "" })
+  const [blogs, setBlogs] = useState<any[]>([])
+  const [editingBlog, setEditingBlog] = useState<string|null>(null)
+  // Cloudinary config
+  const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgyxftryr/upload";
+  const CLOUDINARY_UPLOAD_PRESET = "ftl_main";
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -27,34 +40,6 @@ const AdminPage: React.FC = () => {
       router.replace("/admin/login");
     }
   }, [user, router]);
-  const [activeTab, setActiveTab] = useState("categories")
-
-  // Only render admin panel if authenticated
-  if (!user) return null;
-
-  // Category CRUD
-  // Return early before any hooks if not authenticated
-  if (!user) {
-    if (typeof window !== "undefined" && window.location.pathname !== "/admin/login") {
-      router.replace("/admin/login");
-    }
-    return null;
-  }
-  const [editingCategory, setEditingCategory] = useState<string|null>(null)
-
-  // Package CRUD
-  const [packageForm, setPackageForm] = useState({ title: "", categoryId: "", days: "", shortDescription: "", detailedDescription: "", image: "" })
-  const [packages, setPackages] = useState<any[]>([])
-  const [editingPackage, setEditingPackage] = useState<string|null>(null)
-
-  // Blog CRUD
-  const [blogForm, setBlogForm] = useState({ title: "", excerpt: "", content: "", image: "" })
-  const [blogs, setBlogs] = useState<any[]>([])
-  const [editingBlog, setEditingBlog] = useState<string|null>(null)
-
-  // Cloudinary config
-  const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgyxftryr/upload";
-  const CLOUDINARY_UPLOAD_PRESET = "ftl_main";
 
   // Fetch lists
   useEffect(() => {
@@ -62,6 +47,9 @@ const AdminPage: React.FC = () => {
     fetch("/api/package").then(res => res.json()).then(setPackages)
     fetch("/api/blog").then(res => res.json()).then(setBlogs)
   }, [])
+
+  // Only render admin panel if authenticated
+  if (!user) return null;
 
   // Cloudinary upload helper
   async function uploadImage(file: File) {
@@ -166,9 +154,152 @@ const AdminPage: React.FC = () => {
           </div>
           <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
         </div>
-        {/* ...existing code... (Tabs, CRUD forms, etc.) */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          {/* ...existing code... */}
+          <TabsList className="flex gap-2">
+            <TabsTrigger value="categories"><FolderPlus className="inline mr-1" size={16}/>Categories</TabsTrigger>
+            <TabsTrigger value="packages"><Package className="inline mr-1" size={16}/>Packages</TabsTrigger>
+            <TabsTrigger value="blogs"><FileText className="inline mr-1" size={16}/>Blog</TabsTrigger>
+          </TabsList>
+          {/* Categories Tab */}
+          <TabsContent value="categories">
+            <Card>
+              <CardHeader>
+                <CardTitle>Categories</CardTitle>
+                <CardDescription>Manage travel categories</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleCategorySubmit} className="space-y-4">
+                  <div>
+                    <Label>Name</Label>
+                    <Input value={categoryForm.name} onChange={e => setCategoryForm(f => ({ ...f, name: e.target.value }))} required />
+                  </div>
+                  <div>
+                    <Label>Description</Label>
+                    <Input value={categoryForm.description} onChange={e => setCategoryForm(f => ({ ...f, description: e.target.value }))} />
+                  </div>
+                  <div>
+                    <Label>Image URL</Label>
+                    <Input value={categoryForm.image} onChange={e => setCategoryForm(f => ({ ...f, image: e.target.value }))} />
+                  </div>
+                  <Button type="submit" variant="default">{editingCategory ? "Update" : "Add"} Category</Button>
+                  {editingCategory && <Button type="button" variant="secondary" onClick={() => { setEditingCategory(null); setCategoryForm({ name: "", description: "", image: "", defaultText: "" }); }}>Cancel</Button>}
+                </form>
+                <div className="mt-6">
+                  <h3 className="font-semibold mb-2">Existing Categories</h3>
+                  <ul className="space-y-2">
+                    {categories.map(cat => (
+                      <li key={cat.id} className="flex items-center gap-2">
+                        <span>{cat.name}</span>
+                        <Button size="sm" variant="outline" onClick={() => handleCategoryEdit(cat)}>Edit</Button>
+                        <Button size="sm" variant="destructive" onClick={() => handleCategoryDelete(cat.id)}>Delete</Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          {/* Packages Tab */}
+          <TabsContent value="packages">
+            <Card>
+              <CardHeader>
+                <CardTitle>Packages</CardTitle>
+                <CardDescription>Manage travel packages</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handlePackageSubmit} className="space-y-4">
+                  <div>
+                    <Label>Title</Label>
+                    <Input value={packageForm.title} onChange={e => setPackageForm(f => ({ ...f, title: e.target.value }))} required />
+                  </div>
+                  <div>
+                    <Label>Category</Label>
+                    <Select value={packageForm.categoryId} onValueChange={val => setPackageForm(f => ({ ...f, categoryId: val }))}>
+                      <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                      <SelectContent>
+                        {categories.map(cat => (
+                          <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Days</Label>
+                    <Input value={packageForm.days} onChange={e => setPackageForm(f => ({ ...f, days: e.target.value }))} />
+                  </div>
+                  <div>
+                    <Label>Short Description</Label>
+                    <Input value={packageForm.shortDescription} onChange={e => setPackageForm(f => ({ ...f, shortDescription: e.target.value }))} />
+                  </div>
+                  <div>
+                    <Label>Detailed Description</Label>
+                    <Input value={packageForm.detailedDescription} onChange={e => setPackageForm(f => ({ ...f, detailedDescription: e.target.value }))} />
+                  </div>
+                  <div>
+                    <Label>Image URL</Label>
+                    <Input value={packageForm.image} onChange={e => setPackageForm(f => ({ ...f, image: e.target.value }))} />
+                  </div>
+                  <Button type="submit" variant="default">{editingPackage ? "Update" : "Add"} Package</Button>
+                  {editingPackage && <Button type="button" variant="secondary" onClick={() => { setEditingPackage(null); setPackageForm({ title: "", categoryId: "", days: "", shortDescription: "", detailedDescription: "", image: "" }); }}>Cancel</Button>}
+                </form>
+                <div className="mt-6">
+                  <h3 className="font-semibold mb-2">Existing Packages</h3>
+                  <ul className="space-y-2">
+                    {packages.map(pkg => (
+                      <li key={pkg.id} className="flex items-center gap-2">
+                        <span>{pkg.title}</span>
+                        <Button size="sm" variant="outline" onClick={() => handlePackageEdit(pkg)}>Edit</Button>
+                        <Button size="sm" variant="destructive" onClick={() => handlePackageDelete(pkg.id)}>Delete</Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          {/* Blog Tab */}
+          <TabsContent value="blogs">
+            <Card>
+              <CardHeader>
+                <CardTitle>Blog</CardTitle>
+                <CardDescription>Manage blog posts</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleBlogSubmit} className="space-y-4">
+                  <div>
+                    <Label>Title</Label>
+                    <Input value={blogForm.title} onChange={e => setBlogForm(f => ({ ...f, title: e.target.value }))} required />
+                  </div>
+                  <div>
+                    <Label>Excerpt</Label>
+                    <Input value={blogForm.excerpt} onChange={e => setBlogForm(f => ({ ...f, excerpt: e.target.value }))} />
+                  </div>
+                  <div>
+                    <Label>Content</Label>
+                    <RichTextEditor value={blogForm.content} onChange={val => setBlogForm(f => ({ ...f, content: val }))} />
+                  </div>
+                  <div>
+                    <Label>Image URL</Label>
+                    <Input value={blogForm.image} onChange={e => setBlogForm(f => ({ ...f, image: e.target.value }))} />
+                  </div>
+                  <Button type="submit" variant="default">{editingBlog ? "Update" : "Add"} Blog Post</Button>
+                  {editingBlog && <Button type="button" variant="secondary" onClick={() => { setEditingBlog(null); setBlogForm({ title: "", excerpt: "", content: "", image: "" }); }}>Cancel</Button>}
+                </form>
+                <div className="mt-6">
+                  <h3 className="font-semibold mb-2">Existing Blog Posts</h3>
+                  <ul className="space-y-2">
+                    {blogs.map(blog => (
+                      <li key={blog.id} className="flex items-center gap-2">
+                        <span>{blog.title}</span>
+                        <Button size="sm" variant="outline" onClick={() => handleBlogEdit(blog)}>Edit</Button>
+                        <Button size="sm" variant="destructive" onClick={() => handleBlogDelete(blog.id)}>Delete</Button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </div>

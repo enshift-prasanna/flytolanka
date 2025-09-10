@@ -41,7 +41,7 @@ export function Footer() {
     <footer className="relative text-white">
       {/* Background image with dark overlay */}
       <div className="absolute inset-0 w-full h-full bg-[url('https://backpacking-tours.imgix.net/storage/uploads/blog/sri-lanka/weather/backpacking-tours-sri-lanka-weather-98_nvten.jpg?w=1920&crop=faces&q=75&auto=format&fm=png')] bg-cover bg-center z-0" />
-      <div className="absolute inset-0 w-full h-full bg-black/80 z-10" />
+      <div className="absolute inset-0 w-full h-full bg-black/89 z-10" />
       <section id="contact" className="py-10 pb-0 relative overflow-hidden scroll-mt-24 z-20">
 
         <div className="relative container mx-auto px-4 lg:px-24 text-center">
