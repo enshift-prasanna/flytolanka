@@ -60,7 +60,9 @@ export function Navigation() {
                 {item.label}
               </Link>
             ))}
-            <Button className="bg-secondary hover:bg-secondary/80">Tailor Made</Button>
+            <Link href="/tailor-made">
+              <Button className="bg-secondary hover:bg-secondary/80">Tailor Made</Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -83,7 +85,9 @@ export function Navigation() {
                   {item.label}
                 </Link>
               ))}
-              <Button className="bg-secondary hover:bg-secondary/80 w-fit">Tailor Made</Button>
+              <Link href="/tailor-made">
+                <Button className="bg-secondary hover:bg-secondary/80 w-fit">Tailor Made</Button>
+              </Link>
             </div>
           </div>
         )}
