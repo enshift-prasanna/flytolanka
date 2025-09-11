@@ -44,7 +44,7 @@ const AdminPage: React.FC = () => {
   // Fetch lists
   useEffect(() => {
     fetch("/api/category").then(res => res.json()).then(setCategories)
-    fetch("/api/package").then(res => res.json()).then(setPackages)
+    fetch("/api/package?detailed=true").then(res => res.json()).then(setPackages)
     fetch("/api/blog").then(res => res.json()).then(setBlogs)
   }, [])
 
@@ -190,6 +190,10 @@ const AdminPage: React.FC = () => {
                     <Label>Image URL</Label>
                     <Input value={categoryForm.image} onChange={e => setCategoryForm(f => ({ ...f, image: e.target.value }))} />
                   </div>
+                    <div>
+                      <Label>Default Text</Label>
+                      <RichTextEditor value={categoryForm.defaultText} onChange={val => setCategoryForm(f => ({ ...f, defaultText: val }))} />
+                    </div>
                   <Button type="submit" variant="default">{editingCategory ? "Update" : "Add"} Category</Button>
                   {editingCategory && <Button type="button" variant="secondary" onClick={() => { setEditingCategory(null); setCategoryForm({ name: "", description: "", image: "", defaultText: "" }); }}>Cancel</Button>}
                 </form>
@@ -256,10 +260,10 @@ const AdminPage: React.FC = () => {
                     <Label>Short Description</Label>
                     <Input value={packageForm.shortDescription} onChange={e => setPackageForm(f => ({ ...f, shortDescription: e.target.value }))} />
                   </div>
-                  <div>
-                    <Label>Detailed Description</Label>
-                    <Input value={packageForm.detailedDescription} onChange={e => setPackageForm(f => ({ ...f, detailedDescription: e.target.value }))} />
-                  </div>
+                    <div>
+                      <Label>Detailed Description</Label>
+                      <RichTextEditor value={packageForm.detailedDescription} onChange={val => setPackageForm(f => ({ ...f, detailedDescription: val }))} />
+                    </div>
                   <div>
                     <Label>Image URL</Label>
                     <Input value={packageForm.image} onChange={e => setPackageForm(f => ({ ...f, image: e.target.value }))} />

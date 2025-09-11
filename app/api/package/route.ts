@@ -2,24 +2,18 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@/lib/generated/prisma";
 const prisma = new PrismaClient();
 
-export async function GET() {
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const includeDetailed = searchParams.get("detailed") === "true";
   const packages = await prisma.package.findMany({
-    select: {
-      id: true,
-      title: true,
-      categoryId: true,
-      days: true,
-      shortDescription: true,
-      image: true,
-      category: {
-        select: {
-          id: true,
-          name: true,
-        }
-      }
+    include: {
+      category: true
     }
   });
-  return NextResponse.json(packages);
+  const result = includeDetailed
+    ? packages
+    : packages.map(({ detailedDescription, ...rest }) => rest);
+  return NextResponse.json(result);
 }
 
 export async function POST(req: Request) {
