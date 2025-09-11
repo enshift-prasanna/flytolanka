@@ -104,7 +104,7 @@ const AdminPage: React.FC = () => {
     if (res.ok) {
       setPackageForm({ title: "", categoryId: "", days: "", shortDescription: "", detailedDescription: "", image: "" });
       setEditingPackage(null);
-      fetch("/api/package").then(res => res.json()).then(setPackages);
+      fetch("/api/package?detailed=true").then(res => res.json()).then(setPackages);
     }
   }
   function handlePackageEdit(pkg: any) {
