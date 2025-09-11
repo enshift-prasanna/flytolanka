@@ -2,9 +2,14 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@/lib/generated/prisma";
 const prisma = new PrismaClient();
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const includeContent = searchParams.get("includeContent") === "true";
   const blogs = await prisma.blog.findMany();
-  return NextResponse.json(blogs);
+  const filteredBlogs = includeContent
+    ? blogs
+    : blogs.map(({ content, ...rest }) => rest);
+  return NextResponse.json(filteredBlogs);
 }
 
 export async function POST(req: Request) {

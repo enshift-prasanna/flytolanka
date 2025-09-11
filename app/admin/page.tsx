@@ -45,7 +45,7 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     fetch("/api/category").then(res => res.json()).then(setCategories)
     fetch("/api/package?detailed=true").then(res => res.json()).then(setPackages)
-    fetch("/api/blog").then(res => res.json()).then(setBlogs)
+    fetch("/api/blog?includeContent=true").then(res => res.json()).then(setBlogs)
   }, [])
 
   // Only render admin panel if authenticated
