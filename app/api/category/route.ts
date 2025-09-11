@@ -3,7 +3,7 @@ import { PrismaClient } from "@/lib/generated/prisma";
 const prisma = new PrismaClient();
 
 export async function GET() {
-  const categories = await prisma.category.findMany({ include: { packages: true } });
+  const categories = await prisma.category.findMany();
   return NextResponse.json(categories);
 }
 

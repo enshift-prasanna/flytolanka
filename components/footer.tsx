@@ -2,6 +2,7 @@
 import Link from "next/link"
 import { useEffect, useRef, useState } from 'react'
 import { Button } from "@/components/ui/button"
+import { usePathname } from "next/navigation"
 import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Car, ShieldCheck, ShoppingCart, Route, Smile, Users, UserCheck } from "lucide-react"
 
 // Reusable reveal animation wrapper
@@ -35,6 +36,8 @@ function Reveal({ children, className = '' }: { children: React.ReactNode, class
 }
 
 export function Footer() {
+  const pathname = usePathname();
+  if (pathname.startsWith("/admin")) return null;
   return (
     <footer className="relative text-white">
       {/* Background image with dark overlay */}

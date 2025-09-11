@@ -2,11 +2,14 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Menu, X, Phone, Mail } from "lucide-react"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname();
+  if (pathname.startsWith("/admin")) return null;
 
   const navItems = [
     { href: "/", label: "Home" },
@@ -85,9 +88,9 @@ export function Navigation() {
                   {item.label}
                 </Link>
               ))}
-              <Link href="/tailor-made">
-                <Button className="bg-secondary hover:bg-secondary/80 w-fit">Tailor Made</Button>
-              </Link>
+                <Link href="/tailor-made" onClick={() => setIsOpen(false)}>
+                  <Button className="bg-secondary hover:bg-secondary/80 w-fit">Tailor Made</Button>
+                </Link>
             </div>
           </div>
         )}

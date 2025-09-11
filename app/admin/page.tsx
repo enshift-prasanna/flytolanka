@@ -80,6 +80,9 @@ const AdminPage: React.FC = () => {
   function handleCategoryEdit(cat: any) {
     setCategoryForm({ name: cat.name, description: cat.description, image: cat.image || "", defaultText: cat.defaultText || "" });
     setEditingCategory(cat.id);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
   }
   async function handleCategoryDelete(id: string) {
     if (confirm("Delete this category?")) {
@@ -107,6 +110,9 @@ const AdminPage: React.FC = () => {
   function handlePackageEdit(pkg: any) {
     setPackageForm({ title: pkg.title, categoryId: pkg.categoryId, days: pkg.days, shortDescription: pkg.shortDescription, detailedDescription: pkg.detailedDescription, image: pkg.image || "" });
     setEditingPackage(pkg.id);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
   }
   async function handlePackageDelete(id: string) {
     if (confirm("Delete this package?")) {
@@ -134,6 +140,9 @@ const AdminPage: React.FC = () => {
   function handleBlogEdit(blog: any) {
     setBlogForm({ title: blog.title, excerpt: blog.excerpt, content: blog.content, image: blog.image || "" });
     setEditingBlog(blog.id);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
   }
   async function handleBlogDelete(id: string) {
     if (confirm("Delete this blog post?")) {
@@ -186,15 +195,31 @@ const AdminPage: React.FC = () => {
                 </form>
                 <div className="mt-6">
                   <h3 className="font-semibold mb-2">Existing Categories</h3>
-                  <ul className="space-y-2">
-                    {categories.map(cat => (
-                      <li key={cat.id} className="flex items-center gap-2">
-                        <span>{cat.name}</span>
-                        <Button size="sm" variant="outline" onClick={() => handleCategoryEdit(cat)}>Edit</Button>
-                        <Button size="sm" variant="destructive" onClick={() => handleCategoryDelete(cat.id)}>Delete</Button>
-                      </li>
-                    ))}
-                  </ul>
+                  <table className="min-w-full bg-white border rounded">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2 border">Image</th>
+                        <th className="px-4 py-2 border">Title</th>
+                        <th className="px-4 py-2 border">Description</th>
+                        <th className="px-4 py-2 border">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categories.map(cat => (
+                        <tr key={cat.id}>
+                          <td className="px-4 py-2 border">
+                            {cat.image ? <img src={cat.image} alt={cat.name} className="h-12 w-12 object-cover rounded" /> : <span className="text-gray-400">No image</span>}
+                          </td>
+                          <td className="px-4 py-2 border">{cat.name}</td>
+                          <td className="px-4 py-2 border">{cat.description?.length > 50 ? cat.description.slice(0, 50) + '...' : cat.description}</td>
+                          <td className="px-4 py-2 border flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => handleCategoryEdit(cat)}>Edit</Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleCategoryDelete(cat.id)}>Delete</Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </CardContent>
             </Card>
@@ -244,15 +269,31 @@ const AdminPage: React.FC = () => {
                 </form>
                 <div className="mt-6">
                   <h3 className="font-semibold mb-2">Existing Packages</h3>
-                  <ul className="space-y-2">
-                    {packages.map(pkg => (
-                      <li key={pkg.id} className="flex items-center gap-2">
-                        <span>{pkg.title}</span>
-                        <Button size="sm" variant="outline" onClick={() => handlePackageEdit(pkg)}>Edit</Button>
-                        <Button size="sm" variant="destructive" onClick={() => handlePackageDelete(pkg.id)}>Delete</Button>
-                      </li>
-                    ))}
-                  </ul>
+                  <table className="min-w-full bg-white border rounded">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2 border">Image</th>
+                        <th className="px-4 py-2 border">Title</th>
+                        <th className="px-4 py-2 border">Short Description</th>
+                        <th className="px-4 py-2 border">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {packages.map(pkg => (
+                        <tr key={pkg.id}>
+                          <td className="px-4 py-2 border">
+                            {pkg.image ? <img src={pkg.image} alt={pkg.title} className="h-12 w-12 object-cover rounded" /> : <span className="text-gray-400">No image</span>}
+                          </td>
+                          <td className="px-4 py-2 border">{pkg.title}</td>
+                          <td className="px-4 py-2 border">{pkg.shortDescription?.length > 50 ? pkg.shortDescription.slice(0, 50) + '...' : pkg.shortDescription}</td>
+                          <td className="px-4 py-2 border flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => handlePackageEdit(pkg)}>Edit</Button>
+                            <Button size="sm" variant="destructive" onClick={() => handlePackageDelete(pkg.id)}>Delete</Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </CardContent>
             </Card>
@@ -287,15 +328,27 @@ const AdminPage: React.FC = () => {
                 </form>
                 <div className="mt-6">
                   <h3 className="font-semibold mb-2">Existing Blog Posts</h3>
-                  <ul className="space-y-2">
-                    {blogs.map(blog => (
-                      <li key={blog.id} className="flex items-center gap-2">
-                        <span>{blog.title}</span>
-                        <Button size="sm" variant="outline" onClick={() => handleBlogEdit(blog)}>Edit</Button>
-                        <Button size="sm" variant="destructive" onClick={() => handleBlogDelete(blog.id)}>Delete</Button>
-                      </li>
-                    ))}
-                  </ul>
+                  <table className="min-w-full bg-white border rounded">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2 border">Title</th>
+                        <th className="px-4 py-2 border">Excerpt</th>
+                        <th className="px-4 py-2 border">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {blogs.map(blog => (
+                        <tr key={blog.id}>
+                          <td className="px-4 py-2 border">{blog.title}</td>
+                          <td className="px-4 py-2 border">{blog.excerpt?.length > 50 ? blog.excerpt.slice(0, 50) + '...' : blog.excerpt}</td>
+                          <td className="px-4 py-2 border flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => handleBlogEdit(blog)}>Edit</Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleBlogDelete(blog.id)}>Delete</Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </CardContent>
             </Card>
