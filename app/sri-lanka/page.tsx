@@ -110,30 +110,31 @@ export default function SriLankaPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {posts.map((post: any, idx) => (
                 <Reveal key={post.id} className={idx % 2 === 0 ? "delay-75" : ""}>
-                  <Card className="pt-0 group overflow-hidden h-full bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
-                    <div className="relative h-48 w-full overflow-hidden">
-                      <Image
-                        src={post.image || "/placeholder.svg"}
-                        alt={post.title}
-                        width={600}
-                        height={400}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      {/* Removed hover line */}
-                    </div>
-                    <CardHeader className="space-y-2">
-                      <CardTitle className="text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-secondary transition-colors">
-                        {post.title}
-                      </CardTitle>
-                      <CardDescription className="text-gray-600 leading-relaxed line-clamp-3">
-                        {post.excerpt}
-                      </CardDescription>
-                      <div className="text-sm text-gray-500 pt-2">
-                        <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
+                  <Link href={`/sri-lanka/${post.id}`} className="block h-full">
+                    <Card className="pt-0 group overflow-hidden h-full bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
+                      <div className="relative h-48 w-full overflow-hidden">
+                        <Image
+                          src={post.image || "/placeholder.svg"}
+                          alt={post.title}
+                          width={600}
+                          height={400}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
-                    </CardHeader>
-                  </Card>
+                      <CardHeader className="space-y-2">
+                        <CardTitle className="text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-secondary transition-colors">
+                          {post.title}
+                        </CardTitle>
+                        <CardDescription className="text-gray-600 leading-relaxed line-clamp-3">
+                          {post.excerpt}
+                        </CardDescription>
+                        <div className="text-sm text-gray-500 pt-2">
+                          <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
+                        </div>
+                      </CardHeader>
+                    </Card>
+                  </Link>
                 </Reveal>
               ))}
             </div>
