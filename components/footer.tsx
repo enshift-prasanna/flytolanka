@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
 import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Car, ShieldCheck, ShoppingCart, Route, Smile, Users, UserCheck } from "lucide-react"
 
+// Fixed this page
+
 // Reusable reveal animation wrapper
 function Reveal({ children, className = '' }: { children: React.ReactNode, className?: string }) {
   const ref = useRef<HTMLDivElement | null>(null)
