@@ -70,7 +70,7 @@ export function Navigation() {
 
           {/* Mobile menu button */}
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isOpen ? <X className="h-14 w-14" style={{height: 32, width: 32}} /> : <Menu className="h-14 w-14" style={{height: 32, width: 32}} />}
           </Button>
         </div>
 

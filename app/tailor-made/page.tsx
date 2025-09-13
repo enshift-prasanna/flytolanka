@@ -253,7 +253,7 @@ export default function TailorMadePage() {
 
 								{/* Interests & Experiences */}
 								<h2 className="text-xl font-semibold text-white mb-2">🌍 Interests & Experiences</h2>
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 gap-y-4 py-4">
 									{[
 										'Cultural Heritage',
 										'Nature & Wildlife',
@@ -266,12 +266,12 @@ export default function TailorMadePage() {
 										'Food & Culinary Experiences',
 										'Festivals & Local Events'
 									].map((v,i) => (
-										<label key={i} className="flex items-center gap-2 text-white">
+										<label key={i} className="flex flex-wrap items-center gap-2 text-white">
 											<input type="checkbox" name="interests" value={v} className="accent-primary" />
 											{v}
 										</label>
 									))}
-									<div className="space-y-2 col-span-2">
+									<div className="space-y-2 sm:col-span-2">
 										<Label htmlFor="special-interest" className="text-white">Other Special Interest</Label>
 										<Textarea id="special-interest" rows={8} className="bg-white/80 focus-visible:ring-primary min-h-[120px]" />
 									</div>
