@@ -29,6 +29,61 @@ function Reveal({ children, className = "" }: { children: React.ReactNode; class
 
 export default function TailorMadePage() {
 	const [showScrollTop, setShowScrollTop] = useState(false)
+	// Form state
+	const [form, setForm] = useState({
+		name: '',
+		country: '',
+		email: '',
+		phone: '',
+		contactMethod: '',
+		arrival: '',
+		departure: '',
+		days: '',
+		adults: '',
+		children: '',
+		start: '',
+		end: '',
+		requirements: '',
+		specialInterest: '',
+		specialRequests: ''
+	});
+	const [loading, setLoading] = useState(false);
+	const [success, setSuccess] = useState(false);
+	const [error, setError] = useState('');
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		setForm({ ...form, [e.target.id]: e.target.value });
+	};
+
+	const handleSelect = (id: string, value: string) => {
+		setForm({ ...form, [id]: value });
+	};
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setLoading(true);
+		setError('');
+		setSuccess(false);
+		try {
+			const res = await fetch('/api/send-form-email', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(form)
+			});
+			const result = await res.json();
+			if (result.success) {
+				setSuccess(true);
+				setForm({
+					name: '', country: '', email: '', phone: '', contactMethod: '', arrival: '', departure: '', days: '', adults: '', children: '', start: '', end: '', requirements: '', specialInterest: '', specialRequests: ''
+				});
+			} else {
+				setError(result.error || 'Failed to send.');
+			}
+		} catch (err) {
+			setError('Failed to send.');
+		}
+		setLoading(false);
+	};
 	useEffect(() => {
 		const onScroll = () => setShowScrollTop(window.scrollY > 600)
 		window.addEventListener('scroll', onScroll)
@@ -115,7 +170,7 @@ export default function TailorMadePage() {
 
 								{/* Travel Information */}
 								<h2 className="text-xl font-semibold text-white mb-2">📅 Travel Information</h2>
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+								<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 									<div className="space-y-2">
 										<Label htmlFor="arrival" className="text-white">Arrival Date *</Label>
 										<Input id="arrival" type="date" required className="bg-white/80 focus-visible:ring-primary" />
@@ -124,12 +179,12 @@ export default function TailorMadePage() {
 										<Label htmlFor="departure" className="text-white">Departure Date</Label>
 										<Input id="departure" type="date" className="bg-white/80 focus-visible:ring-primary" />
 									</div>
-								</div>
-								<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 									<div className="space-y-2">
 										<Label htmlFor="days" className="text-white">Number of Days in Sri Lanka</Label>
 										<Input id="days" type="number" min="1" className="bg-white/80 focus-visible:ring-primary" />
 									</div>
+								</div>
+								<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 									<div className="space-y-2">
 										<Label htmlFor="adults" className="text-white">Number of Adults</Label>
 										<Input id="adults" type="number" min="0" className="bg-white/80 focus-visible:ring-primary" />
@@ -137,6 +192,10 @@ export default function TailorMadePage() {
 									<div className="space-y-2">
 										<Label htmlFor="children" className="text-white">Number of Children (Age)</Label>
 										<Input id="children" type="text" className="bg-white/80 focus-visible:ring-primary" placeholder="e.g. 2 (5, 8 yrs)" />
+									</div>
+									<div className="space-y-2 md:col-span-1">
+										<Label htmlFor="infants" className="text-white">Number of Infants</Label>
+										<Input id="infants" type="number" min="0" className="bg-white/80 focus-visible:ring-primary" />
 									</div>
 								</div>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -195,7 +254,18 @@ export default function TailorMadePage() {
 								{/* Interests & Experiences */}
 								<h2 className="text-xl font-semibold text-white mb-2">🌍 Interests & Experiences</h2>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-									{["Cultural Heritage (Anuradhapura, Polonnaruwa, Sigiriya, Kandy)","Nature & Wildlife (Yala, Wilpattu, Udawalawe, Minneriya)","Beaches (Mirissa, Bentota, Trincomalee, Passikudah)","Hill Country (Nuwara Eliya, Ella, Tea Plantations, Scenic Train)","Adventure (Hiking, Water Sports, White Water Rafting)","Spiritual / Pilgrimage (Buddhist, Hindu, Catholic, Multi-faith)","Ayurveda & Wellness (Yoga, Spa, Healing Retreats)","Photography & Birdwatching Tours","Food & Culinary Experiences","Festivals & Local Events"].map((v,i) => (
+									{[
+										'Cultural Heritage',
+										'Nature & Wildlife',
+										'Beaches',
+										'Hill Country',
+										'Adventure',
+										'Spiritual / Pilgrimage',
+										'Ayurveda & Wellness',
+										'Photography & Birdwatching Tours',
+										'Food & Culinary Experiences',
+										'Festivals & Local Events'
+									].map((v,i) => (
 										<label key={i} className="flex items-center gap-2 text-white">
 											<input type="checkbox" name="interests" value={v} className="accent-primary" />
 											{v}
@@ -242,7 +312,9 @@ export default function TailorMadePage() {
 
 								{/* Submit */}
 								<div className="pt-2">
-									<Button type="submit" className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-6 rounded-full shadow-lg hover:shadow-2xl transition">Submit Your Tailor-Made Request</Button>
+									<Button type="submit" className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-6 rounded-full shadow-lg hover:shadow-2xl transition" disabled={loading}>{loading ? 'Sending...' : 'Submit Your Tailor-Made Request'}</Button>
+									{success && <p className="text-center text-green-300 mt-3">Request sent successfully!</p>}
+									{error && <p className="text-center text-red-300 mt-3">{error}</p>}
 									<p className="text-center text-xs text-white/70 mt-3">No advance payment • Fast response • Secure & private</p>
 								</div>
 							</form>

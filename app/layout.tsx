@@ -10,13 +10,13 @@ import { Suspense } from "react"
 
 import { AuthProvider } from "@/components/auth-context"
 import "./globals.css"
+import { FixedButtons } from "../components/FixedButtons"
 
 export const metadata: Metadata = {
-  title: "FlyToLanka - Premium Travel & Transportation Services in Sri Lanka",
+  title: "FlyToLanka - Sri Lanka Private Driver Tour Guides & Transportation Services",
   description:
     "Experience Sri Lanka with our professional drivers and quality vehicles. Airport transfers, city tours, and travel packages across the beautiful island.",
   keywords: "Sri Lanka travel, transportation, drivers, vehicles, tours, airport transfer",
-  generator: "v0.app",
 }
 
 const poppins = Poppins({
@@ -41,6 +41,7 @@ export default function RootLayout({
             <Footer />
           </Suspense>
           <Analytics />
+          <FixedButtons />
         </AuthProvider>
       </body>
     </html>

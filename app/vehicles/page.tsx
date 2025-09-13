@@ -101,6 +101,60 @@ export default function VehiclesPage() {
   }, [])
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+  // Form state
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    whatsapp: '',
+    vehicle: '',
+    arrival: '',
+    departure: '',
+    adults: '',
+    children: '',
+    infants: '',
+    requirements: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+
+  // Handle input changes
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.id]: e.target.value });
+  };
+
+  // Handle select change
+  const handleSelect = (value: string) => {
+    setForm({ ...form, vehicle: value });
+  };
+
+  // Handle form submit
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess(false);
+    try {
+      const res = await fetch('/api/send-form-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+      const result = await res.json();
+      if (result.success) {
+        setSuccess(true);
+        setForm({
+          name: '', email: '', whatsapp: '', vehicle: '', arrival: '', departure: '', adults: '', children: '', infants: '', requirements: ''
+        });
+      } else {
+        setError(result.error || 'Failed to send.');
+      }
+    } catch (err) {
+      setError('Failed to send.');
+    }
+    setLoading(false);
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Hero Section - styled like package[id] */}
@@ -199,24 +253,24 @@ export default function VehiclesPage() {
               <p className="text-white/70">Fields marked with an * are required</p>
             </Reveal>
             <Reveal className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 lg:p-10 shadow-xl">
-              <form className="space-y-8">
+              <form className="space-y-8" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="name" className="text-white">Name *</Label>
-                    <Input id="name" required className="bg-white/80 focus-visible:ring-primary" />
+                    <Input id="name" required className="bg-white/80 focus-visible:ring-primary" value={form.name} onChange={handleChange} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-white">Email Address *</Label>
-                    <Input id="email" type="email" required className="bg-white/80 focus-visible:ring-primary" />
+                    <Input id="email" type="email" required className="bg-white/80 focus-visible:ring-primary" value={form.email} onChange={handleChange} />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="whatsapp" className="text-white">WhatsApp Number</Label>
-                  <Input id="whatsapp" className="bg-white/80 focus-visible:ring-primary" />
+                  <Input id="whatsapp" className="bg-white/80 focus-visible:ring-primary" value={form.whatsapp} onChange={handleChange} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="vehicle" className="text-white">Vehicle Type</Label>
-                  <Select>
+                  <Select value={form.vehicle} onValueChange={handleSelect}>
                     <SelectTrigger className="bg-white/80 focus:ring-primary">
                       <SelectValue placeholder="Select vehicle" />
                     </SelectTrigger>
@@ -230,27 +284,29 @@ export default function VehiclesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="arrival" className="text-white">Arrival Date *</Label>
-                    <Input id="arrival" type="date" required className="bg-white/80 focus-visible:ring-primary" />
+                    <Input id="arrival" type="date" required className="bg-white/80 focus-visible:ring-primary" value={form.arrival} onChange={handleChange} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="departure" className="text-white">Departure Date</Label>
-                    <Input id="departure" type="date" className="bg-white/80 focus-visible:ring-primary" />
+                    <Input id="departure" type="date" className="bg-white/80 focus-visible:ring-primary" value={form.departure} onChange={handleChange} />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[['adults','Number of Adults (13+)'],['children','Number of Children (6–12)'],['infants','Number of Infants (0–5)']].map(([id,label]) => (
                     <div key={id} className="space-y-2">
                       <Label htmlFor={id} className="text-white">{label}</Label>
-                      <Input id={id} type="number" min={0} className="bg-white/80 focus-visible:ring-primary" />
+                      <Input id={id} type="number" min={0} className="bg-white/80 focus-visible:ring-primary" value={form[id as keyof typeof form]} onChange={handleChange} />
                     </div>
                   ))}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="requirements" className="text-white">Describe your planned route, interests, or any special requirements... *</Label>
-                  <Textarea id="requirements" rows={6} required className="bg-white/80 focus-visible:ring-primary" />
+                  <Textarea id="requirements" rows={6} required className="bg-white/80 focus-visible:ring-primary" value={form.requirements} onChange={handleChange} />
                 </div>
                 <div className="pt-2">
-                  <Button type="submit" className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-6 rounded-full shadow-lg hover:shadow-2xl transition">Submit Booking Request</Button>
+                  <Button type="submit" className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-6 rounded-full shadow-lg hover:shadow-2xl transition" disabled={loading}>{loading ? 'Sending...' : 'Submit Booking Request'}</Button>
+                  {success && <p className="text-center text-green-300 mt-3">Booking request sent successfully!</p>}
+                  {error && <p className="text-center text-red-300 mt-3">{error}</p>}
                   <p className="text-center text-xs text-white/70 mt-3">No advance payment required • Fast response • Secure & private</p>
                 </div>
               </form>

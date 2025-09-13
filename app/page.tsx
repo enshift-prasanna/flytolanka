@@ -462,7 +462,7 @@ export default function HomePage() {
                     <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">Personalized Travel & Sightseeing in Sri Lanka</h3>
                     <p className="text-lg text-gray-700 mb-6">Our travel and tourism services are designed to give you a private, safe, and customized experience. Whether you're exploring cities, cultural sites, or nature escapes, we ensure your journey is comfortable, flexible, and memorable.</p>
                     <div className="bg-gradient-to-r from-slate-50 to-slate-100 p-6 rounded-xl">
-                      <p className="text-gray-700 italic">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo."</p>
+                      <p className="text-gray-700 italic">"Discover Sri Lanka your way – with personalized itineraries, expert guidance, and unforgettable experiences tailored just for you."</p>
                     </div>
                   </div>
                 </Reveal>

@@ -54,6 +54,54 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
   const [category, setCategory] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  // Booking form state
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    whatsapp: '',
+    vehicle: '',
+    arrival: '',
+    departure: '',
+    adults: '',
+    children: '',
+    infants: '',
+    requirements: ''
+  });
+  const [sending, setSending] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.id]: e.target.value });
+  };
+  const handleSelect = (id: string, value: string) => {
+    setForm({ ...form, [id]: value });
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    setError('');
+    setSuccess(false);
+    try {
+      const res = await fetch('/api/send-form-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+      const result = await res.json();
+      if (result.success) {
+        setSuccess(true);
+        setForm({
+          name: '', email: '', whatsapp: '', vehicle: '', arrival: '', departure: '', adults: '', children: '', infants: '', requirements: ''
+        });
+      } else {
+        setError(result.error || 'Failed to send.');
+      }
+    } catch (err) {
+      setError('Failed to send.');
+    }
+    setSending(false);
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -131,7 +179,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                       <Users className="h-6 w-6 text-secondary" />
                       <div>
                         <p className="text-xs uppercase tracking-wide text-white/70">Group Size</p>
-                        <p className="font-semibold">Max {packageData.maxPeople}</p>
+                        <p className="font-semibold">Any</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
@@ -145,7 +193,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                       {/* Badge removed */}
                       <div>
                         <p className="text-xs uppercase tracking-wide text-white/70">Category</p>
-                        <p className="font-semibold">{category?.name}</p>
+                        <p className="font-semibold whitespace-nowrap">{category?.name}</p>
                       </div>
                     </div>
                   </div>
@@ -227,118 +275,113 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                     <p className="text-sm text-gray-600">Fields marked with an * are required</p>
                   </CardHeader>
                   <CardContent className="space-y-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name *</Label>
-                      <Input id="name" placeholder="Your full name" required />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address *</Label>
-                      <Input id="email" type="email" placeholder="your@email.com" required />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="whatsapp">WhatsApp Number</Label>
-                      <Input id="whatsapp" placeholder="+94 77 123 4567" />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="vehicle">Vehicle Type</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select vehicle type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="mini-car">Mini Car & Driver</SelectItem>
-                          <SelectItem value="sedan-car">Sedan Car & Driver</SelectItem>
-                          <SelectItem value="luxury-car">Luxury Car & Driver</SelectItem>
-                          <SelectItem value="suv">SUV & Driver</SelectItem>
-                          <SelectItem value="van">Van & Driver</SelectItem>
-                          <SelectItem value="luxury-van">Luxury Van & Driver</SelectItem>
-                          <SelectItem value="mini-coach">Mini Coach & Driver</SelectItem>
-                          <SelectItem value="luxury-coach">Luxury Coach & Driver</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="arrival">Arrival Date *</Label>
-                      <Input id="arrival" type="date" required />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="departure">Departure Date</Label>
-                      <Input id="departure" type="date" />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4">
+                    <form className="space-y-5" onSubmit={handleSubmit}>
                       <div className="space-y-2">
-                        <Label htmlFor="adults">Number of Adults (13+)</Label>
-                        <Select>
+                        <Label htmlFor="name">Name *</Label>
+                        <Input id="name" required value={form.name} onChange={handleChange} placeholder="Your full name" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email Address *</Label>
+                        <Input id="email" type="email" required value={form.email} onChange={handleChange} placeholder="your@email.com" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="whatsapp">WhatsApp Number</Label>
+                        <Input id="whatsapp" value={form.whatsapp} onChange={handleChange} placeholder="+94 77 123 4567" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="vehicle">Vehicle Type</Label>
+                        <Select value={form.vehicle} onValueChange={v => handleSelect('vehicle', v)}>
                           <SelectTrigger>
-                            <SelectValue placeholder="Adults" />
+                            <SelectValue placeholder="Select vehicle type" />
                           </SelectTrigger>
                           <SelectContent>
-                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                              <SelectItem key={num} value={num.toString()}>
-                                {num}
-                              </SelectItem>
-                            ))}
+                            <SelectItem value="mini-car">Mini Car & Driver</SelectItem>
+                            <SelectItem value="sedan-car">Sedan Car & Driver</SelectItem>
+                            <SelectItem value="luxury-car">Luxury Car & Driver</SelectItem>
+                            <SelectItem value="suv">SUV & Driver</SelectItem>
+                            <SelectItem value="van">Van & Driver</SelectItem>
+                            <SelectItem value="luxury-van">Luxury Van & Driver</SelectItem>
+                            <SelectItem value="mini-coach">Mini Coach & Driver</SelectItem>
+                            <SelectItem value="luxury-coach">Luxury Coach & Driver</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
-
                       <div className="space-y-2">
-                        <Label htmlFor="children">Number of Children (6 to 12)</Label>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Children" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {[0, 1, 2, 3, 4, 5].map((num) => (
-                              <SelectItem key={num} value={num.toString()}>
-                                {num}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <Label htmlFor="arrival">Arrival Date *</Label>
+                        <Input id="arrival" type="date" required value={form.arrival} onChange={handleChange} />
                       </div>
-
                       <div className="space-y-2">
-                        <Label htmlFor="infants">Number of Infants (0 to 5)</Label>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Infants" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {[0, 1, 2, 3].map((num) => (
-                              <SelectItem key={num} value={num.toString()}>
-                                {num}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <Label htmlFor="departure">Departure Date</Label>
+                        <Input id="departure" type="date" value={form.departure} onChange={handleChange} />
                       </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="requirements">
-                        Describe your planned route, places you wish to visit, interests, or any special requirements... *
-                      </Label>
-                      <Textarea
-                        id="requirements"
-                        placeholder="Please describe your travel plans, interests, and any special requirements..."
-                        rows={4}
-                        required
-                      />
-                    </div>
-
-                    <Button className="w-full bg-secondary hover:bg-secondary/80" size="lg">Send Inquiry</Button>
-
-                    <div className="text-center text-sm text-gray-600">
-                      <p>Questions? Call us at</p>
-                      <p className="font-medium text-secondary">+94 77 123 4567</p>
-                    </div>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="adults">Number of Adults (13+)</Label>
+                          <Select value={form.adults} onValueChange={v => handleSelect('adults', v)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Adults" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                                <SelectItem key={num} value={num.toString()}>
+                                  {num}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="children">Number of Children (6 to 12)</Label>
+                          <Select value={form.children} onValueChange={v => handleSelect('children', v)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Children" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[0, 1, 2, 3, 4, 5].map((num) => (
+                                <SelectItem key={num} value={num.toString()}>
+                                  {num}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="infants">Number of Infants (0 to 5)</Label>
+                          <Select value={form.infants} onValueChange={v => handleSelect('infants', v)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Infants" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[0, 1, 2, 3].map((num) => (
+                                <SelectItem key={num} value={num.toString()}>
+                                  {num}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="requirements">
+                          Describe your planned route, places you wish to visit, interests, or any special requirements... *
+                        </Label>
+                        <Textarea
+                          id="requirements"
+                          required
+                          value={form.requirements}
+                          onChange={handleChange}
+                          placeholder="Please describe your travel plans, interests, and any special requirements..."
+                          rows={4}
+                        />
+                      </div>
+                      <Button className="w-full bg-secondary hover:bg-secondary/80" size="lg" type="submit" disabled={sending}>{sending ? "Sending..." : "Send Inquiry"}</Button>
+                      {success && <p className="text-center text-green-600 mt-3">Booking request sent successfully!</p>}
+                      {error && <p className="text-center text-red-600 mt-3">{error}</p>}
+                      <div className="text-center text-sm text-gray-600">
+                        <p>Questions? Call us at</p>
+                        <p className="font-medium text-secondary">+94 77 123 4567</p>
+                      </div>
+                    </form>
                   </CardContent>
                 </Card>
               </Reveal>
