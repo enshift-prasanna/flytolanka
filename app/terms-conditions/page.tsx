@@ -158,7 +158,7 @@ export default function TermsConditionsPage() {
                   <p className="text-gray-700 mb-4">For questions about these terms, please contact us:</p>
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <p className="text-gray-700"><strong>Email:</strong> info@flytolanka.com</p>
-                    <p className="text-gray-700"><strong>Phone:</strong> +94 77 123 4567</p>
+                    <p className="text-gray-700"><strong>Phone:</strong> +94 76 553 3874</p>
                     <p className="text-gray-700"><strong>Address:</strong> Colombo, Sri Lanka</p>
                     <p className="text-gray-700"><strong>Business Registration:</strong> Licensed Tour Operator in Sri Lanka</p>
                   </div>

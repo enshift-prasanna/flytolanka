@@ -285,7 +285,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="phone">Phone / WhatsApp *</Label>
-                        <Input id="phone" type="tel" required placeholder="+94 77 123 4567" value={form.phone} onChange={handleChange} />
+                        <Input id="phone" type="tel" required placeholder="+94 76 553 3874" value={form.phone} onChange={handleChange} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="contact-method">Preferred Contact Method</Label>

@@ -286,7 +286,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="whatsapp">WhatsApp Number</Label>
-                        <Input id="whatsapp" value={form.whatsapp} onChange={handleChange} placeholder="+94 77 123 4567" />
+                        <Input id="whatsapp" value={form.whatsapp} onChange={handleChange} placeholder="+94 76 553 3874" />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="vehicle">Vehicle Type</Label>
@@ -379,7 +379,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                       {error && <p className="text-center text-red-600 mt-3">{error}</p>}
                       <div className="text-center text-sm text-gray-600">
                         <p>Questions? Call us at</p>
-                        <p className="font-medium text-secondary">+94 77 123 4567</p>
+                        <p className="font-medium text-secondary">+94 76 553 3874</p>
                       </div>
                     </form>
                   </CardContent>

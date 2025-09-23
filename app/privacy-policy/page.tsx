@@ -115,7 +115,7 @@ export default function PrivacyPolicyPage() {
                   <p className="text-gray-700 mb-4">If you have any questions about this privacy policy, please contact us:</p>
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <p className="text-gray-700"><strong>Email:</strong> info@flytolanka.com</p>
-                    <p className="text-gray-700"><strong>Phone:</strong> +94 77 123 4567</p>
+                    <p className="text-gray-700"><strong>Phone:</strong> +94 76 553 3874</p>
                     <p className="text-gray-700"><strong>Address:</strong> Colombo, Sri Lanka</p>
                   </div>
                 </section>
