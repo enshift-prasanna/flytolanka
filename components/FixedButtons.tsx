@@ -46,31 +46,42 @@ export const FixedButtons = () => {
         </button>
       )}
 
+      {/* Chat with us text box */}
+      <a
+        href="https://wa.me/94771234567"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed right-28 bottom-10 lg:right-35 lg:bottom-13 z-50 bg-[#25D366] text-white px-5 py-2 lg:px-6 lg:py-3 rounded-[20px] text-lg lg:text-lg font-medium shadow-lg whitespace-nowrap no-underline block cursor-pointer transition-transform duration-200 hover:scale-105"
+        onMouseOver={e => (e.currentTarget.style.transform = 'scale(1.02)')}
+        onMouseOut={e => (e.currentTarget.style.transform = 'scale(1)')}
+      >
+        Chat with us
+        {/* Arrow pointing to WhatsApp button */}
+        <div
+          style={{
+            position: 'absolute',
+            right: '-8px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: 0,
+            height: 0,
+            borderLeft: '8px solid #25D366',
+            borderTop: '6px solid transparent',
+            borderBottom: '6px solid transparent'
+          }}
+        />
+      </a>
+
       <a
         href="https://wa.me/94771234567"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contact via WhatsApp"
+        className="fixed right-0 bottom-0 lg:right-4 lg:bottom-4 z-50 w-[120px] h-[120px] flex items-center justify-center cursor-pointer p-0"
         style={{
-          position: 'fixed',
-          right: '1.5rem',
-          bottom: '1.5rem',
-          zIndex: 50,
           background: 'none',
           boxShadow: 'none',
-          width: '120px',
-          height: '120px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          border: 'none',
-          cursor: 'pointer',
-          padding: 0,
-        ...(
-          typeof window !== 'undefined' && window.innerWidth <= 600
-            ? { right: '0.5rem', bottom: '0.5rem' }
-            : {}
-        )
+          border: 'none'
         }}
       >
         <iframe

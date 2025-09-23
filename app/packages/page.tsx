@@ -31,6 +31,24 @@ export default function PackagesPage() {
   const [loading, setLoading] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false)
 
+  // Form state
+  const [form, setForm] = useState({
+    name: '',
+    country: '',
+    email: '',
+    phone: '',
+    arrival: '',
+    departure: '',
+    days: '',
+    adults: '',
+    children: '',
+    specialInterest: '',
+    specialRequests: ''
+  });
+  const [formLoading, setFormLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+
   useEffect(() => {
     fetch("/api/category")
       .then((res) => res.json())
@@ -47,6 +65,37 @@ export default function PackagesPage() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormLoading(true);
+    setError('');
+    setSuccess(false);
+    try {
+      const res = await fetch('/api/send-form-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+      const result = await res.json();
+      if (result.success) {
+        setSuccess(true);
+        setForm({
+          name: '', country: '', email: '', phone: '', arrival: '', departure: '', 
+          days: '', adults: '', children: '', specialInterest: '', specialRequests: ''
+        });
+      } else {
+        setError(result.error || 'Failed to send.');
+      }
+    } catch (err) {
+      setError('Failed to send.');
+    }
+    setFormLoading(false);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
@@ -115,6 +164,199 @@ export default function PackagesPage() {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Tailor-Made Tour Request Form */}
+      <section className="py-20 relative overflow-hidden bg-gradient-to-br from-secondary via-secondary/95 to-secondary">
+        <div className="absolute -top-24 -right-10 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
+        <div className="relative container mx-auto px-4 lg:px-24">
+          <Reveal className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">Plan Your Custom Sri Lanka Tour</h2>
+            <p className="text-white/90 max-w-2xl mx-auto">Can't find the perfect package? Let us create a personalized itinerary just for you. Tell us your preferences and we'll craft your dream Sri Lankan adventure.</p>
+          </Reveal>
+          <div className="max-w-3xl mx-auto">
+            <Reveal className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 lg:p-10 shadow-xl">
+              <form className="space-y-8" onSubmit={handleSubmit}>
+                {/* Personal Details */}
+                <h3 className="text-xl font-semibold text-white mb-2">🧑‍🤝‍🧑 Personal Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="name" className="text-white">Name *</label>
+                    <input 
+                      id="name" 
+                      type="text" 
+                      required 
+                      value={form.name}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 bg-white/80 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="country" className="text-white">Country</label>
+                    <input 
+                      id="country" 
+                      type="text" 
+                      value={form.country}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 bg-white/80 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="text-white">Email *</label>
+                    <input 
+                      id="email" 
+                      type="email" 
+                      required 
+                      value={form.email}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 bg-white/80 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="phone" className="text-white">Phone / WhatsApp *</label>
+                    <input 
+                      id="phone" 
+                      type="tel" 
+                      required 
+                      value={form.phone}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 bg-white/80 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                    />
+                  </div>
+                </div>
+
+                {/* Travel Information */}
+                <h3 className="text-xl font-semibold text-white mb-2">📅 Travel Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="arrival" className="text-white">Arrival Date *</label>
+                    <input 
+                      id="arrival" 
+                      type="date" 
+                      required 
+                      value={form.arrival}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 bg-white/80 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="departure" className="text-white">Departure Date</label>
+                    <input 
+                      id="departure" 
+                      type="date" 
+                      value={form.departure}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 bg-white/80 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="days" className="text-white">Number of Days</label>
+                    <input 
+                      id="days" 
+                      type="number" 
+                      min="1" 
+                      value={form.days}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 bg-white/80 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="adults" className="text-white">Number of Adults</label>
+                    <input 
+                      id="adults" 
+                      type="number" 
+                      min="0" 
+                      value={form.adults}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 bg-white/80 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="children" className="text-white">Number of Children (Age)</label>
+                    <input 
+                      id="children" 
+                      type="text" 
+                      value={form.children}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 bg-white/80 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                      placeholder="e.g. 2 (5, 8 yrs)" 
+                    />
+                  </div>
+                </div>
+
+                {/* Interests & Experiences */}
+                <h3 className="text-xl font-semibold text-white mb-2">🌍 Interests & Experiences</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[
+                    'Cultural Heritage',
+                    'Nature & Wildlife',
+                    'Beaches',
+                    'Hill Country',
+                    'Adventure',
+                    'Spiritual / Pilgrimage',
+                    'Ayurveda & Wellness',
+                    'Photography Tours',
+                    'Food & Culinary',
+                    'Festivals & Events'
+                  ].map((interest, i) => (
+                    <label key={i} className="flex items-center gap-2 text-white">
+                      <input 
+                        type="checkbox" 
+                        name="interests" 
+                        value={interest} 
+                        onChange={(e) => {
+                          const interests = form.specialInterest ? form.specialInterest.split(', ') : [];
+                          if (e.target.checked) {
+                            interests.push(interest);
+                          } else {
+                            const index = interests.indexOf(interest);
+                            if (index > -1) interests.splice(index, 1);
+                          }
+                          setForm({ ...form, specialInterest: interests.join(', ') });
+                        }}
+                        checked={form.specialInterest.includes(interest)}
+                        className="accent-primary" 
+                      />
+                      {interest}
+                    </label>
+                  ))}
+                </div>
+
+                {/* Special Requests */}
+                <div className="space-y-2">
+                  <label htmlFor="specialRequests" className="text-white">Special Requests</label>
+                  <textarea
+                    id="specialRequests"
+                    rows={4}
+                    value={form.specialRequests}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 bg-white/80 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Tell us about your preferences, special needs, or any specific requests..."
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <div className="pt-2">
+                  <button 
+                    type="submit" 
+                    disabled={formLoading}
+                    className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-4 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 disabled:opacity-70"
+                  >
+                    {formLoading ? 'Sending...' : 'Get Your Custom Itinerary'}
+                  </button>
+                  {success && <p className="text-center text-green-300 mt-3">Request sent successfully!</p>}
+                  {error && <p className="text-center text-red-300 mt-3">{error}</p>}
+                  <p className="text-center text-xs text-white/70 mt-3">Free consultation • No obligation • Quick response</p>
+                </div>
+              </form>
+            </Reveal>
+          </div>
         </div>
       </section>
 
