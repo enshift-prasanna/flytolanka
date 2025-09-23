@@ -24,15 +24,15 @@ export function Navigation() {
       {/* Top contact bar */}
       <div className="bg-secondary text-white py-2">
         <div className="container mx-auto px-4 lg:px-24 flex justify-between items-center text-sm">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1">
+          <div className="flex items-center gap-4 mx-auto lg:mx-0">
+            <Link href="tel:+94765533874" className="flex items-center gap-1">
               <Phone className="h-4 w-4" />
               <span>+94 76 553 3874</span>
-            </div>
-            <div className="flex items-center gap-1">
+            </Link>
+            <Link href="mailto:info@flytolanka.com" className="flex items-center gap-1">
               <Mail className="h-4 w-4" />
               <span>info@flytolanka.com</span>
-            </div>
+            </Link>
           </div>
           <div className="hidden md:block">
             <span>24/7 Customer Support</span>

@@ -48,7 +48,7 @@ export const FixedButtons = () => {
 
       {/* Chat with us text box */}
       <a
-        href="https://wa.me/94771234567"
+        href="https://wa.me/94765533874"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed right-26 bottom-7 lg:right-35 lg:bottom-13 z-50 bg-[#25D366] text-white px-5 py-2 lg:px-6 lg:py-3 rounded-[20px] text-base lg:text-lg font-medium shadow-lg whitespace-nowrap no-underline block cursor-pointer transition-transform duration-200 hover:scale-105"
@@ -73,7 +73,7 @@ export const FixedButtons = () => {
       </a>
 
       <a
-        href="https://wa.me/94771234567"
+        href="https://wa.me/94765533874"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contact via WhatsApp"

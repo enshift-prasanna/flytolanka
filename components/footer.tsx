@@ -89,7 +89,7 @@ export function Footer() {
             {/* Mail Us */}
             <div>
               <div className="font-bold text-lg mb-2">Mail Us</div>
-              <div className="text-gray-400 text-base">info@flytolanka.com</div>
+              <a href="mailto:info@flytolanka.com" className="text-gray-400 text-base">info@flytolanka.com</a>
             </div>
             {/* Meet Us */}
             <div>
