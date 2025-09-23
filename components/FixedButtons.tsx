@@ -51,7 +51,7 @@ export const FixedButtons = () => {
         href="https://wa.me/94771234567"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed right-28 bottom-10 lg:right-35 lg:bottom-13 z-50 bg-[#25D366] text-white px-5 py-2 lg:px-6 lg:py-3 rounded-[20px] text-lg lg:text-lg font-medium shadow-lg whitespace-nowrap no-underline block cursor-pointer transition-transform duration-200 hover:scale-105"
+        className="fixed right-26 bottom-7 lg:right-35 lg:bottom-13 z-50 bg-[#25D366] text-white px-5 py-2 lg:px-6 lg:py-3 rounded-[20px] text-base lg:text-lg font-medium shadow-lg whitespace-nowrap no-underline block cursor-pointer transition-transform duration-200 hover:scale-105"
         onMouseOver={e => (e.currentTarget.style.transform = 'scale(1.02)')}
         onMouseOut={e => (e.currentTarget.style.transform = 'scale(1)')}
       >
@@ -77,7 +77,7 @@ export const FixedButtons = () => {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contact via WhatsApp"
-        className="fixed right-0 bottom-0 lg:right-4 lg:bottom-4 z-50 w-[120px] h-[120px] flex items-center justify-center cursor-pointer p-0"
+        className="fixed right-0 bottom-0 lg:right-4 lg:bottom-4 z-50 flex items-center justify-center cursor-pointer p-0"
         style={{
           background: 'none',
           boxShadow: 'none',
@@ -87,7 +87,8 @@ export const FixedButtons = () => {
         <iframe
           src="https://lottie.host/embed/1207ea19-22eb-4450-b8f9-d03b3a00f187/EVzS4iKWsm.lottie"
           title="WhatsApp Animation"
-          style={{ width: '120px', height: '120px', border: 'none', background: 'none', pointerEvents: 'none' }}
+          className="w-[100px] h-[100px] lg:w-[120px] lg:h-[120px]"
+          style={{ border: 'none', background: 'none', pointerEvents: 'none' }}
           allowFullScreen
         />
       </a>
