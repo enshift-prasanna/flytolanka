@@ -18,16 +18,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 	}, []);
 
 	const login = async (username: string, password: string) => {
-			// Use environment variables for credentials
-			const adminUsername = process.env.ADMIN_USERNAME || "admin";
-			const adminPassword = process.env.ADMIN_PASSWORD || "password";
-			if (username === adminUsername && password === adminPassword) {
+		try {
+			const response = await fetch("/api/auth/login", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ username, password }),
+			});
+
+			const data = await response.json();
+
+			if (data.success) {
 				localStorage.setItem("adminUser", username);
 				setUser(username);
 				return true;
+			} else {
+				console.error("Login failed:", data.message);
+				return false;
 			}
+		} catch (error) {
+			console.error("Login error:", error);
 			return false;
-		};
+		}
+	};
 
 	const logout = () => {
 		localStorage.removeItem("adminUser");
