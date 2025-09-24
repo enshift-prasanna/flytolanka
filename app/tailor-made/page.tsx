@@ -41,6 +41,7 @@ export default function TailorMadePage() {
 		days: '',
 		adults: '',
 		children: '',
+		infants: '',
 		start: '',
 		end: '',
 		requirements: '',
@@ -74,7 +75,7 @@ export default function TailorMadePage() {
 			if (result.success) {
 				setSuccess(true);
 				setForm({
-					name: '', country: '', email: '', phone: '', contactMethod: '', arrival: '', departure: '', days: '', adults: '', children: '', start: '', end: '', requirements: '', specialInterest: '', specialRequests: ''
+					name: '', country: '', email: '', phone: '', contactMethod: '', arrival: '', departure: '', days: '', adults: '', children: '', infants: '', start: '', end: '', requirements: '', specialInterest: '', specialRequests: ''
 				});
 			} else {
 				setError(result.error || 'Failed to send.');
@@ -131,32 +132,32 @@ export default function TailorMadePage() {
 				<div className="relative container mx-auto px-6">
 					<div className="max-w-3xl mx-auto">
 						<Reveal className="bg-secondary bg-opacity-95 backdrop-blur-md border border-white/20 rounded-2xl p-8 lg:p-10 shadow-xl">
-							<form className="space-y-8">
+							<form className="space-y-8" onSubmit={handleSubmit}>
 								{/* Personal Details */}
 								<h2 className="text-xl font-semibold text-white mb-2">🧑‍🤝‍🧑 Personal Details</h2>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 									<div className="space-y-2">
 										<Label htmlFor="name" className="text-white">Name *</Label>
-										<Input id="name" type="text" required className="bg-white/80 focus-visible:ring-primary" />
+										<Input id="name" type="text" required className="bg-white/80 focus-visible:ring-primary" value={form.name} onChange={handleChange} />
 									</div>
 									<div className="space-y-2">
 										<Label htmlFor="country" className="text-white">Country</Label>
-										<Input id="country" type="text" className="bg-white/80 focus-visible:ring-primary" />
+										<Input id="country" type="text" className="bg-white/80 focus-visible:ring-primary" value={form.country} onChange={handleChange} />
 									</div>
 								</div>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 									<div className="space-y-2">
 										<Label htmlFor="email" className="text-white">Email *</Label>
-										<Input id="email" type="email" required className="bg-white/80 focus-visible:ring-primary" />
+										<Input id="email" type="email" required className="bg-white/80 focus-visible:ring-primary" value={form.email} onChange={handleChange} />
 									</div>
 									<div className="space-y-2">
 										<Label htmlFor="phone" className="text-white">Phone / WhatsApp *</Label>
-										<Input id="phone" type="tel" required className="bg-white/80 focus-visible:ring-primary" />
+										<Input id="phone" type="tel" required className="bg-white/80 focus-visible:ring-primary" value={form.phone} onChange={handleChange} />
 									</div>
 								</div>
 								<div className="space-y-2">
 									<Label htmlFor="contact-method" className="text-white">Preferred Contact Method</Label>
-									<Select>
+									<Select value={form.contactMethod} onValueChange={(value) => handleSelect('contactMethod', value)}>
 										<SelectTrigger className="bg-white/80 focus:ring-primary">
 											<SelectValue placeholder="Select Method" />
 										</SelectTrigger>
@@ -173,35 +174,35 @@ export default function TailorMadePage() {
 								<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 									<div className="space-y-2">
 										<Label htmlFor="arrival" className="text-white">Arrival Date *</Label>
-										<Input id="arrival" type="date" required className="bg-white/80 focus-visible:ring-primary" />
+										<Input id="arrival" type="date" required className="bg-white/80 focus-visible:ring-primary" value={form.arrival} onChange={handleChange} />
 									</div>
 									<div className="space-y-2">
 										<Label htmlFor="departure" className="text-white">Departure Date</Label>
-										<Input id="departure" type="date" className="bg-white/80 focus-visible:ring-primary" />
+										<Input id="departure" type="date" className="bg-white/80 focus-visible:ring-primary" value={form.departure} onChange={handleChange} />
 									</div>
 									<div className="space-y-2">
 										<Label htmlFor="days" className="text-white">Number of Days in Sri Lanka</Label>
-										<Input id="days" type="number" min="1" className="bg-white/80 focus-visible:ring-primary" />
+										<Input id="days" type="number" min="1" className="bg-white/80 focus-visible:ring-primary" value={form.days} onChange={handleChange} />
 									</div>
 								</div>
 								<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 									<div className="space-y-2">
 										<Label htmlFor="adults" className="text-white">Number of Adults</Label>
-										<Input id="adults" type="number" min="0" className="bg-white/80 focus-visible:ring-primary" />
+										<Input id="adults" type="number" min="0" className="bg-white/80 focus-visible:ring-primary" value={form.adults} onChange={handleChange} />
 									</div>
 									<div className="space-y-2">
 										<Label htmlFor="children" className="text-white">Number of Children (Age)</Label>
-										<Input id="children" type="text" className="bg-white/80 focus-visible:ring-primary" placeholder="e.g. 2 (5, 8 yrs)" />
+										<Input id="children" type="text" className="bg-white/80 focus-visible:ring-primary" placeholder="e.g. 2 (5, 8 yrs)" value={form.children} onChange={handleChange} />
 									</div>
 									<div className="space-y-2 md:col-span-1">
 										<Label htmlFor="infants" className="text-white">Number of Infants</Label>
-										<Input id="infants" type="number" min="0" className="bg-white/80 focus-visible:ring-primary" />
+										<Input id="infants" type="number" min="0" className="bg-white/80 focus-visible:ring-primary" value={form.infants} onChange={handleChange} />
 									</div>
 								</div>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 									<div className="space-y-2">
 										<Label htmlFor="start" className="text-white">Starting Point</Label>
-										<Select>
+										<Select value={form.start} onValueChange={(value) => handleSelect('start', value)}>
 											<SelectTrigger className="bg-white/80 focus:ring-primary">
 												<SelectValue placeholder="Select Starting Point" />
 											</SelectTrigger>
@@ -215,7 +216,7 @@ export default function TailorMadePage() {
 									</div>
 									<div className="space-y-2">
 										<Label htmlFor="end" className="text-white">Ending Point</Label>
-										<Select>
+										<Select value={form.end} onValueChange={(value) => handleSelect('end', value)}>
 											<SelectTrigger className="bg-white/80 focus:ring-primary">
 												<SelectValue placeholder="Select Ending Point" />
 											</SelectTrigger>
@@ -272,8 +273,8 @@ export default function TailorMadePage() {
 										</label>
 									))}
 									<div className="space-y-2 sm:col-span-2">
-										<Label htmlFor="special-interest" className="text-white">Other Special Interest</Label>
-										<Textarea id="special-interest" rows={8} className="bg-white/80 focus-visible:ring-primary min-h-[120px]" />
+										<Label htmlFor="specialInterest" className="text-white">Other Special Interest</Label>
+										<Textarea id="specialInterest" rows={8} className="bg-white/80 focus-visible:ring-primary min-h-[120px]" value={form.specialInterest} onChange={handleChange} />
 									</div>
 								</div>
 
@@ -300,14 +301,30 @@ export default function TailorMadePage() {
 								</div>
 
 								{/* Special Requests */}
-								<h2 className="text-xl font-semibold text-white mb-2">📝 Special Requests</h2>
-								<div className="space-y-2">
-									<Textarea
-										id="special-requests"
-										rows={8}
-										className="bg-white/80 focus-visible:ring-primary min-h-[160px]"
-										placeholder="Let us know any special requests, needs, or details..."
-									/>
+								<h2 className="text-xl font-semibold text-white mb-2">📝 Additional Requirements & Special Requests</h2>
+								<div className="space-y-4">
+									<div className="space-y-2">
+										<Label htmlFor="requirements" className="text-white">General Requirements & Itinerary Preferences</Label>
+										<Textarea
+											id="requirements"
+											rows={4}
+											className="bg-white/80 focus-visible:ring-primary min-h-[120px]"
+											placeholder="Describe your ideal itinerary, must-see places, activities you're interested in..."
+											value={form.requirements}
+											onChange={handleChange}
+										/>
+									</div>
+									<div className="space-y-2">
+										<Label htmlFor="specialRequests" className="text-white">Special Requests & Needs</Label>
+										<Textarea
+											id="specialRequests"
+											rows={4}
+											className="bg-white/80 focus-visible:ring-primary min-h-[120px]"
+											placeholder="Any special dietary needs, accessibility requirements, celebrations, etc..."
+											value={form.specialRequests}
+											onChange={handleChange}
+										/>
+									</div>
 								</div>
 
 								{/* Submit */}

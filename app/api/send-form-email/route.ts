@@ -12,12 +12,21 @@ export async function POST(request: Request) {
 				pass: process.env.GMAIL_APP_PASSWORD,
 			},
 		});
+		// Format the form data for better readability
+		const formatFormData = (data: any) => {
+			return Object.entries(data)
+				.map(([key, value]) => `<strong>${key}:</strong> ${value}`)
+				.join('<br><br>');
+		};
+
+		const formattedData = formatFormData(data);
+		
 		const mailOptions = {
 			from: process.env.GMAIL_USER,
 			to: process.env.GMAIL_TO_EMAIL,
 			subject: 'New Form Submission',
-			text: JSON.stringify(data, null, 2),
-			html: `<pre>${JSON.stringify(data, null, 2)}</pre>`
+			text: Object.entries(data).map(([key, value]) => `${key}: ${value}`).join('\n'),
+			html: formattedData
 		};
 		await transporter.sendMail(mailOptions);
 		return NextResponse.json({ success: true });
