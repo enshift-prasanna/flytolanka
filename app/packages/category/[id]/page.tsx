@@ -50,7 +50,9 @@ export default function CategoryPage({ params }: PageProps) {
       setCategory(found)
       const pkgRes = await fetch(`/api/package`)
       const allPackages = await pkgRes.json()
-      const filtered = allPackages.filter((pkg: any) => pkg.categoryId === categoryId)
+      const filtered = allPackages
+        .filter((pkg: any) => pkg.categoryId === categoryId)
+        .sort((a: any, b: any) => Number(a.days) - Number(b.days))
       setPackages(filtered)
       setLoading(false)
     }
