@@ -163,7 +163,11 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                     <Calendar className="h-6 w-6 text-secondary" />
                     <div>
                       <p className="text-xs uppercase tracking-wide text-white/70">Published</p>
-                        <p className="font-semibold">{new Date(post.createdAt).toLocaleDateString()}</p>
+                        <p className="font-semibold">
+                          {new Date(post.createdAt).getDate()}/
+                          {new Date(post.createdAt).getMonth() + 1}/
+                          {new Date(post.createdAt).getFullYear()}
+                        </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
