@@ -1,15 +1,23 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
-  const host = request.headers.get('host') || '';
-  
+  const host = request.headers.get("host") || "";
+
   // Only apply restriction for /admin routes
-  if (url.pathname.startsWith('/admin')) {
-    // Allow only Vercel default domain
-    if (host !== 'flytolanka.vercel.app') {
-      url.pathname = '/404'; // Or you can return 403
+  if (url.pathname.startsWith("/admin")) {
+    // Allow Vercel domain and local development hosts
+    const hostname = host.split(":")[0]; // remove port if present
+    const allowedHosts = [
+      "flytolanka.vercel.app",
+      "localhost",
+      "127.0.0.1",
+      "::1",
+    ];
+
+    if (!allowedHosts.includes(hostname)) {
+      url.pathname = "/404"; // Or return 403
       return NextResponse.rewrite(url);
     }
   }
@@ -18,5 +26,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'], // only /admin routes
+  matcher: ["/admin/:path*"], // only /admin routes
 };

@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useState } from "react"
-import { usePathname } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Menu, X, Phone, Mail } from "lucide-react"
+import Link from "next/link";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Menu, X, Phone, Mail } from "lucide-react";
 
 export function Navigation() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   if (pathname.startsWith("/admin")) return null;
 
@@ -17,7 +17,8 @@ export function Navigation() {
     { href: "/drivers", label: "Drivers" },
     { href: "/packages", label: "Packages" },
     { href: "/sri-lanka", label: "Sri Lanka" },
-  ]
+    { href: "/things-to-do", label: "Things to Do" },
+  ];
 
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
@@ -29,7 +30,10 @@ export function Navigation() {
               <Phone className="h-4 w-4" />
               <span>+94 76 553 3874</span>
             </Link>
-            <Link href="mailto:info@flytolanka.com" className="flex items-center gap-1">
+            <Link
+              href="mailto:info@flytolanka.com"
+              className="flex items-center gap-1"
+            >
               <Mail className="h-4 w-4" />
               <span>info@flytolanka.com</span>
             </Link>
@@ -45,9 +49,13 @@ export function Navigation() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="bg-primary text-white px-3 py-2 rounded-lg font-bold text-xl">FTLT</div>
+            <div className="bg-primary text-white px-3 py-2 rounded-lg font-bold text-xl">
+              FTLT
+            </div>
             <div className="flex flex-col">
-              <span className="font-bold text-xl text-gray-900">Fly To Lanka Tours</span>
+              <span className="font-bold text-xl text-gray-900">
+                Fly To Lanka Tours
+              </span>
               <span className="text-sm text-gray-600">Travel & Transport</span>
             </div>
           </Link>
@@ -64,13 +72,24 @@ export function Navigation() {
               </Link>
             ))}
             <Link href="/tailor-made">
-              <Button className="bg-secondary hover:bg-secondary/80">Tailor Made</Button>
+              <Button className="bg-secondary hover:bg-secondary/80">
+                Tailor Made
+              </Button>
             </Link>
           </div>
 
           {/* Mobile menu button */}
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X className="h-14 w-14" style={{height: 32, width: 32}} /> : <Menu className="h-14 w-14" style={{height: 32, width: 32}} />}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? (
+              <X className="h-14 w-14" style={{ height: 32, width: 32 }} />
+            ) : (
+              <Menu className="h-14 w-14" style={{ height: 32, width: 32 }} />
+            )}
           </Button>
         </div>
 
@@ -88,13 +107,15 @@ export function Navigation() {
                   {item.label}
                 </Link>
               ))}
-                <Link href="/tailor-made" onClick={() => setIsOpen(false)}>
-                  <Button className="bg-secondary hover:bg-secondary/80 w-fit">Tailor Made</Button>
-                </Link>
+              <Link href="/tailor-made" onClick={() => setIsOpen(false)}>
+                <Button className="bg-secondary hover:bg-secondary/80 w-fit">
+                  Tailor Made
+                </Button>
+              </Link>
             </div>
           </div>
         )}
       </nav>
     </header>
-  )
+  );
 }
