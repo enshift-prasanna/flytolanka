@@ -5,10 +5,14 @@ const prisma = new PrismaClient();
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const includeContent = searchParams.get("includeContent") === "true";
+
   const blogs = await prisma.blog.findMany();
+  const reversedBlogs = blogs.reverse(); // reverse order
+
   const filteredBlogs = includeContent
-    ? blogs
-    : blogs.map(({ content, ...rest }) => rest);
+    ? reversedBlogs
+    : reversedBlogs.map(({ content, ...rest }) => rest);
+  
   return NextResponse.json(filteredBlogs);
 }
 
