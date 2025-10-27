@@ -148,11 +148,6 @@ export default function ThingsToDoPage() {
                         <CardDescription className="text-gray-600 leading-relaxed line-clamp-3">
                           {post.excerpt}
                         </CardDescription>
-                        <div className="text-sm text-gray-500 pt-2">
-                          <span>
-                            {new Date(post.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
                       </CardHeader>
                     </Card>
                   </Link>

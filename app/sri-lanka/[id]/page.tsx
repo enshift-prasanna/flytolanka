@@ -1,81 +1,115 @@
-"use client"
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Calendar, Clock, User, ArrowLeft, Share2, Heart, MessageCircle } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+"use client";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Calendar,
+  Clock,
+  User,
+  ArrowLeft,
+  Share2,
+  Heart,
+  MessageCircle,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 export default function BlogPostPage({ params }: { params: { id: string } }) {
-  const [post, setPost] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [notFoundState, setNotFoundState] = useState(false)
+  const [post, setPost] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [notFoundState, setNotFoundState] = useState(false);
   // Recent blogs state
   const [recentBlogs, setRecentBlogs] = useState<any[]>([]);
   const [recentLoading, setRecentLoading] = useState(true);
   // Inquiry form state
   const [form, setForm] = useState({
-    name: '',
-    country: '',
-    email: '',
-    phone: '',
-    contactMethod: '',
-    arrival: '',
-    departure: '',
-    days: '',
-    adults: '',
-    children: '',
-    start: '',
-    end: '',
+    name: "",
+    country: "",
+    email: "",
+    phone: "",
+    contactMethod: "",
+    arrival: "",
+    departure: "",
+    days: "",
+    adults: "",
+    children: "",
+    start: "",
+    end: "",
     accommodation: [] as string[],
     transport: [] as string[],
     interests: [] as string[],
     meal: [] as string[],
     budget: [] as string[],
-    specialInterest: '',
-    specialRequests: ''
+    specialInterest: "",
+    specialRequests: "",
   });
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
-  const handleCheckbox = (group: keyof typeof form, value: string, checked: boolean) => {
-    setForm(prev => ({
+  const handleCheckbox = (
+    group: keyof typeof form,
+    value: string,
+    checked: boolean
+  ) => {
+    setForm((prev) => ({
       ...prev,
       [group]: checked
         ? [...(prev[group] as string[]), value]
-        : (prev[group] as string[]).filter(v => v !== value)
+        : (prev[group] as string[]).filter((v) => v !== value),
     }));
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    setError('');
+    setError("");
     setSuccess(false);
     try {
-      const res = await fetch('/api/send-form-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+      const res = await fetch("/api/send-form-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
       const result = await res.json();
       if (result.success) {
         setSuccess(true);
         setForm({
-          name: '', country: '', email: '', phone: '', contactMethod: '', arrival: '', departure: '', days: '', adults: '', children: '', start: '', end: '', accommodation: [], transport: [], interests: [], meal: [], budget: [], specialInterest: '', specialRequests: ''
+          name: "",
+          country: "",
+          email: "",
+          phone: "",
+          contactMethod: "",
+          arrival: "",
+          departure: "",
+          days: "",
+          adults: "",
+          children: "",
+          start: "",
+          end: "",
+          accommodation: [],
+          transport: [],
+          interests: [],
+          meal: [],
+          budget: [],
+          specialInterest: "",
+          specialRequests: "",
         });
       } else {
-        setError(result.error || 'Failed to send.');
+        setError(result.error || "Failed to send.");
       }
     } catch (err) {
-      setError('Failed to send.');
+      setError("Failed to send.");
     }
     setSending(false);
   };
@@ -84,30 +118,36 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
     fetch(`/api/blog/${params.id}`)
       .then((res) => {
         if (res.status === 404) {
-          setNotFoundState(true)
-          setLoading(false)
-          return null
+          setNotFoundState(true);
+          setLoading(false);
+          return null;
         }
-        return res.json()
+        return res.json();
       })
       .then((data) => {
-        if (data) setPost(data)
-        setLoading(false)
+        if (data) setPost(data);
+        setLoading(false);
       })
       .catch(() => {
-        setNotFoundState(true)
-        setLoading(false)
-      })
+        setNotFoundState(true);
+        setLoading(false);
+      });
   }, [params.id]);
 
   // Fetch recent blogs
   useEffect(() => {
-    fetch('/api/blog?includeContent=false')
-      .then(res => res.json())
-      .then(data => {
+    fetch("/api/blog?includeContent=false")
+      .then((res) => res.json())
+      .then((data) => {
         // Exclude current post and sort by publishedAt desc
         const filtered = Array.isArray(data)
-          ? data.filter((b: any) => b.id !== params.id).sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+          ? data
+              .filter((b: any) => b.id !== params.id)
+              .sort(
+                (a: any, b: any) =>
+                  new Date(b.publishedAt).getTime() -
+                  new Date(a.publishedAt).getTime()
+              )
           : [];
         setRecentBlogs(filtered.slice(0, 4));
         setRecentLoading(false);
@@ -116,10 +156,18 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
   }, [params.id]);
 
   if (loading) {
-    return <div className="container mx-auto px-4 py-24 text-center text-gray-600">Loading...</div>
+    return (
+      <div className="container mx-auto px-4 py-24 text-center text-gray-600">
+        Loading...
+      </div>
+    );
   }
   if (notFoundState || !post) {
-    return <div className="container mx-auto px-4 py-24 text-center text-red-500">Blog post not found.</div>
+    return (
+      <div className="container mx-auto px-4 py-24 text-center text-red-500">
+        Blog post not found.
+      </div>
+    );
   }
 
   return (
@@ -143,37 +191,48 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
             <div className="container mx-auto px-4 lg:px-24">
               <div className="max-w-4xl text-white">
                 <div className="flex flex-wrap items-center gap-3 mb-5">
-                  <Link href="/sri-lanka" className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm backdrop-blur-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 transition-colors">
+                  <Link
+                    href="/sri-lanka"
+                    className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm backdrop-blur-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 transition-colors"
+                  >
                     <ArrowLeft className="h-4 w-4" /> Back to Articles
                   </Link>
                 </div>
                 <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight tracking-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]">
                   {post.title}
                 </h1>
-                <p className="text-xl text-white/90 mb-6 max-w-3xl">{post.excerpt}</p>
+                <p className="text-xl text-white/90 mb-6 max-w-3xl">
+                  {post.excerpt}
+                </p>
                 <div className="hidden lg:grid grid-cols-3 gap-6 max-w-3xl">
                   <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
                     <User className="h-6 w-6 text-secondary" />
                     <div>
-                      <p className="text-xs uppercase tracking-wide text-white/70">Author</p>
+                      <p className="text-xs uppercase tracking-wide text-white/70">
+                        Author
+                      </p>
                       <p className="font-semibold">Fly To Lanka Tours</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
                     <Calendar className="h-6 w-6 text-secondary" />
                     <div>
-                      <p className="text-xs uppercase tracking-wide text-white/70">Published</p>
-                        <p className="font-semibold">
-                          {new Date(post.createdAt).getDate()}/
-                          {new Date(post.createdAt).getMonth() + 1}/
-                          {new Date(post.createdAt).getFullYear()}
-                        </p>
+                      <p className="text-xs uppercase tracking-wide text-white/70">
+                        Published
+                      </p>
+                      <p className="font-semibold">
+                        {new Date(post.createdAt).getDate()}/
+                        {new Date(post.createdAt).getMonth() + 1}/
+                        {new Date(post.createdAt).getFullYear()}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
                     <Clock className="h-6 w-6 text-secondary" />
                     <div>
-                      <p className="text-xs uppercase tracking-wide text-white/70">Read Time</p>
+                      <p className="text-xs uppercase tracking-wide text-white/70">
+                        Read Time
+                      </p>
                       <p className="font-semibold">10 Min</p>
                     </div>
                   </div>
@@ -191,7 +250,9 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
             </div>
             <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
               <Calendar className="h-5 w-5 text-secondary" />
-                  <span className="text-sm font-medium">{new Date(post.createdAt).toLocaleDateString()}</span>
+              <span className="text-sm font-medium">
+                {new Date(post.createdAt).toLocaleDateString()}
+              </span>
             </div>
             <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
               <Clock className="h-5 w-5 text-secondary" />
@@ -209,7 +270,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
             {/* Main Content */}
             <div className="lg:col-span-2">
               <article className="prose prose-lg prose-emerald max-w-none">
-                <div dangerouslySetInnerHTML={{ __html: post.content }} className="space-y-6" />
+                <div dangerouslySetInnerHTML={{ __html: post.content }} />
               </article>
 
               {/* Social Sharing */}
@@ -242,20 +303,38 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {recentLoading ? (
-                      <div className="text-center text-gray-400">Loading...</div>
+                      <div className="text-center text-gray-400">
+                        Loading...
+                      </div>
                     ) : recentBlogs.length === 0 ? (
-                      <div className="text-center text-gray-400">No recent blogs found.</div>
+                      <div className="text-center text-gray-400">
+                        No recent blogs found.
+                      </div>
                     ) : (
                       <ul className="space-y-3">
-                        {recentBlogs.map(blog => (
+                        {recentBlogs.map((blog) => (
                           <li key={blog.id}>
-                            <Link href={`/sri-lanka/${blog.id}`} className="flex gap-3 items-center group">
+                            <Link
+                              href={`/sri-lanka/${blog.id}`}
+                              className="flex gap-3 items-center group"
+                            >
                               <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 relative">
-                                <Image src={blog.image || "/placeholder.svg"} alt={blog.title} fill className="object-cover" />
+                                <Image
+                                  src={blog.image || "/placeholder.svg"}
+                                  alt={blog.title}
+                                  fill
+                                  className="object-cover"
+                                />
                               </div>
                               <div className="flex-1">
-                                <h4 className="font-semibold text-sm group-hover:text-primary transition-colors line-clamp-2">{blog.title}</h4>
-                                <span className="text-xs text-gray-400">{new Date(blog.createdAt).toLocaleDateString()}</span>
+                                <h4 className="font-semibold text-sm group-hover:text-primary transition-colors line-clamp-2">
+                                  {blog.title}
+                                </h4>
+                                <span className="text-xs text-gray-400">
+                                  {new Date(
+                                    blog.createdAt
+                                  ).toLocaleDateString()}
+                                </span>
                               </div>
                             </Link>
                           </li>
@@ -270,30 +349,67 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                 <Card className="shadow-md hover:shadow-xl transition-shadow border-gray-200/70 rounded-2xl backdrop-blur-sm bg-white/90">
                   <CardHeader className="pb-2">
                     <CardTitle>Planning Your Sri Lanka Trip?</CardTitle>
-                    <p className="text-sm text-gray-600">Let us help you design your perfect journey. Fields marked with an * are required.</p>
+                    <p className="text-sm text-gray-600">
+                      Let us help you design your perfect journey. Fields marked
+                      with an * are required.
+                    </p>
                   </CardHeader>
                   <CardContent className="space-y-5">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                       {/* Personal Details */}
                       <div className="space-y-2">
                         <Label htmlFor="name">Name *</Label>
-                        <Input id="name" type="text" required placeholder="Your full name" value={form.name} onChange={handleChange} />
+                        <Input
+                          id="name"
+                          type="text"
+                          required
+                          placeholder="Your full name"
+                          value={form.name}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="country">Country</Label>
-                        <Input id="country" type="text" placeholder="Your country" value={form.country} onChange={handleChange} />
+                        <Input
+                          id="country"
+                          type="text"
+                          placeholder="Your country"
+                          value={form.country}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="email">Email *</Label>
-                        <Input id="email" type="email" required placeholder="your@email.com" value={form.email} onChange={handleChange} />
+                        <Input
+                          id="email"
+                          type="email"
+                          required
+                          placeholder="your@email.com"
+                          value={form.email}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="phone">Phone / WhatsApp *</Label>
-                        <Input id="phone" type="tel" required placeholder="+94 76 553 3874" value={form.phone} onChange={handleChange} />
+                        <Input
+                          id="phone"
+                          type="tel"
+                          required
+                          placeholder="+94 76 553 3874"
+                          value={form.phone}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="contact-method">Preferred Contact Method</Label>
-                        <select id="contactMethod" className="bg-white/80 w-full rounded border-gray-300 p-2" value={form.contactMethod} onChange={handleChange}>
+                        <Label htmlFor="contact-method">
+                          Preferred Contact Method
+                        </Label>
+                        <select
+                          id="contactMethod"
+                          className="bg-white/80 w-full rounded border-gray-300 p-2"
+                          value={form.contactMethod}
+                          onChange={handleChange}
+                        >
                           <option value="">Select Method</option>
                           <option value="email">Email</option>
                           <option value="whatsapp">WhatsApp</option>
@@ -304,27 +420,67 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                       {/* Travel Information */}
                       <div className="space-y-2">
                         <Label htmlFor="arrival">Arrival Date *</Label>
-                        <Input id="arrival" type="date" required value={form.arrival} onChange={handleChange} />
+                        <Input
+                          id="arrival"
+                          type="date"
+                          required
+                          value={form.arrival}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="departure">Departure Date</Label>
-                        <Input id="departure" type="date" value={form.departure} onChange={handleChange} />
+                        <Input
+                          id="departure"
+                          type="date"
+                          value={form.departure}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="days">Number of Days in Sri Lanka</Label>
-                        <Input id="days" type="number" min="1" placeholder="e.g. 7" value={form.days} onChange={handleChange} />
+                        <Label htmlFor="days">
+                          Number of Days in Sri Lanka
+                        </Label>
+                        <Input
+                          id="days"
+                          type="number"
+                          min="1"
+                          placeholder="e.g. 7"
+                          value={form.days}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="adults">Number of Adults</Label>
-                        <Input id="adults" type="number" min="0" placeholder="e.g. 2" value={form.adults} onChange={handleChange} />
+                        <Input
+                          id="adults"
+                          type="number"
+                          min="0"
+                          placeholder="e.g. 2"
+                          value={form.adults}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="children">Number of Children (Age)</Label>
-                        <Input id="children" type="text" placeholder="e.g. 2 (5, 8 yrs)" value={form.children} onChange={handleChange} />
+                        <Label htmlFor="children">
+                          Number of Children (Age)
+                        </Label>
+                        <Input
+                          id="children"
+                          type="text"
+                          placeholder="e.g. 2 (5, 8 yrs)"
+                          value={form.children}
+                          onChange={handleChange}
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="start">Starting Point</Label>
-                        <select id="start" className="bg-white/80 w-full rounded border-gray-300 p-2" value={form.start} onChange={handleChange}>
+                        <select
+                          id="start"
+                          className="bg-white/80 w-full rounded border-gray-300 p-2"
+                          value={form.start}
+                          onChange={handleChange}
+                        >
                           <option value="">Select Starting Point</option>
                           <option value="colombo">Colombo</option>
                           <option value="negombo">Negombo</option>
@@ -334,7 +490,12 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="end">Ending Point</Label>
-                        <select id="end" className="bg-white/80 w-full rounded border-gray-300 p-2" value={form.end} onChange={handleChange}>
+                        <select
+                          id="end"
+                          className="bg-white/80 w-full rounded border-gray-300 p-2"
+                          value={form.end}
+                          onChange={handleChange}
+                        >
                           <option value="">Select Ending Point</option>
                           <option value="colombo">Colombo</option>
                           <option value="negombo">Negombo</option>
@@ -347,9 +508,30 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                       <div className="space-y-2">
                         <Label>Accommodation Preference</Label>
                         <div className="grid grid-cols-2 gap-2">
-                          {['Budget (Guesthouse / 2★)','Standard (3★ / Boutique)','Comfort (4★)','Luxury (5★ / Resorts / Villas)'].map((v,i) => (
-                            <label key={i} className="flex items-center gap-2 text-gray-700">
-                              <input type="checkbox" name="accommodation" value={v} className="accent-primary" checked={form.accommodation.includes(v)} onChange={e => handleCheckbox('accommodation', v, e.target.checked)} />
+                          {[
+                            "Budget (Guesthouse / 2★)",
+                            "Standard (3★ / Boutique)",
+                            "Comfort (4★)",
+                            "Luxury (5★ / Resorts / Villas)",
+                          ].map((v, i) => (
+                            <label
+                              key={i}
+                              className="flex items-center gap-2 text-gray-700"
+                            >
+                              <input
+                                type="checkbox"
+                                name="accommodation"
+                                value={v}
+                                className="accent-primary"
+                                checked={form.accommodation.includes(v)}
+                                onChange={(e) =>
+                                  handleCheckbox(
+                                    "accommodation",
+                                    v,
+                                    e.target.checked
+                                  )
+                                }
+                              />
                               {v}
                             </label>
                           ))}
@@ -360,9 +542,34 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                       <div className="space-y-2">
                         <Label>Transportation</Label>
                         <div className="grid grid-cols-2 gap-2">
-                          {['Mini Car','Sedan Car','Luxury Car','SUV','Van','Luxury Van','Mini Coach','Luxury Coach'].map((v,i) => (
-                            <label key={i} className="flex items-center gap-2 text-gray-700">
-                              <input type="checkbox" name="transport" value={v} className="accent-primary" checked={form.transport.includes(v)} onChange={e => handleCheckbox('transport', v, e.target.checked)} />
+                          {[
+                            "Mini Car",
+                            "Sedan Car",
+                            "Luxury Car",
+                            "SUV",
+                            "Van",
+                            "Luxury Van",
+                            "Mini Coach",
+                            "Luxury Coach",
+                          ].map((v, i) => (
+                            <label
+                              key={i}
+                              className="flex items-center gap-2 text-gray-700"
+                            >
+                              <input
+                                type="checkbox"
+                                name="transport"
+                                value={v}
+                                className="accent-primary"
+                                checked={form.transport.includes(v)}
+                                onChange={(e) =>
+                                  handleCheckbox(
+                                    "transport",
+                                    v,
+                                    e.target.checked
+                                  )
+                                }
+                              />
                               {v}
                             </label>
                           ))}
@@ -374,26 +581,50 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                         <Label>Interests & Experiences</Label>
                         <div className="grid grid-cols-1 gap-2">
                           {[
-                            'Cultural Heritage',
-                            'Nature & Wildlife',
-                            'Beaches',
-                            'Hill Country',
-                            'Adventure',
-                            'Spiritual / Pilgrimage',
-                            'Ayurveda & Wellness',
-                            'Photography & Birdwatching Tours',
-                            'Food & Culinary Experiences',
-                            'Festivals & Local Events'
+                            "Cultural Heritage",
+                            "Nature & Wildlife",
+                            "Beaches",
+                            "Hill Country",
+                            "Adventure",
+                            "Spiritual / Pilgrimage",
+                            "Ayurveda & Wellness",
+                            "Photography & Birdwatching Tours",
+                            "Food & Culinary Experiences",
+                            "Festivals & Local Events",
                           ].map((v, i) => (
-                            <label key={i} className="flex items-center gap-2 text-gray-700">
-                              <input type="checkbox" name="interests" value={v} className="accent-primary" checked={form.interests.includes(v)} onChange={e => handleCheckbox('interests', v, e.target.checked)} />
+                            <label
+                              key={i}
+                              className="flex items-center gap-2 text-gray-700"
+                            >
+                              <input
+                                type="checkbox"
+                                name="interests"
+                                value={v}
+                                className="accent-primary"
+                                checked={form.interests.includes(v)}
+                                onChange={(e) =>
+                                  handleCheckbox(
+                                    "interests",
+                                    v,
+                                    e.target.checked
+                                  )
+                                }
+                              />
                               {v}
                             </label>
                           ))}
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="special-interest">Other Special Interest</Label>
-                          <Textarea id="specialInterest" rows={3} className="bg-white/80 min-h-[60px]" value={form.specialInterest} onChange={handleChange} />
+                          <Label htmlFor="special-interest">
+                            Other Special Interest
+                          </Label>
+                          <Textarea
+                            id="specialInterest"
+                            rows={3}
+                            className="bg-white/80 min-h-[60px]"
+                            value={form.specialInterest}
+                            onChange={handleChange}
+                          />
                         </div>
                       </div>
 
@@ -401,9 +632,25 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                       <div className="space-y-2">
                         <Label>Meal Plan</Label>
                         <div className="grid grid-cols-1 gap-2">
-                          {['Bed & Breakfast','Half Board (Breakfast + Dinner)','Full Board (Breakfast, Lunch & Dinner)'].map((v,i) => (
-                            <label key={i} className="flex items-center gap-2 text-gray-700">
-                              <input type="checkbox" name="meal" value={v} className="accent-primary" checked={form.meal.includes(v)} onChange={e => handleCheckbox('meal', v, e.target.checked)} />
+                          {[
+                            "Bed & Breakfast",
+                            "Half Board (Breakfast + Dinner)",
+                            "Full Board (Breakfast, Lunch & Dinner)",
+                          ].map((v, i) => (
+                            <label
+                              key={i}
+                              className="flex items-center gap-2 text-gray-700"
+                            >
+                              <input
+                                type="checkbox"
+                                name="meal"
+                                value={v}
+                                className="accent-primary"
+                                checked={form.meal.includes(v)}
+                                onChange={(e) =>
+                                  handleCheckbox("meal", v, e.target.checked)
+                                }
+                              />
                               {v}
                             </label>
                           ))}
@@ -414,9 +661,26 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                       <div className="space-y-2">
                         <Label>Estimated Budget Range (per person)</Label>
                         <div className="grid grid-cols-1 gap-2">
-                          {['USD 50–100 per day','USD 100–200 per day','USD 200–400 per day','USD 400+ per day'].map((v,i) => (
-                            <label key={i} className="flex items-center gap-2 text-gray-700">
-                              <input type="checkbox" name="budget" value={v} className="accent-primary" checked={form.budget.includes(v)} onChange={e => handleCheckbox('budget', v, e.target.checked)} />
+                          {[
+                            "USD 50–100 per day",
+                            "USD 100–200 per day",
+                            "USD 200–400 per day",
+                            "USD 400+ per day",
+                          ].map((v, i) => (
+                            <label
+                              key={i}
+                              className="flex items-center gap-2 text-gray-700"
+                            >
+                              <input
+                                type="checkbox"
+                                name="budget"
+                                value={v}
+                                className="accent-primary"
+                                checked={form.budget.includes(v)}
+                                onChange={(e) =>
+                                  handleCheckbox("budget", v, e.target.checked)
+                                }
+                              />
                               {v}
                             </label>
                           ))}
@@ -425,15 +689,40 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
 
                       {/* Special Requests */}
                       <div className="space-y-2">
-                        <Label htmlFor="special-requests">Special Requests</Label>
-                        <Textarea id="specialRequests" rows={4} className="bg-white/80 min-h-[80px]" placeholder="Let us know any special requests, needs, or details..." value={form.specialRequests} onChange={handleChange} />
+                        <Label htmlFor="special-requests">
+                          Special Requests
+                        </Label>
+                        <Textarea
+                          id="specialRequests"
+                          rows={4}
+                          className="bg-white/80 min-h-[80px]"
+                          placeholder="Let us know any special requests, needs, or details..."
+                          value={form.specialRequests}
+                          onChange={handleChange}
+                        />
                       </div>
 
                       {/* Submit */}
-                      <Button type="submit" className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-4 rounded-full shadow-lg hover:shadow-2xl transition" disabled={sending}>{sending ? "Sending..." : "Submit Your Tailor-Made Request"}</Button>
-                      {success && <p className="text-center text-green-600 mt-3">Request sent successfully!</p>}
-                      {error && <p className="text-center text-red-600 mt-3">{error}</p>}
-                      <p className="text-center text-xs text-gray-500 mt-3">No advance payment • Fast response • Secure & private</p>
+                      <Button
+                        type="submit"
+                        className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-4 rounded-full shadow-lg hover:shadow-2xl transition"
+                        disabled={sending}
+                      >
+                        {sending
+                          ? "Sending..."
+                          : "Submit Your Tailor-Made Request"}
+                      </Button>
+                      {success && (
+                        <p className="text-center text-green-600 mt-3">
+                          Request sent successfully!
+                        </p>
+                      )}
+                      {error && (
+                        <p className="text-center text-red-600 mt-3">{error}</p>
+                      )}
+                      <p className="text-center text-xs text-gray-500 mt-3">
+                        No advance payment • Fast response • Secure & private
+                      </p>
                     </form>
                   </CardContent>
                 </Card>
@@ -443,5 +732,5 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
         </div>
       </section>
     </div>
-  )
+  );
 }
