@@ -55,6 +55,7 @@ const AdminPage: React.FC = () => {
     title: "",
     categoryId: "",
     days: "",
+    price: "",
     shortDescription: "",
     detailedDescription: "",
     image: "",
@@ -242,6 +243,7 @@ const AdminPage: React.FC = () => {
         title: "",
         categoryId: "",
         days: "",
+        price: "",
         shortDescription: "",
         detailedDescription: "",
         image: "",
@@ -257,6 +259,7 @@ const AdminPage: React.FC = () => {
       title: pkg.title,
       categoryId: pkg.categoryId,
       days: pkg.days,
+      price: pkg.price || "",
       shortDescription: pkg.shortDescription,
       detailedDescription: pkg.detailedDescription,
       image: pkg.image || "",
@@ -659,6 +662,16 @@ const AdminPage: React.FC = () => {
                     />
                   </div>
                   <div>
+                    <Label>Price</Label>
+                    <Input
+                      value={packageForm.price}
+                      onChange={(e) =>
+                        setPackageForm((f) => ({ ...f, price: e.target.value }))
+                      }
+                      placeholder="e.g. $100 or From $100"
+                    />
+                  </div>
+                  <div>
                     <Label>Short Description</Label>
                     <Input
                       value={packageForm.shortDescription}
@@ -704,6 +717,7 @@ const AdminPage: React.FC = () => {
                           title: "",
                           categoryId: "",
                           days: "",
+                          price: "",
                           shortDescription: "",
                           detailedDescription: "",
                           image: "",
@@ -721,6 +735,7 @@ const AdminPage: React.FC = () => {
                       <tr>
                         <th className="px-4 py-2 border">Image</th>
                         <th className="px-4 py-2 border">Title</th>
+                        <th className="px-4 py-2 border">Price</th>
                         <th className="px-4 py-2 border">Short Description</th>
                         <th className="px-4 py-2 border">Actions</th>
                       </tr>
@@ -740,6 +755,7 @@ const AdminPage: React.FC = () => {
                             )}
                           </td>
                           <td className="px-4 py-2 border">{pkg.title}</td>
+                          <td className="px-4 py-2 border">{pkg.price || "N/A"}</td>
                           <td className="px-4 py-2 border">
                             {pkg.shortDescription?.length > 50
                               ? pkg.shortDescription.slice(0, 50) + "..."

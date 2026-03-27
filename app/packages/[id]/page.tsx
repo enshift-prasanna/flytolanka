@@ -167,7 +167,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                   <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed max-w-3xl">
                     {packageData.shortDescription}
                   </p>
-                  <div className="hidden lg:grid grid-cols-4 gap-6 max-w-4xl">
+                  <div className="hidden lg:grid grid-cols-5 gap-6 max-w-5xl">
                     <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
                       <Clock className="h-6 w-6 text-secondary" />
                       <div>
@@ -175,6 +175,15 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                         <p className="font-semibold">{packageData.days} Days</p>
                       </div>
                     </div>
+                    {packageData.price && (
+                      <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
+                        <Star className="h-6 w-6 text-secondary fill-current" />
+                        <div>
+                          <p className="text-xs uppercase tracking-wide text-white/70">Price</p>
+                          <p className="font-semibold">{packageData.price}</p>
+                        </div>
+                      </div>
+                    )}
                     <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
                       <Users className="h-6 w-6 text-secondary" />
                       <div>
@@ -209,17 +218,23 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
               <Clock className="h-5 w-5 text-secondary" />
               <span className="text-sm font-medium">{packageData.days} Days</span>
             </div>
+            {packageData.price && (
+              <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
+                <Star className="h-5 w-5 text-secondary fill-current" />
+                <span className="text-sm font-medium">{packageData.price}</span>
+              </div>
+            )}
             <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
               <Users className="h-5 w-5 text-secondary" />
-              <span className="text-sm font-medium">Max {packageData.maxPeople}</span>
+              <span className="text-sm font-medium">Any</span>
             </div>
             <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
               <Star className="h-5 w-5 text-yellow-500 fill-current" />
               <span className="text-sm font-medium">5</span>
             </div>
-            <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
+            <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3 col-span-2">
               <span className="text-xs font-semibold tracking-wide bg-secondary/10 text-secondary px-2 py-1 rounded">{category?.name?.split(' ')[0]}</span>
-              <span className="text-sm font-medium">Category</span>
+              <span className="text-sm font-medium">Category: {category?.name}</span>
             </div>
           </div>
         </div>

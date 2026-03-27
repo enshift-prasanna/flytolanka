@@ -138,7 +138,7 @@ export default function CategoryPage({ params }: PageProps) {
                     <CardContent className="space-y-4">
                       <div className="flex items-center justify-between pt-4 border-t">
                         <div>
-                          <span className="text-lg font-bold text-secondary">Contact for Pricing</span>
+                          <span className="text-lg font-bold text-secondary">{pkg.price || "Contact for Pricing"}</span>
                         </div>
                         <Link href={`/packages/${pkg.id}`}>
                           <Button className="bg-secondary hover:bg-secondary/80">
