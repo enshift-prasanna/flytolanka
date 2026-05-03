@@ -332,48 +332,15 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                       <div className="grid grid-cols-1 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="adults">Number of Adults (13+)</Label>
-                          <Select value={form.adults} onValueChange={v => handleSelect('adults', v)}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Adults" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                                <SelectItem key={num} value={num.toString()}>
-                                  {num}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <Input id="adults" type="number" min="0" value={form.adults} onChange={handleChange} placeholder="0" />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="children">Number of Children (6 to 12)</Label>
-                          <Select value={form.children} onValueChange={v => handleSelect('children', v)}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Children" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {[0, 1, 2, 3, 4, 5].map((num) => (
-                                <SelectItem key={num} value={num.toString()}>
-                                  {num}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <Input id="children" type="number" min="0" value={form.children} onChange={handleChange} placeholder="0" />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="infants">Number of Infants (0 to 5)</Label>
-                          <Select value={form.infants} onValueChange={v => handleSelect('infants', v)}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Infants" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {[0, 1, 2, 3].map((num) => (
-                                <SelectItem key={num} value={num.toString()}>
-                                  {num}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <Input id="infants" type="number" min="0" value={form.infants} onChange={handleChange} placeholder="0" />
                         </div>
                       </div>
                       <div className="space-y-2">
