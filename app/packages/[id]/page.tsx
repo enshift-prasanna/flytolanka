@@ -86,7 +86,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
       const res = await fetch('/api/send-form-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify({ ...form, package: packageData.title })
       });
       const result = await res.json();
       if (result.success) {
