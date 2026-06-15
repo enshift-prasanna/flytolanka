@@ -2,6 +2,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 
 // Reusable reveal animation wrapper
@@ -45,6 +49,84 @@ function Reveal({
 export default function HomePage() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [vehicles, setVehicles] = useState<any[]>([]);
+
+  // Booking Form State
+  const [form, setForm] = useState({
+    name: "",
+    country: "",
+    email: "",
+    phone: "",
+    contactMethod: "",
+    arrival: "",
+    departure: "",
+    adults: "",
+    children: "",
+    infants: "",
+    specialNotes: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setForm({ ...form, [e.target.id]: e.target.value });
+  };
+
+  const handleSelect = (id: string, value: string) => {
+    setForm({ ...form, [id]: value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess(false);
+    try {
+      const payload = {
+        "Name": form.name,
+        "Email": form.email,
+        "Phone / WhatsApp": form.phone,
+        "Country": form.country || "N/A",
+        "Preferred Contact Method": form.contactMethod || "N/A",
+        "Arrival Date": form.arrival,
+        "Departure Date": form.departure || "N/A",
+        "Number of Adults": form.adults || "0",
+        "Number of Children (Age)": form.children || "0",
+        "Number of Infants": form.infants || "0",
+        "Special Notes": form.specialNotes || "None",
+      };
+      const res = await fetch("/api/send-form-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await res.json();
+      if (result.success) {
+        setSuccess(true);
+        setForm({
+          name: "",
+          country: "",
+          email: "",
+          phone: "",
+          contactMethod: "",
+          arrival: "",
+          departure: "",
+          adults: "",
+          children: "",
+          infants: "",
+          specialNotes: "",
+        });
+      } else {
+        setError(result.error || "Failed to send.");
+      }
+    } catch (err) {
+      setError("Failed to send.");
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     const onScroll = () => setShowScrollTop(window.scrollY > 600);
     window.addEventListener("scroll", onScroll);
@@ -81,8 +163,169 @@ export default function HomePage() {
           <a href="#contact" className="text-white/80 hover:text-yellow-300 transition">Contact</a>
         </nav> */}
         <div className="relative container mx-auto px-4 lg:px-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <Reveal className="space-y-8 text-white">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            <Reveal className="relative delay-150 lg:col-span-5">
+              <div className="bg-secondary bg-opacity-95 border border-white/20 rounded-2xl p-6 lg:p-8 shadow-xl text-white">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <h2 className="text-xl font-bold text-yellow-300 text-center tracking-tight">
+                    Book your Sri Lanka Tour
+                  </h2>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <Label htmlFor="name" className="text-white text-xs font-semibold">Name *</Label>
+                      <Input
+                        id="name"
+                        type="text"
+                        required
+                        placeholder="Your full name"
+                        className="bg-white/95 text-black placeholder:text-gray-400 border-0 focus-visible:ring-2 focus-visible:ring-yellow-400 h-9 text-sm"
+                        value={form.name}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="country" className="text-white text-xs font-semibold">Country</Label>
+                      <Input
+                        id="country"
+                        type="text"
+                        placeholder="Your country"
+                        className="bg-white/95 text-black placeholder:text-gray-400 border-0 focus-visible:ring-2 focus-visible:ring-yellow-400 h-9 text-sm"
+                        value={form.country}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <Label htmlFor="email" className="text-white text-xs font-semibold">Email *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        required
+                        placeholder="Your email address"
+                        className="bg-white/95 text-black placeholder:text-gray-400 border-0 focus-visible:ring-2 focus-visible:ring-yellow-400 h-9 text-sm"
+                        value={form.email}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="phone" className="text-white text-xs font-semibold">Phone / WhatsApp *</Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        required
+                        placeholder="Phone or WhatsApp number"
+                        className="bg-white/95 text-black placeholder:text-gray-400 border-0 focus-visible:ring-2 focus-visible:ring-yellow-400 h-9 text-sm"
+                        value={form.phone}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label htmlFor="contactMethod" className="text-white text-xs font-semibold">Preferred Contact Method</Label>
+                    <Select value={form.contactMethod} onValueChange={(value) => handleSelect('contactMethod', value)}>
+                      <SelectTrigger className="bg-white/95 text-black border-0 focus:ring-2 focus:ring-yellow-400 h-9 text-sm">
+                        <SelectValue placeholder="Select Method" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white text-black">
+                        <SelectItem value="email">Email</SelectItem>
+                        <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                        <SelectItem value="phone">Phone</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <Label htmlFor="arrival" className="text-white text-xs font-semibold">Arrival Date *</Label>
+                      <Input
+                        id="arrival"
+                        type="date"
+                        required
+                        className="bg-white/95 text-black border-0 focus-visible:ring-2 focus-visible:ring-yellow-400 h-9 text-sm"
+                        value={form.arrival}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="departure" className="text-white text-xs font-semibold">Departure Date</Label>
+                      <Input
+                        id="departure"
+                        type="date"
+                        className="bg-white/95 text-black border-0 focus-visible:ring-2 focus-visible:ring-yellow-400 h-9 text-sm"
+                        value={form.departure}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="space-y-1">
+                      <Label htmlFor="adults" className="text-white text-[10px] sm:text-xs font-semibold block truncate">Adults</Label>
+                      <Input
+                        id="adults"
+                        type="number"
+                        min="1"
+                        placeholder="1"
+                        className="bg-white/95 text-black border-0 focus-visible:ring-2 focus-visible:ring-yellow-400 h-9 text-sm"
+                        value={form.adults}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="children" className="text-white text-[10px] sm:text-xs font-semibold block truncate">Children (Age)</Label>
+                      <Input
+                        id="children"
+                        type="text"
+                        placeholder="e.g. 5, 8"
+                        className="bg-white/95 text-black placeholder:text-gray-400 border-0 focus-visible:ring-2 focus-visible:ring-yellow-400 h-9 text-sm"
+                        value={form.children}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="infants" className="text-white text-[10px] sm:text-xs font-semibold block truncate">Infants</Label>
+                      <Input
+                        id="infants"
+                        type="number"
+                        min="0"
+                        className="bg-white/95 text-black border-0 focus-visible:ring-2 focus-visible:ring-yellow-400 h-9 text-sm"
+                        value={form.infants}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label htmlFor="specialNotes" className="text-white text-xs font-semibold">Special Notes</Label>
+                    <Textarea
+                      id="specialNotes"
+                      rows={2}
+                      placeholder="Any specific requests or requirements..."
+                      className="bg-white/95 text-black placeholder:text-gray-400 border-0 focus-visible:ring-2 focus-visible:ring-yellow-400 min-h-[60px] text-sm py-1.5"
+                      value={form.specialNotes}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="pt-2">
+                    <Button
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-5 rounded-full shadow-lg hover:shadow-2xl transition duration-300"
+                      disabled={loading}
+                    >
+                      {loading ? 'Sending...' : 'Book your Sri Lanka Tour'}
+                    </Button>
+                    {success && <p className="text-center text-green-300 mt-2 text-sm">Request sent successfully!</p>}
+                    {error && <p className="text-center text-red-300 mt-2 text-sm">{error}</p>}
+                  </div>
+                </form>
+              </div>
+            </Reveal>
+            <Reveal className="space-y-8 text-white lg:col-span-7 mt-12 lg:mt-0">
               <div className="space-y-4">
                 <div className="inline-flex items-center px-4 py-2 bg-yellow-400/20 text-yellow-300 rounded-full text-sm font-medium backdrop-blur-sm border border-yellow-400/30 shadow-sm">
                   ⭐ #1 Rated Sri Lanka Tour Service
@@ -163,19 +406,6 @@ export default function HomePage() {
                     </span>
                   </span>
                 </Button>
-              </div>
-            </Reveal>
-            <Reveal className="relative lg:mt-0 mt-12 delay-150">
-              <div className="absolute -inset-4 bg-gradient-to-r from-yellow-400/20 to-blue-400/20 blur-xl rounded-2xl"></div>
-              <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-2 border border-white/20">
-                <Image
-                  src="https://miro.medium.com/v2/resize:fit:1400/0*49rWwR59OahKWF3h"
-                  alt="Lake Gregory, Nuwara Eliya - Scenic Sri Lanka"
-                  width={400}
-                  height={300}
-                  priority
-                  className="rounded-xl shadow-2xl w-full h-auto"
-                />
               </div>
             </Reveal>
           </div>
