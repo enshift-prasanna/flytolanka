@@ -65,7 +65,12 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
     adults: '',
     children: '',
     infants: '',
-    requirements: ''
+    requirements: '',
+    phone: '',
+    contactMethod: '',
+    pickupLocation: '',
+    dropoffLocation: '',
+    specialNotes: ''
   });
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -82,17 +87,59 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
     setSending(true);
     setError('');
     setSuccess(false);
+
+    const isDayTour = packageData?.categoryId === "68babf3c85d85b76f41bcfe6";
+    const emailData = isDayTour ? {
+      package: packageData.title,
+      'Name': form.name,
+      'Email': form.email,
+      'Phone / WhatsApp': form.phone,
+      'Preferred Contact Method': form.contactMethod || 'Not specified',
+      'Pick Up Location': form.pickupLocation || 'Not specified',
+      'Drop Off Location': form.dropoffLocation || 'Not specified',
+      'Number of Adults': form.adults || '0',
+      'Number of Children (Age)': form.children || '0',
+      'Number of Infants': form.infants || '0',
+      'Special Notes': form.specialNotes || 'None'
+    } : {
+      package: packageData.title,
+      'Name': form.name,
+      'Email': form.email,
+      'WhatsApp Number': form.whatsapp,
+      'Vehicle Type': form.vehicle || 'Not specified',
+      'Arrival Date': form.arrival,
+      'Departure Date': form.departure || 'Not specified',
+      'Number of Adults (13+)': form.adults || '0',
+      'Number of Children (6 to 12)': form.children || '0',
+      'Number of Infants (0 to 5)': form.infants || '0',
+      'Special Requirements': form.requirements
+    };
+
     try {
       const res = await fetch('/api/send-form-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, package: packageData.title })
+        body: JSON.stringify(emailData)
       });
       const result = await res.json();
       if (result.success) {
         setSuccess(true);
         setForm({
-          name: '', email: '', whatsapp: '', vehicle: '', arrival: '', departure: '', adults: '', children: '', infants: '', requirements: ''
+          name: '',
+          email: '',
+          whatsapp: '',
+          vehicle: '',
+          arrival: '',
+          departure: '',
+          adults: '',
+          children: '',
+          infants: '',
+          requirements: '',
+          phone: '',
+          contactMethod: '',
+          pickupLocation: '',
+          dropoffLocation: '',
+          specialNotes: ''
         });
       } else {
         setError(result.error || 'Failed to send.');
@@ -291,71 +338,135 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                   </CardHeader>
                   <CardContent className="space-y-5">
                     <form className="space-y-5" onSubmit={handleSubmit}>
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Name *</Label>
-                        <Input id="name" required value={form.name} onChange={handleChange} placeholder="Your full name" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email Address *</Label>
-                        <Input id="email" type="email" required value={form.email} onChange={handleChange} placeholder="your@email.com" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="whatsapp">WhatsApp Number</Label>
-                        <Input id="whatsapp" value={form.whatsapp} onChange={handleChange} placeholder="+94 76 553 3874" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="vehicle">Vehicle Type</Label>
-                        <Select value={form.vehicle} onValueChange={v => handleSelect('vehicle', v)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select vehicle type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="mini-car">Mini Car & Driver</SelectItem>
-                            <SelectItem value="sedan-car">Sedan Car & Driver</SelectItem>
-                            <SelectItem value="luxury-car">Luxury Car & Driver</SelectItem>
-                            <SelectItem value="suv">SUV & Driver</SelectItem>
-                            <SelectItem value="van">Van & Driver</SelectItem>
-                            <SelectItem value="luxury-van">Luxury Van & Driver</SelectItem>
-                            <SelectItem value="mini-coach">Mini Coach & Driver</SelectItem>
-                            <SelectItem value="luxury-coach">Luxury Coach & Driver</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="arrival">Arrival Date *</Label>
-                        <Input id="arrival" type="date" required value={form.arrival} onChange={handleChange} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="departure">Departure Date</Label>
-                        <Input id="departure" type="date" value={form.departure} onChange={handleChange} />
-                      </div>
-                      <div className="grid grid-cols-1 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="adults">Number of Adults (13+)</Label>
-                          <Input id="adults" type="number" min="0" value={form.adults} onChange={handleChange} placeholder="0" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="children">Number of Children (6 to 12)</Label>
-                          <Input id="children" type="number" min="0" value={form.children} onChange={handleChange} placeholder="0" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="infants">Number of Infants (0 to 5)</Label>
-                          <Input id="infants" type="number" min="0" value={form.infants} onChange={handleChange} placeholder="0" />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="requirements">
-                          Describe your planned route, places you wish to visit, interests, or any special requirements... *
-                        </Label>
-                        <Textarea
-                          id="requirements"
-                          required
-                          value={form.requirements}
-                          onChange={handleChange}
-                          placeholder="Please describe your travel plans, interests, and any special requirements..."
-                          rows={4}
-                        />
-                      </div>
+                      {packageData?.categoryId === "68babf3c85d85b76f41bcfe6" ? (
+                        <>
+                          <div className="space-y-2">
+                            <Label htmlFor="name">Name *</Label>
+                            <Input id="name" required value={form.name} onChange={handleChange} placeholder="Your full name" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="email">Email *</Label>
+                            <Input id="email" type="email" required value={form.email} onChange={handleChange} placeholder="your@email.com" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="phone">Phone / WhatsApp *</Label>
+                            <Input id="phone" type="tel" required value={form.phone} onChange={handleChange} placeholder="+94 76 553 3874" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="contactMethod">Preferred Contact Method</Label>
+                            <Select value={form.contactMethod} onValueChange={v => handleSelect('contactMethod', v)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Method" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="email">Email</SelectItem>
+                                <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                                <SelectItem value="phone">Phone Call</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="pickupLocation">Pick Up Location</Label>
+                            <Input id="pickupLocation" value={form.pickupLocation} onChange={handleChange} placeholder="Starting point (e.g., hotel name)" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="dropoffLocation">Drop Off Location</Label>
+                            <Input id="dropoffLocation" value={form.dropoffLocation} onChange={handleChange} placeholder="Ending point (e.g., hotel name)" />
+                          </div>
+                          <div className="grid grid-cols-1 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="adults">Number of Adults</Label>
+                              <Input id="adults" type="number" min="0" value={form.adults} onChange={handleChange} placeholder="0" />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="children">Number of Children (Age)</Label>
+                              <Input id="children" type="text" value={form.children} onChange={handleChange} placeholder="e.g. 2 (5, 8 yrs)" />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="infants">Number of Infants</Label>
+                              <Input id="infants" type="number" min="0" value={form.infants} onChange={handleChange} placeholder="0" />
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="specialNotes">Special Notes</Label>
+                            <Textarea
+                              id="specialNotes"
+                              value={form.specialNotes}
+                              onChange={handleChange}
+                              placeholder="Any special requests or instructions..."
+                              rows={4}
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-2">
+                            <Label htmlFor="name">Name *</Label>
+                            <Input id="name" required value={form.name} onChange={handleChange} placeholder="Your full name" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="email">Email Address *</Label>
+                            <Input id="email" type="email" required value={form.email} onChange={handleChange} placeholder="your@email.com" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="whatsapp">WhatsApp Number</Label>
+                            <Input id="whatsapp" value={form.whatsapp} onChange={handleChange} placeholder="+94 76 553 3874" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="vehicle">Vehicle Type</Label>
+                            <Select value={form.vehicle} onValueChange={v => handleSelect('vehicle', v)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select vehicle type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="mini-car">Mini Car & Driver</SelectItem>
+                                <SelectItem value="sedan-car">Sedan Car & Driver</SelectItem>
+                                <SelectItem value="luxury-car">Luxury Car & Driver</SelectItem>
+                                <SelectItem value="suv">SUV & Driver</SelectItem>
+                                <SelectItem value="van">Van & Driver</SelectItem>
+                                <SelectItem value="luxury-van">Luxury Van & Driver</SelectItem>
+                                <SelectItem value="mini-coach">Mini Coach & Driver</SelectItem>
+                                <SelectItem value="luxury-coach">Luxury Coach & Driver</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="arrival">Arrival Date *</Label>
+                            <Input id="arrival" type="date" required value={form.arrival} onChange={handleChange} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="departure">Departure Date</Label>
+                            <Input id="departure" type="date" value={form.departure} onChange={handleChange} />
+                          </div>
+                          <div className="grid grid-cols-1 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="adults">Number of Adults (13+)</Label>
+                              <Input id="adults" type="number" min="0" value={form.adults} onChange={handleChange} placeholder="0" />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="children">Number of Children (6 to 12)</Label>
+                              <Input id="children" type="number" min="0" value={form.children} onChange={handleChange} placeholder="0" />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="infants">Number of Infants (0 to 5)</Label>
+                              <Input id="infants" type="number" min="0" value={form.infants} onChange={handleChange} placeholder="0" />
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="requirements">
+                              Describe your planned route, places you wish to visit, interests, or any special requirements... *
+                            </Label>
+                            <Textarea
+                              id="requirements"
+                              required
+                              value={form.requirements}
+                              onChange={handleChange}
+                              placeholder="Please describe your travel plans, interests, and any special requirements..."
+                              rows={4}
+                            />
+                          </div>
+                        </>
+                      )}
                       <Button className="w-full bg-secondary hover:bg-secondary/80" size="lg" type="submit" disabled={sending}>{sending ? "Sending..." : "Send Inquiry"}</Button>
                       {success && <p className="text-center text-green-600 mt-3">Booking request sent successfully!</p>}
                       {error && <p className="text-center text-red-600 mt-3">{error}</p>}
