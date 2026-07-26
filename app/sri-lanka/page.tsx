@@ -13,6 +13,10 @@ function Reveal({ children, className = "" }: { children: React.ReactNode; class
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     if (!ref.current) return;
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setVisible(true);
+      return;
+    }
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -20,7 +24,7 @@ function Reveal({ children, className = "" }: { children: React.ReactNode; class
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.01 });
     observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
