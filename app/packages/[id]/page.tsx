@@ -311,7 +311,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                     <CardTitle className="text-2xl">Package Details</CardTitle>
                   </CardHeader>
                   <CardContent className="prose prose-gray max-w-none">
-                    <div dangerouslySetInnerHTML={{ __html: packageData.detailedDescription }} className="space-y-4" />
+                    <div dangerouslySetInnerHTML={{ __html: packageData.detailedDescription }} />
                   </CardContent>
                 </Card>
               </Reveal>

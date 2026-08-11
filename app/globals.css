@@ -165,6 +165,38 @@
     margin: 0.5rem 0 !important;
     padding-left: 1.5rem !important;
   }
+
+  /* Style paragraphs inside prose editors and content areas nicely */
+  .prose p {
+    margin-top: 0 !important;
+    margin-bottom: 0.35rem !important;
+  }
+
+  .prose p:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  /* Keep manual breaks from database HTML neat and compact */
+  .prose br {
+    margin: 0 !important;
+    display: block;
+    content: "";
+    height: 0.25rem;
+  }
+
+  /* Collapse empty paragraphs that only contain a break tag (common in rich-text editors) to prevent massive vertical gaps */
+  .prose p:has(> br:only-child),
+  .prose p:has(> b:only-child > br:only-child),
+  .prose p:has(> strong:only-child > br:only-child),
+  .prose p:has(> i:only-child > br:only-child),
+  .prose p:has(> em:only-child > br:only-child) {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    display: block !important;
+    height: 1rem !important;
+  }
 }
 
 /* Pulse animation for chat button */
