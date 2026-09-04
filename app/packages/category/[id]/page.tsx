@@ -50,14 +50,18 @@ export default function CategoryPage({ params }: PageProps) {
       setLoading(true)
       const catRes = await fetch(`/api/category`)
       const categories = await catRes.json()
-      const found = categories.find((cat: any) => cat.id === categoryId)
+      const found = categories.find((cat: any) => cat.id === categoryId || cat.slug === categoryId)
       setCategory(found)
-      const pkgRes = await fetch(`/api/package`)
-      const allPackages = await pkgRes.json()
-      const filtered = allPackages
-        .filter((pkg: any) => pkg.categoryId === categoryId)
-        .sort((a: any, b: any) => Number(a.days) - Number(b.days))
-      setPackages(filtered)
+      if (found) {
+        const pkgRes = await fetch(`/api/package`)
+        const allPackages = await pkgRes.json()
+        const filtered = allPackages
+          .filter((pkg: any) => pkg.categoryId === found.id)
+          .sort((a: any, b: any) => Number(a.days) - Number(b.days))
+        setPackages(filtered)
+      } else {
+        setPackages([])
+      }
       setLoading(false)
     }
     fetchData()
@@ -144,7 +148,7 @@ export default function CategoryPage({ params }: PageProps) {
                         <div>
                           <span className="text-lg font-bold text-secondary">{pkg.price || "Contact for Pricing"}</span>
                         </div>
-                        <Link href={`/packages/${pkg.id}`}>
+                        <Link href={`/packages/${pkg.slug || pkg.id}`}>
                           <Button className="bg-secondary hover:bg-secondary/80">
                             View Details
                             <ArrowRight className="ml-2 h-4 w-4" />

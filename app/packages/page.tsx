@@ -151,7 +151,7 @@ export default function PackagesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {categories.map((category: any, idx) => (
                 <Reveal key={category.id} className={idx % 2 === 0 ? 'delay-75' : ''}>
-                  <Link href={`/packages/category/${category.id}`}>
+                  <Link href={`/packages/category/${category.slug || category.id}`}>
                     <Card className="pt-0 group overflow-hidden cursor-pointer h-full bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
                       <div className="relative h-48 w-full overflow-hidden">
                         <Image src={category.image || "/placeholder.svg"} alt={category.name} width={400} height={300} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />

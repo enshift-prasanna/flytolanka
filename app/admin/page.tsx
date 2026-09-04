@@ -46,6 +46,7 @@ const AdminPage: React.FC = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [categoryForm, setCategoryForm] = useState({
     name: "",
+    slug: "",
     description: "",
     image: "",
     defaultText: "",
@@ -53,6 +54,7 @@ const AdminPage: React.FC = () => {
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const [packageForm, setPackageForm] = useState({
     title: "",
+    slug: "",
     categoryId: "",
     days: "",
     price: "",
@@ -189,6 +191,7 @@ const AdminPage: React.FC = () => {
     if (res.ok) {
       setCategoryForm({
         name: "",
+        slug: "",
         description: "",
         image: "",
         defaultText: "",
@@ -202,6 +205,7 @@ const AdminPage: React.FC = () => {
   function handleCategoryEdit(cat: any) {
     setCategoryForm({
       name: cat.name,
+      slug: cat.slug || "",
       description: cat.description,
       image: cat.image || "",
       defaultText: cat.defaultText || "",
@@ -241,6 +245,7 @@ const AdminPage: React.FC = () => {
     if (res.ok) {
       setPackageForm({
         title: "",
+        slug: "",
         categoryId: "",
         days: "",
         price: "",
@@ -257,6 +262,7 @@ const AdminPage: React.FC = () => {
   function handlePackageEdit(pkg: any) {
     setPackageForm({
       title: pkg.title,
+      slug: pkg.slug || "",
       categoryId: pkg.categoryId,
       days: pkg.days,
       price: pkg.price || "",
@@ -498,10 +504,25 @@ const AdminPage: React.FC = () => {
                     <Label>Name</Label>
                     <Input
                       value={categoryForm.name}
-                      onChange={(e) =>
-                        setCategoryForm((f) => ({ ...f, name: e.target.value }))
-                      }
+                      onChange={(e) => {
+                        const name = e.target.value;
+                        setCategoryForm((f) => ({
+                          ...f,
+                          name,
+                          slug: editingCategory ? f.slug : name.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
+                        }));
+                      }}
                       required
+                    />
+                  </div>
+                  <div>
+                    <Label>URL Slug (Optional - auto-generated if left blank)</Label>
+                    <Input
+                      value={categoryForm.slug}
+                      onChange={(e) =>
+                        setCategoryForm((f) => ({ ...f, slug: e.target.value }))
+                      }
+                      placeholder="e.g. day-tours"
                     />
                   </div>
                   <div>
@@ -548,6 +569,7 @@ const AdminPage: React.FC = () => {
                         setEditingCategory(null);
                         setCategoryForm({
                           name: "",
+                          slug: "",
                           description: "",
                           image: "",
                           defaultText: "",
@@ -565,6 +587,7 @@ const AdminPage: React.FC = () => {
                       <tr>
                         <th className="px-4 py-2 border">Image</th>
                         <th className="px-4 py-2 border">Title</th>
+                        <th className="px-4 py-2 border">Slug</th>
                         <th className="px-4 py-2 border">Description</th>
                         <th className="px-4 py-2 border">Actions</th>
                       </tr>
@@ -584,6 +607,7 @@ const AdminPage: React.FC = () => {
                             )}
                           </td>
                           <td className="px-4 py-2 border">{cat.name}</td>
+                          <td className="px-4 py-2 border font-mono text-xs text-blue-600">{cat.slug || "-"}</td>
                           <td className="px-4 py-2 border">
                             {cat.description?.length > 50
                               ? cat.description.slice(0, 50) + "..."
@@ -626,10 +650,25 @@ const AdminPage: React.FC = () => {
                     <Label>Title</Label>
                     <Input
                       value={packageForm.title}
-                      onChange={(e) =>
-                        setPackageForm((f) => ({ ...f, title: e.target.value }))
-                      }
+                      onChange={(e) => {
+                        const title = e.target.value;
+                        setPackageForm((f) => ({
+                          ...f,
+                          title,
+                          slug: editingPackage ? f.slug : title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
+                        }));
+                      }}
                       required
+                    />
+                  </div>
+                  <div>
+                    <Label>URL Slug (Optional - auto-generated if left blank)</Label>
+                    <Input
+                      value={packageForm.slug}
+                      onChange={(e) =>
+                        setPackageForm((f) => ({ ...f, slug: e.target.value }))
+                      }
+                      placeholder="e.g. 7-days-cultural-triangle"
                     />
                   </div>
                   <div>
@@ -715,6 +754,7 @@ const AdminPage: React.FC = () => {
                         setEditingPackage(null);
                         setPackageForm({
                           title: "",
+                          slug: "",
                           categoryId: "",
                           days: "",
                           price: "",
@@ -735,6 +775,7 @@ const AdminPage: React.FC = () => {
                       <tr>
                         <th className="px-4 py-2 border">Image</th>
                         <th className="px-4 py-2 border">Title</th>
+                        <th className="px-4 py-2 border">Slug</th>
                         <th className="px-4 py-2 border">Price</th>
                         <th className="px-4 py-2 border">Short Description</th>
                         <th className="px-4 py-2 border">Actions</th>
@@ -755,6 +796,7 @@ const AdminPage: React.FC = () => {
                             )}
                           </td>
                           <td className="px-4 py-2 border">{pkg.title}</td>
+                          <td className="px-4 py-2 border font-mono text-xs text-blue-600">{pkg.slug || "-"}</td>
                           <td className="px-4 py-2 border">{pkg.price || "N/A"}</td>
                           <td className="px-4 py-2 border">
                             {pkg.shortDescription?.length > 50

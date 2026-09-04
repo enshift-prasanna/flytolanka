@@ -17,6 +17,7 @@ datasource db {
 // Category model
 model Category {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  slug        String?   @unique
   name        String
   description String
   image       String?
@@ -27,6 +28,7 @@ model Category {
 // Package model
 model Package {
   id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug                String?  @unique
   title               String
   categoryId          String
   days                String
