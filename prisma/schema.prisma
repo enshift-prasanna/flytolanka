@@ -37,6 +37,8 @@ model Package {
   detailedDescription String
   image               String?
   category            Category @relation(fields: [categoryId], references: [id])
+
+  @@index([categoryId])
 }
 
 

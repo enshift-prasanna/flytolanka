@@ -7,6 +7,7 @@ import { Clock, ArrowRight, Check, ArrowLeft } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { optimizeImage } from "@/lib/utils"
 
 import { useEffect, useState, useRef } from "react"
 
@@ -47,25 +48,28 @@ export default function CategoryPage({ params }: PageProps) {
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true)
-      const catRes = await fetch(`/api/category`)
-      const categories = await catRes.json()
-      const found = categories.find((cat: any) => cat.id === categoryId || cat.slug === categoryId)
-      setCategory(found)
-      if (found) {
-        const pkgRes = await fetch(`/api/package`)
-        const allPackages = await pkgRes.json()
-        const filtered = allPackages
-          .filter((pkg: any) => pkg.categoryId === found.id)
-          .sort((a: any, b: any) => Number(a.days) - Number(b.days))
-        setPackages(filtered)
-      } else {
-        setPackages([])
+      setLoading(true);
+      try {
+        const catRes = await fetch(`/api/category/${categoryId}`);
+        if (catRes.ok) {
+          const cat = await catRes.json();
+          setCategory(cat);
+          const sorted = (cat.packages || []).sort(
+            (a: any, b: any) => Number(a.days) - Number(b.days)
+          );
+          setPackages(sorted);
+        } else {
+          setCategory(null);
+          setPackages([]);
+        }
+      } catch {
+        setCategory(null);
+        setPackages([]);
       }
-      setLoading(false)
+      setLoading(false);
     }
-    fetchData()
-  }, [categoryId])
+    fetchData();
+  }, [categoryId]);
 
   useEffect(() => {
     const onScroll = () => setShowScrollTop(window.scrollY > 600)
@@ -84,7 +88,7 @@ export default function CategoryPage({ params }: PageProps) {
       <section className="relative overflow-hidden" id="top">
         <div className="relative h-[460px] lg:h-[520px]">
           <Image
-            src={category?.image || "/placeholder.svg"}
+            src={optimizeImage(category?.image, 1600)}
             alt={category?.name || "Category"}
             fill
             className="object-cover"
@@ -131,7 +135,7 @@ export default function CategoryPage({ params }: PageProps) {
                 <Reveal key={pkg.id} className={idx % 2 === 0 ? 'delay-75' : ''}>
                   <Card className="pt-0 group overflow-hidden h-full bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
                     <div className="relative h-48 w-full overflow-hidden">
-                      <Image src={pkg.image || "/placeholder.svg"} alt={pkg.title} width={600} height={400} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <Image src={optimizeImage(pkg.image, 600)} alt={pkg.title} width={600} height={400} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       <Badge className="absolute top-4 left-4 bg-secondary">{category?.name}</Badge>
                     </div>

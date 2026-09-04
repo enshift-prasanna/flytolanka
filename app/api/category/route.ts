@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@/lib/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import { generateUniqueCategorySlug } from "@/lib/slug";
-
-const prisma = new PrismaClient();
 
 export async function GET() {
   const categories = await prisma.category.findMany();

@@ -1,21 +1,49 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@/lib/generated/prisma";
+import { prisma } from "@/lib/prisma";
 import { generateUniquePackageSlug } from "@/lib/slug";
-
-const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const includeDetailed = searchParams.get("detailed") === "true";
+  const categoryId = searchParams.get("categoryId");
+
+  const where = categoryId ? { categoryId } : {};
+
   const packages = await prisma.package.findMany({
-    include: {
-      category: true
-    }
+    where,
+    select: includeDetailed
+      ? {
+          id: true,
+          slug: true,
+          title: true,
+          categoryId: true,
+          days: true,
+          price: true,
+          shortDescription: true,
+          detailedDescription: true,
+          image: true,
+          category: true,
+        }
+      : {
+          id: true,
+          slug: true,
+          title: true,
+          categoryId: true,
+          days: true,
+          price: true,
+          shortDescription: true,
+          image: true,
+          category: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+        },
   });
-  const result = includeDetailed
-    ? packages
-    : packages.map(({ detailedDescription, ...rest }) => rest);
-  return NextResponse.json(result);
+
+  return NextResponse.json(packages);
 }
 
 export async function POST(req: Request) {

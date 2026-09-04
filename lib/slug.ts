@@ -1,6 +1,4 @@
-import { PrismaClient } from "@/lib/generated/prisma";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 /**
  * Converts a text string into a clean, URL-friendly slug.

@@ -11,6 +11,7 @@ import { Clock, Users, Star, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { optimizeImage } from "@/lib/utils";
 
 // Lightweight reveal animation component (no textual content changes)
 function Reveal({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -158,7 +159,9 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
     async function fetchData() {
       const pkg = await fetchPackage(params.id);
       setPackageData(pkg);
-      if (pkg && pkg.categoryId) {
+      if (pkg?.category) {
+        setCategory(pkg.category);
+      } else if (pkg?.categoryId) {
         const res = await fetch(`/api/category/${pkg.categoryId}`);
         if (res.ok) {
           const cat = await res.json();
@@ -191,7 +194,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
       <section className="relative overflow-hidden" id="top">
         <div className="relative h-[460px] lg:h-[520px]">
           <Image
-            src={packageData.image || "/placeholder.svg"}
+            src={optimizeImage(packageData.image, 1600)}
             alt={packageData.title}
             fill
             className="object-cover"

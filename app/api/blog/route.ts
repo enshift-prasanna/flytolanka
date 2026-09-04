@@ -1,19 +1,24 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@/lib/generated/prisma";
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const includeContent = searchParams.get("includeContent") === "true";
 
-  const blogs = await prisma.blog.findMany();
-  const reversedBlogs = blogs.reverse(); // reverse order
+  const blogs = await prisma.blog.findMany({
+    orderBy: { createdAt: "desc" },
+    select: includeContent
+      ? undefined
+      : {
+          id: true,
+          title: true,
+          excerpt: true,
+          image: true,
+          createdAt: true,
+        },
+  });
 
-  const filteredBlogs = includeContent
-    ? reversedBlogs
-    : reversedBlogs.map(({ content, ...rest }) => rest);
-  
-  return NextResponse.json(filteredBlogs);
+  return NextResponse.json(blogs);
 }
 
 export async function POST(req: Request) {

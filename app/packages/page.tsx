@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Users, Star, Phone } from "lucide-react";
+import { optimizeImage } from "@/lib/utils";
 
 // Local Reveal animation (keeps existing content, only adds motion)
 function Reveal({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -154,7 +155,7 @@ export default function PackagesPage() {
                   <Link href={`/packages/category/${category.slug || category.id}`}>
                     <Card className="pt-0 group overflow-hidden cursor-pointer h-full bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
                       <div className="relative h-48 w-full overflow-hidden">
-                        <Image src={category.image || "/placeholder.svg"} alt={category.name} width={400} height={300} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                        <Image src={optimizeImage(category.image, 600)} alt={category.name} width={400} height={300} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                           {/* Removed colored line on hover */}
                       </div>
