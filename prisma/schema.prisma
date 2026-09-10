@@ -45,6 +45,7 @@ model Package {
 // Blog model
 model Blog {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug      String?  @unique
   title     String
   excerpt   String
   content   String
@@ -55,6 +56,7 @@ model Blog {
 // ThingsToDo model (copy of Blog)
 model ThingsToDo {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug      String?  @unique
   title     String
   excerpt   String
   content   String

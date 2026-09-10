@@ -66,6 +66,7 @@ const AdminPage: React.FC = () => {
   const [editingPackage, setEditingPackage] = useState<string | null>(null);
   const [blogForm, setBlogForm] = useState({
     title: "",
+    slug: "",
     excerpt: "",
     content: "",
     image: "",
@@ -75,6 +76,7 @@ const AdminPage: React.FC = () => {
   // Things to Do state
   const [thingsForm, setThingsForm] = useState({
     title: "",
+    slug: "",
     excerpt: "",
     content: "",
     image: "",
@@ -129,7 +131,7 @@ const AdminPage: React.FC = () => {
       ),
     });
     if (res.ok) {
-      setThingsForm({ title: "", excerpt: "", content: "", image: "" });
+      setThingsForm({ title: "", slug: "", excerpt: "", content: "", image: "" });
       setEditingThings(null);
       fetch("/api/things-to-do")
         .then((res) => res.json())
@@ -139,6 +141,7 @@ const AdminPage: React.FC = () => {
   function handleThingsEdit(item: any) {
     setThingsForm({
       title: item.title,
+      slug: item.slug || "",
       excerpt: item.excerpt,
       content: item.content,
       image: item.image || "",
@@ -303,7 +306,7 @@ const AdminPage: React.FC = () => {
       ),
     });
     if (res.ok) {
-      setBlogForm({ title: "", excerpt: "", content: "", image: "" });
+      setBlogForm({ title: "", slug: "", excerpt: "", content: "", image: "" });
       setEditingBlog(null);
       fetch("/api/blog")
         .then((res) => res.json())
@@ -313,6 +316,7 @@ const AdminPage: React.FC = () => {
   function handleBlogEdit(blog: any) {
     setBlogForm({
       title: blog.title,
+      slug: blog.slug || "",
       excerpt: blog.excerpt,
       content: blog.content,
       image: blog.image || "",
@@ -391,10 +395,32 @@ const AdminPage: React.FC = () => {
                     <Label>Title</Label>
                     <Input
                       value={thingsForm.title}
-                      onChange={(e) =>
-                        setThingsForm((f) => ({ ...f, title: e.target.value }))
-                      }
+                      onChange={(e) => {
+                        const title = e.target.value;
+                        setThingsForm((f) => ({
+                          ...f,
+                          title,
+                          slug: editingThings
+                            ? f.slug
+                            : title
+                                .toLowerCase()
+                                .trim()
+                                .replace(/[^\w\s-]/g, "")
+                                .replace(/[\s_-]+/g, "-")
+                                .replace(/^-+|-+$/g, ""),
+                        }));
+                      }}
                       required
+                    />
+                  </div>
+                  <div>
+                    <Label>URL Slug (Optional - auto-generated if left blank)</Label>
+                    <Input
+                      value={thingsForm.slug}
+                      onChange={(e) =>
+                        setThingsForm((f) => ({ ...f, slug: e.target.value }))
+                      }
+                      placeholder="e.g. things-to-do-in-colombo"
                     />
                   </div>
                   <div>
@@ -438,6 +464,7 @@ const AdminPage: React.FC = () => {
                         setEditingThings(null);
                         setThingsForm({
                           title: "",
+                          slug: "",
                           excerpt: "",
                           content: "",
                           image: "",
@@ -454,6 +481,7 @@ const AdminPage: React.FC = () => {
                     <thead>
                       <tr>
                         <th className="px-4 py-2 border">Title</th>
+                        <th className="px-4 py-2 border">Slug</th>
                         <th className="px-4 py-2 border">Excerpt</th>
                         <th className="px-4 py-2 border">Actions</th>
                       </tr>
@@ -462,6 +490,9 @@ const AdminPage: React.FC = () => {
                       {things.map((item) => (
                         <tr key={item.id}>
                           <td className="px-4 py-2 border">{item.title}</td>
+                          <td className="px-4 py-2 border font-mono text-xs text-blue-600">
+                            {item.slug || "-"}
+                          </td>
                           <td className="px-4 py-2 border">
                             {item.excerpt?.length > 50
                               ? item.excerpt.slice(0, 50) + "..."
@@ -840,10 +871,32 @@ const AdminPage: React.FC = () => {
                     <Label>Title</Label>
                     <Input
                       value={blogForm.title}
-                      onChange={(e) =>
-                        setBlogForm((f) => ({ ...f, title: e.target.value }))
-                      }
+                      onChange={(e) => {
+                        const title = e.target.value;
+                        setBlogForm((f) => ({
+                          ...f,
+                          title,
+                          slug: editingBlog
+                            ? f.slug
+                            : title
+                                .toLowerCase()
+                                .trim()
+                                .replace(/[^\w\s-]/g, "")
+                                .replace(/[\s_-]+/g, "-")
+                                .replace(/^-+|-+$/g, ""),
+                        }));
+                      }}
                       required
+                    />
+                  </div>
+                  <div>
+                    <Label>URL Slug (Optional - auto-generated if left blank)</Label>
+                    <Input
+                      value={blogForm.slug}
+                      onChange={(e) =>
+                        setBlogForm((f) => ({ ...f, slug: e.target.value }))
+                      }
+                      placeholder="e.g. travel-guide-sri-lanka"
                     />
                   </div>
                   <div>
@@ -884,6 +937,7 @@ const AdminPage: React.FC = () => {
                         setEditingBlog(null);
                         setBlogForm({
                           title: "",
+                          slug: "",
                           excerpt: "",
                           content: "",
                           image: "",
@@ -900,6 +954,7 @@ const AdminPage: React.FC = () => {
                     <thead>
                       <tr>
                         <th className="px-4 py-2 border">Title</th>
+                        <th className="px-4 py-2 border">Slug</th>
                         <th className="px-4 py-2 border">Excerpt</th>
                         <th className="px-4 py-2 border">Actions</th>
                       </tr>
@@ -908,6 +963,9 @@ const AdminPage: React.FC = () => {
                       {blogs.map((blog) => (
                         <tr key={blog.id}>
                           <td className="px-4 py-2 border">{blog.title}</td>
+                          <td className="px-4 py-2 border font-mono text-xs text-blue-600">
+                            {blog.slug || "-"}
+                          </td>
                           <td className="px-4 py-2 border">
                             {blog.excerpt?.length > 50
                               ? blog.excerpt.slice(0, 50) + "..."

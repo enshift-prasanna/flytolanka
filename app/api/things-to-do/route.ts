@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { generateUniqueThingsToDoSlug } from "@/lib/slug";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -10,6 +11,7 @@ export async function GET(request: Request) {
       ? undefined
       : {
           id: true,
+          slug: true,
           title: true,
           excerpt: true,
           image: true,
@@ -21,13 +23,19 @@ export async function GET(request: Request) {
 
 export async function POST(req: Request) {
   const data = await req.json();
-  const thingsToDo = await prisma.thingsToDo.create({ data });
+  const slug = await generateUniqueThingsToDoSlug(data.slug || data.title);
+  const thingsToDo = await prisma.thingsToDo.create({
+    data: { ...data, slug },
+  });
   return NextResponse.json(thingsToDo);
 }
 
 export async function PUT(req: Request) {
   const data = await req.json();
   const { id, ...rest } = data;
+  if (rest.title || rest.slug) {
+    rest.slug = await generateUniqueThingsToDoSlug(rest.slug || rest.title, id);
+  }
   const thingsToDo = await prisma.thingsToDo.update({
     where: { id },
     data: rest,

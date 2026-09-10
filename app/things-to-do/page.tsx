@@ -131,7 +131,7 @@ export default function ThingsToDoPage() {
                   className={idx % 2 === 0 ? "delay-75" : ""}
                 >
                   <Link
-                    href={`/things-to-do/${post.id}`}
+                    href={`/things-to-do/${post.slug || post.id}`}
                     className="block h-full"
                   >
                     <Card className="pt-0 group overflow-hidden h-full bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">

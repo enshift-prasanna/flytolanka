@@ -114,7 +114,7 @@ export default function SriLankaPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {posts.map((post: any, idx) => (
                 <Reveal key={post.id} className={idx % 2 === 0 ? "delay-75" : ""}>
-                  <Link href={`/sri-lanka/${post.id}`} className="block h-full">
+                  <Link href={`/sri-lanka/${post.slug || post.id}`} className="block h-full">
                     <Card className="pt-0 group overflow-hidden h-full bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
                       <div className="relative h-48 w-full overflow-hidden">
                         <Image

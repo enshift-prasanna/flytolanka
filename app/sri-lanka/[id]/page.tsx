@@ -139,14 +139,14 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
     fetch("/api/blog?includeContent=false")
       .then((res) => res.json())
       .then((data) => {
-        // Exclude current post and sort by publishedAt desc
+        // Exclude current post and sort by publishedAt/createdAt desc
         const filtered = Array.isArray(data)
           ? data
-              .filter((b: any) => b.id !== params.id)
+              .filter((b: any) => b.id !== params.id && b.slug !== params.id)
               .sort(
                 (a: any, b: any) =>
-                  new Date(b.publishedAt).getTime() -
-                  new Date(a.publishedAt).getTime()
+                  new Date(b.createdAt || b.publishedAt).getTime() -
+                  new Date(a.createdAt || a.publishedAt).getTime()
               )
           : [];
         setRecentBlogs(filtered.slice(0, 4));
@@ -315,7 +315,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                         {recentBlogs.map((blog) => (
                           <li key={blog.id}>
                             <Link
-                              href={`/sri-lanka/${blog.id}`}
+                              href={`/sri-lanka/${blog.slug || blog.id}`}
                               className="flex gap-3 items-center group"
                             >
                               <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 relative">

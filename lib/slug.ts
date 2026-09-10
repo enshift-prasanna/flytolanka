@@ -74,3 +74,63 @@ export async function generateUniqueCategorySlug(
   }
 }
 
+/**
+ * Generates a unique blog slug. If a blog with the slug already exists,
+ * appends -1, -2, etc. until a unique slug is found.
+ */
+export async function generateUniqueBlogSlug(
+  title: string,
+  currentBlogId?: string
+): Promise<string> {
+  const baseSlug = slugify(title) || "blog";
+  let uniqueSlug = baseSlug;
+  let counter = 1;
+
+  while (true) {
+    const existing = await (prisma.blog as any).findFirst({
+      where: {
+        slug: uniqueSlug,
+        ...(currentBlogId ? { id: { not: currentBlogId } } : {}),
+      },
+      select: { id: true },
+    });
+
+    if (!existing) {
+      return uniqueSlug;
+    }
+
+    uniqueSlug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+}
+
+/**
+ * Generates a unique things-to-do slug. If an item with the slug already exists,
+ * appends -1, -2, etc. until a unique slug is found.
+ */
+export async function generateUniqueThingsToDoSlug(
+  title: string,
+  currentThingsToDoId?: string
+): Promise<string> {
+  const baseSlug = slugify(title) || "activity";
+  let uniqueSlug = baseSlug;
+  let counter = 1;
+
+  while (true) {
+    const existing = await (prisma.thingsToDo as any).findFirst({
+      where: {
+        slug: uniqueSlug,
+        ...(currentThingsToDoId ? { id: { not: currentThingsToDoId } } : {}),
+      },
+      select: { id: true },
+    });
+
+    if (!existing) {
+      return uniqueSlug;
+    }
+
+    uniqueSlug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+}
+

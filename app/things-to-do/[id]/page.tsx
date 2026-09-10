@@ -142,7 +142,7 @@ export default function ThingsToDoPostPage({
       .then((res) => res.json())
       .then((data) => {
         const filtered = Array.isArray(data)
-          ? data.filter((b: any) => b.id !== params.id)
+          ? data.filter((b: any) => b.id !== params.id && b.slug !== params.id)
           : [];
         setRecentThings(filtered.slice(0, 4));
         setRecentLoading(false);
@@ -291,7 +291,7 @@ export default function ThingsToDoPostPage({
                         {recentThings.map((item) => (
                           <li key={item.id}>
                             <Link
-                              href={`/things-to-do/${item.id}`}
+                              href={`/things-to-do/${item.slug || item.id}`}
                               className="flex gap-3 items-center group"
                             >
                               <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 relative">
