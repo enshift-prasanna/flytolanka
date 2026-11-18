@@ -33,6 +33,7 @@ model Package {
   categoryId          String
   days                String
   price               String?
+  pricingTiers        Json?
   shortDescription    String
   detailedDescription String
   image               String?
@@ -69,4 +70,33 @@ model Vehicle {
   id    String  @id @default(auto()) @map("_id") @db.ObjectId
   title String
   image String?
+}
+
+// Booking model
+model Booking {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  bookingRef     String   @unique
+  clerkUserId    String?
+  customerName   String
+  customerEmail  String
+  customerPhone  String
+  country        String?
+  packageId      String?
+  packageName    String
+  arrivalDate    String
+  departureDate  String?
+  adults         Int
+  children       Int      @default(0)
+  infants        Int      @default(0)
+  adultTotal     Float?
+  kidTotal       Float?
+  infantTotal    Float?
+  totalPrice     Float?
+  status         String   @default("PENDING")
+  specialNotes   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([clerkUserId])
+  @@index([customerEmail])
 }

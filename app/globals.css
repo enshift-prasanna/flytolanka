@@ -124,6 +124,20 @@
   body {
     @apply bg-background text-foreground;
   }
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"] {
+    cursor: pointer !important;
+  }
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  input[type="button"]:disabled,
+  input[type="submit"]:disabled,
+  input[type="reset"]:disabled {
+    cursor: not-allowed !important;
+  }
   h1, h2 {
     font-family: 'Poppins', sans-serif !important;
     font-weight: 600;

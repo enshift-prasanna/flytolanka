@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Local lightweight reveal animation (no textual content changes)
 function Reveal({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -84,9 +85,6 @@ export default function SriLankaPage() {
             <div className="container mx-auto px-4 lg:px-24 flex flex-col items-center">
               <Reveal>
                 <div className="max-w-3xl text-center text-white mx-auto">
-                  <div className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm backdrop-blur-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 transition-colors mb-5">
-                    🌴 Explore Sri Lanka
-                  </div>
                   <h1 className="text-4xl lg:text-5xl font-bold mb-5 leading-tight tracking-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]">
                     Discover the Pearl of the Indian Ocean
                   </h1>
@@ -109,7 +107,27 @@ export default function SriLankaPage() {
         </div>
         <div className="relative container mx-auto lg:px-24 px-4">
           {loading ? (
-            <Reveal className="text-center py-20 text-gray-600">Loading articles...</Reveal>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="overflow-hidden bg-white border border-gray-100 rounded-2xl shadow-sm p-0 flex flex-col"
+                >
+                  <Skeleton className="h-48 w-full rounded-t-2xl rounded-b-none" />
+                  <div className="p-6 space-y-3 flex-1 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-5/6" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-4/5" />
+                    </div>
+                    <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {posts.map((post: any, idx) => (

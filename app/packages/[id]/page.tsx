@@ -12,6 +12,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { optimizeImage } from "@/lib/utils";
+import { calculatePackagePrice } from "@/lib/pricing";
+import { useUser } from "@clerk/nextjs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Lightweight reveal animation component (no textual content changes)
 function Reveal({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -55,6 +58,7 @@ async function fetchPackage(id: string) {
 }
 
 export default function PackageDetailPage({ params }: { params: { id: string } }) {
+  const { user, isSignedIn } = useUser();
   const [packageData, setPackageData] = useState<any>(null);
   const [category, setCategory] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -81,6 +85,53 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
+  // Check if current package is a Honeymoon tour
+  const isHoneymoon = Boolean(
+    category?.slug === "honeymoon-tours" ||
+    category?.name?.toLowerCase().includes("honeymoon") ||
+    packageData?.categoryId === "68babf3c85d85b76f41bcfe5"
+  );
+
+  // Auto-fill customer details if signed in via Clerk
+  useEffect(() => {
+    if (isSignedIn && user) {
+      setForm((prev) => ({
+        ...prev,
+        name: prev.name || user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+        email: prev.email || user.primaryEmailAddress?.emailAddress || '',
+      }));
+    }
+  }, [isSignedIn, user]);
+
+  // For Honeymoon tours, count is fixed to 2 Adults with no children/infants
+  const effectiveAdults = isHoneymoon ? 2 : (parseInt(form.adults || '0', 10) || 0);
+  const effectiveChildren = isHoneymoon ? 0 : (parseInt(form.children || '0', 10) || 0);
+  const effectiveInfants = isHoneymoon ? 0 : (parseInt(form.infants || '0', 10) || 0);
+
+  // Fallback couple price from packageData.price if pricingTiers not configured
+  const fallbackHoneymoonPrice = isHoneymoon && packageData?.price
+    ? parseFloat(String(packageData.price).replace(/,/g, '').replace(/[^0-9.]/g, '')) || 0
+    : 0;
+
+  // Calculate live dynamic price based on adults, children, and infants
+  let estimatedPricing = calculatePackagePrice(
+    packageData?.pricingTiers,
+    effectiveAdults,
+    effectiveChildren,
+    effectiveInfants
+  );
+
+  // If Honeymoon and no tiered pricing was found, use the package display price
+  if (isHoneymoon && (!estimatedPricing.hasPricing || estimatedPricing.grandTotal === 0) && fallbackHoneymoonPrice > 0) {
+    estimatedPricing = {
+      adultTotal: fallbackHoneymoonPrice,
+      kidTotal: 0,
+      infantTotal: 0,
+      grandTotal: fallbackHoneymoonPrice,
+      hasPricing: true,
+    };
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
@@ -94,30 +145,47 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
     setSuccess(false);
 
     const isDayTour = packageData?.categoryId === "68babf3c85d85b76f41bcfe6";
+    const pricingPayload = estimatedPricing.hasPricing ? {
+      totalPrice: estimatedPricing.grandTotal,
+      adultTotal: estimatedPricing.adultTotal,
+      kidTotal: estimatedPricing.kidTotal,
+      infantTotal: estimatedPricing.infantTotal,
+      'Estimated Total Price': `$${estimatedPricing.grandTotal} USD`,
+      ...(isHoneymoon ? { 'Tour Type': 'Honeymoon (Couple - 2 Adults)' } : {}),
+    } : {};
+
+    const adultDisplay = isHoneymoon ? '2 (Couple)' : (form.adults || '0');
+    const childDisplay = isHoneymoon ? '0 (Not applicable)' : (form.children || '0');
+    const infantDisplay = isHoneymoon ? '0 (Not applicable)' : (form.infants || '0');
+
     const emailData = isDayTour ? {
       package: packageData.title,
+      packageId: packageData.id,
       'Name': form.name,
       'Email': form.email,
       'Phone / WhatsApp': form.phone,
       'Preferred Contact Method': form.contactMethod || 'Not specified',
       'Pick Up Location': form.pickupLocation || 'Not specified',
       'Drop Off Location': form.dropoffLocation || 'Not specified',
-      'Number of Adults': form.adults || '0',
-      'Number of Children (Age)': form.children || '0',
-      'Number of Infants': form.infants || '0',
-      'Special Notes': form.specialNotes || 'None'
+      'Number of Adults': adultDisplay,
+      'Number of Children (Age)': childDisplay,
+      'Number of Infants': infantDisplay,
+      'Special Notes': form.specialNotes || 'None',
+      ...pricingPayload,
     } : {
       package: packageData.title,
+      packageId: packageData.id,
       'Name': form.name,
       'Email': form.email,
       'WhatsApp Number': form.whatsapp,
       'Vehicle Type': form.vehicle || 'Not specified',
       'Arrival Date': form.arrival,
       'Departure Date': form.departure || 'Not specified',
-      'Number of Adults (13+)': form.adults || '0',
-      'Number of Children (6 to 12)': form.children || '0',
-      'Number of Infants (0 to 5)': form.infants || '0',
-      'Special Requirements': form.requirements
+      'Number of Adults (13+)': adultDisplay,
+      'Number of Children (6 to 12)': childDisplay,
+      'Number of Infants (0 to 5)': infantDisplay,
+      'Special Requirements': form.requirements,
+      ...pricingPayload,
     };
 
     try {
@@ -182,7 +250,71 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
   }, []);
 
   if (loading) {
-    return <div className="container mx-auto px-4 lg:px-24 py-16 text-center">Loading package details...</div>;
+    return (
+      <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+        <section className="relative overflow-hidden bg-primary/95 text-white py-16 lg:py-24">
+          <div className="container mx-auto px-4 lg:px-24">
+            <div className="max-w-4xl space-y-4">
+              <Skeleton className="h-8 w-24 rounded-full bg-white/20" />
+              <Skeleton className="h-10 lg:h-14 w-3/4 bg-white/25" />
+              <Skeleton className="h-5 w-full max-w-2xl bg-white/15" />
+              <Skeleton className="h-5 w-4/5 bg-white/15" />
+              <div className="flex items-center gap-4 pt-2">
+                <Skeleton className="h-7 w-28 rounded-full bg-white/20" />
+                <Skeleton className="h-7 w-36 rounded-full bg-white/20" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-12 lg:py-16">
+          <div className="container mx-auto px-4 lg:px-24">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+              <div className="lg:col-span-2 space-y-8">
+                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm space-y-4">
+                  <Skeleton className="h-7 w-48 mb-2" />
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <Skeleton className="h-20 rounded-xl" />
+                    <Skeleton className="h-20 rounded-xl" />
+                    <Skeleton className="h-20 rounded-xl" />
+                    <Skeleton className="h-20 rounded-xl" />
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm space-y-4">
+                  <Skeleton className="h-7 w-56" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                  <Skeleton className="h-4 w-4/6" />
+                </div>
+              </div>
+
+              <div className="lg:col-span-1">
+                <div className="bg-secondary/90 rounded-2xl p-6 shadow-xl space-y-4">
+                  <Skeleton className="h-7 w-48 mx-auto bg-white/25 mb-4" />
+                  <div className="space-y-3">
+                    <Skeleton className="h-9 w-full bg-white/20 rounded-lg" />
+                    <Skeleton className="h-9 w-full bg-white/20 rounded-lg" />
+                    <div className="grid grid-cols-2 gap-2">
+                      <Skeleton className="h-9 w-full bg-white/20 rounded-lg" />
+                      <Skeleton className="h-9 w-full bg-white/20 rounded-lg" />
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <Skeleton className="h-9 w-full bg-white/20 rounded-lg" />
+                      <Skeleton className="h-9 w-full bg-white/20 rounded-lg" />
+                      <Skeleton className="h-9 w-full bg-white/20 rounded-lg" />
+                    </div>
+                    <Skeleton className="h-16 w-full bg-white/20 rounded-lg" />
+                    <Skeleton className="h-12 w-full bg-yellow-400/80 rounded-full mt-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
   }
   if (!packageData || packageData.error) {
     notFound();
@@ -380,20 +512,29 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                             <Label htmlFor="dropoffLocation">Drop Off Location</Label>
                             <Input id="dropoffLocation" value={form.dropoffLocation} onChange={handleChange} placeholder="Ending point (e.g., hotel name)" />
                           </div>
-                          <div className="grid grid-cols-1 gap-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="adults">Number of Adults</Label>
-                              <Input id="adults" type="number" min="0" value={form.adults} onChange={handleChange} placeholder="0" />
+                          {isHoneymoon ? (
+                            <div className="p-3.5 bg-rose-50/80 border border-rose-200 rounded-xl space-y-1">
+                              <div className="flex items-center gap-2 text-rose-900 font-semibold text-sm">
+                                <span className="text-base">💍</span>
+                                <span>Exclusively for 2 Adults (Couple)</span>
+                              </div>
                             </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="children">Number of Children (Age)</Label>
-                              <Input id="children" type="text" value={form.children} onChange={handleChange} placeholder="e.g. 2 (5, 8 yrs)" />
+                          ) : (
+                            <div className="grid grid-cols-1 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="adults">Number of Adults</Label>
+                                <Input id="adults" type="number" min="0" value={form.adults} onChange={handleChange} placeholder="0" />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="children">Number of Children (Age)</Label>
+                                <Input id="children" type="text" value={form.children} onChange={handleChange} placeholder="e.g. 2 (5, 8 yrs)" />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="infants">Number of Infants</Label>
+                                <Input id="infants" type="number" min="0" value={form.infants} onChange={handleChange} placeholder="0" />
+                              </div>
                             </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="infants">Number of Infants</Label>
-                              <Input id="infants" type="number" min="0" value={form.infants} onChange={handleChange} placeholder="0" />
-                            </div>
-                          </div>
+                          )}
                           <div className="space-y-2">
                             <Label htmlFor="specialNotes">Special Notes</Label>
                             <Textarea
@@ -445,20 +586,28 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                             <Label htmlFor="departure">Departure Date</Label>
                             <Input id="departure" type="date" value={form.departure} onChange={handleChange} />
                           </div>
-                          <div className="grid grid-cols-1 gap-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="adults">Number of Adults (13+)</Label>
-                              <Input id="adults" type="number" min="0" value={form.adults} onChange={handleChange} placeholder="0" />
+                          {isHoneymoon ? (
+                            <div className="p-3.5 bg-rose-50/80 border border-rose-200 rounded-xl space-y-1">
+                              <div className="flex items-center gap-2 text-rose-900 font-semibold text-sm">
+                                <span>Exclusively for 2 Adults (Couple)</span>
+                              </div>
                             </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="children">Number of Children (6 to 12)</Label>
-                              <Input id="children" type="number" min="0" value={form.children} onChange={handleChange} placeholder="0" />
+                          ) : (
+                            <div className="grid grid-cols-1 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="adults">Number of Adults (13+)</Label>
+                                <Input id="adults" type="number" min="0" value={form.adults} onChange={handleChange} placeholder="0" />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="children">Number of Children (6 to 12)</Label>
+                                <Input id="children" type="number" min="0" value={form.children} onChange={handleChange} placeholder="0" />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="infants">Number of Infants (0 to 5)</Label>
+                                <Input id="infants" type="number" min="0" value={form.infants} onChange={handleChange} placeholder="0" />
+                              </div>
                             </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="infants">Number of Infants (0 to 5)</Label>
-                              <Input id="infants" type="number" min="0" value={form.infants} onChange={handleChange} placeholder="0" />
-                            </div>
-                          </div>
+                          )}
                           <div className="space-y-2">
                             <Label htmlFor="requirements">
                               Describe your planned route, places you wish to visit, interests, or any special requirements... *
@@ -474,6 +623,43 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                           </div>
                         </>
                       )}
+                      {/* Live Calculated Price Breakdown */}
+                      {estimatedPricing.hasPricing && (
+                        <div className="bg-emerald-50/90 border border-emerald-200 rounded-xl p-4 text-center space-y-1">
+                          <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wider">
+                            {isHoneymoon ? "Estimated Price per Couple (2 Adults)" : "Estimated Package Price"}
+                          </span>
+                          <div className="text-3xl font-extrabold text-emerald-700">
+                            ${estimatedPricing.grandTotal} USD
+                          </div>
+                          {isHoneymoon ? (
+                            <div className="text-xs text-emerald-700 pt-1">
+                              <span className="bg-white px-2.5 py-0.5 rounded border border-emerald-200">
+                                Couple Package Rate (2 Adults)
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="text-xs text-emerald-700 pt-1 flex flex-wrap items-center justify-center gap-2">
+                              {estimatedPricing.adultTotal > 0 && (
+                                <span className="bg-white px-2 py-0.5 rounded border border-emerald-200">
+                                  {form.adults} {Number(form.adults) === 1 ? 'Adult' : 'Adults'}: ${estimatedPricing.adultTotal}
+                                </span>
+                              )}
+                              {estimatedPricing.kidTotal > 0 && (
+                                <span className="bg-white px-2 py-0.5 rounded border border-emerald-200">
+                                  {form.children} {Number(form.children) === 1 ? 'Child' : 'Children'}: ${estimatedPricing.kidTotal}
+                                </span>
+                              )}
+                              {estimatedPricing.infantTotal > 0 && (
+                                <span className="bg-white px-2 py-0.5 rounded border border-emerald-200">
+                                  {form.infants} {Number(form.infants) === 1 ? 'Infant' : 'Infants'}: ${estimatedPricing.infantTotal}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
                       <Button className="w-full bg-secondary hover:bg-secondary/80" size="lg" type="submit" disabled={sending}>{sending ? "Sending..." : "Send Inquiry"}</Button>
                       {success && <p className="text-center text-green-600 mt-3">Booking request sent successfully!</p>}
                       {error && <p className="text-center text-red-600 mt-3">{error}</p>}

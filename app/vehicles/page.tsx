@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import Image from "next/image"
+import { Skeleton } from "@/components/ui/skeleton"
 
 // Local Reveal animation (mirrors homepage style)
 function Reveal({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -84,6 +85,8 @@ const features = [
 export default function VehiclesPage() {
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [vehicles, setVehicles] = useState<Array<{ id: string; title: string; image?: string }>>([])
+  const [vehiclesLoading, setVehiclesLoading] = useState(true)
+
   useEffect(() => {
     const onScroll = () => setShowScrollTop(window.scrollY > 500)
     window.addEventListener('scroll', onScroll)
@@ -99,6 +102,8 @@ export default function VehiclesPage() {
         setVehicles(data)
       } catch (err) {
         setVehicles([])
+      } finally {
+        setVehiclesLoading(false)
       }
     }
     fetchVehicles()
@@ -179,7 +184,6 @@ export default function VehiclesPage() {
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="max-w-3xl w-full text-center mx-auto px-4">
               <Reveal>
-                <div className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-sm font-medium text-white mb-6">🚗 Premium Fleet & Professional Drivers</div>
                 <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
                   Hire Your <span className="text-yellow-300">Private Driver & Vehicle</span> in Sri Lanka
                 </h1>
@@ -195,7 +199,19 @@ export default function VehiclesPage() {
       <section className="py-20">
         <div className="container mx-auto px-4 lg:px-24">
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8">
-            {vehicles.length === 0 ? (
+            {vehiclesLoading ? (
+              Array.from({ length: 4 }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="relative bg-white border border-gray-100 rounded-2xl shadow-md overflow-hidden h-64 flex flex-col justify-end"
+                >
+                  <Skeleton className="absolute inset-0 w-full h-full rounded-2xl" />
+                  <div className="relative z-10 p-4">
+                    <Skeleton className="h-6 w-3/4 mx-auto bg-black/40 rounded" />
+                  </div>
+                </div>
+              ))
+            ) : vehicles.length === 0 ? (
               <div className="col-span-full text-center text-gray-500 py-10">No vehicles found.</div>
             ) : (
               vehicles.map((vehicle, i) => (

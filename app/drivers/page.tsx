@@ -124,9 +124,6 @@ export default function DriversPage() {
             <div className="container mx-auto px-4 lg:px-24 flex flex-col items-center">
               <Reveal>
                 <div className="max-w-3xl text-center text-white mx-auto">
-                  <div className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm backdrop-blur-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 transition-colors mb-5">
-                    👨‍✈️ Professional Chauffeur Guides
-                  </div>
                   <h1 className="text-4xl lg:text-5xl font-bold mb-5 leading-tight tracking-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]">
                     Our Trusted <span className="text-yellow-300">Driver Guides</span>
                   </h1>

@@ -8,6 +8,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { optimizeImage } from "@/lib/utils"
+import { Skeleton } from "@/components/ui/skeleton"
 
 import { useEffect, useState, useRef } from "react"
 
@@ -128,7 +129,34 @@ export default function CategoryPage({ params }: PageProps) {
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-slate-200/30 rounded-full blur-3xl" />
         <div className="relative container mx-auto px-4 lg:px-24">
           {loading ? (
-            <Reveal className="text-center py-16">Loading packages...</Reveal>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="overflow-hidden bg-white border border-gray-100 rounded-2xl shadow-sm p-0 flex flex-col"
+                >
+                  <Skeleton className="h-48 w-full rounded-t-2xl rounded-b-none" />
+                  <div className="p-6 space-y-3 flex-1 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Skeleton className="h-6 w-3/4" />
+                        <Skeleton className="h-5 w-16 rounded-full" />
+                      </div>
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-4/5" />
+                      <div className="flex items-center gap-2 pt-1">
+                        <Skeleton className="h-4 w-4 rounded-full" />
+                        <Skeleton className="h-4 w-20" />
+                      </div>
+                    </div>
+                    <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+                      <Skeleton className="h-6 w-28" />
+                      <Skeleton className="h-9 w-28 rounded-lg" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : packages.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {packages.map((pkg: any, idx: number) => (

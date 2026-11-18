@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Reusable reveal animation wrapper
 function Reveal({
@@ -53,6 +54,7 @@ function Reveal({
 export default function HomePage() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [vehicles, setVehicles] = useState<any[]>([]);
+  const [vehiclesLoading, setVehiclesLoading] = useState(true);
 
   // Booking Form State
   const [form, setForm] = useState({
@@ -141,14 +143,15 @@ export default function HomePage() {
     fetch("/api/vehicle")
       .then((res) => res.json())
       .then((data) => setVehicles(Array.isArray(data) ? data : []))
-      .catch(() => setVehicles([]));
+      .catch(() => setVehicles([]))
+      .finally(() => setVehiclesLoading(false));
   }, []);
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 [scrollbar-width:thin] [scrollbar-color:hsl(var(--primary))_#e0f2fe]">
       {/* Hero Section */}
       <section
         id="hero"
-        className="relative bg-gradient-to-br from-primary via-primary/90 to-primary/80 py-4 lg:py-12 overflow-hidden"
+        className="relative bg-gradient-to-br from-primary via-primary/90 to-primary/80 py-4 lg:pt-8 lg:pb-12 overflow-hidden"
       >
         {/* Animated subtle beams */}
         <div className="pointer-events-none absolute inset-0">
@@ -158,18 +161,10 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[url('/modern-luxury-car-in-sri-lanka-with-palm-trees-and.png')] bg-cover bg-center opacity-10"></div>
         {/* Smooth transition to next section */}
         <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent via-white/5 to-white/20 pointer-events-none"></div>
-        {/* Floating mini nav
-        <nav className="hidden md:flex gap-4 absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-md rounded-full px-6 py-2 text-sm font-medium border border-white/20 shadow-lg">
-          <a href="#services" className="text-white/80 hover:text-yellow-300 transition">Services</a>
-          <a href="#fleet" className="text-white/80 hover:text-yellow-300 transition">Fleet</a>
-          <a href="#awards" className="text-white/80 hover:text-yellow-300 transition">Awards</a>
-          <a href="#tours" className="text-white/80 hover:text-yellow-300 transition">Tours</a>
-          <a href="#contact" className="text-white/80 hover:text-yellow-300 transition">Contact</a>
-        </nav> */}
         <div className="relative container mx-auto px-4 lg:px-24">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
             <Reveal className="relative delay-150 lg:col-span-5">
-              <div className="bg-secondary bg-opacity-95 border border-white/20 rounded-2xl p-6 lg:p-8 shadow-xl text-white">
+              <div className="bg-secondary bg-opacity-95 border border-white/20 rounded-2xl p-6 lg:p-7 shadow-xl text-white">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <h2 className="text-xl font-bold text-yellow-300 text-center tracking-tight">
                     Book your Sri Lanka Tour
@@ -329,15 +324,11 @@ export default function HomePage() {
                 </form>
               </div>
             </Reveal>
-            <Reveal className="space-y-8 text-white lg:col-span-7 mt-12 lg:mt-0">
+            <Reveal className="space-y-8 text-white lg:col-span-7 mt-5 lg:mt-0">
               <div className="space-y-4">
-                <div className="inline-flex items-center px-4 py-2 bg-yellow-400/20 text-yellow-300 rounded-full text-sm font-medium backdrop-blur-sm border border-yellow-400/30 shadow-sm">
-                  ⭐ #1 Rated Sri Lanka Tour Service
-                </div>
-                <h1 className="text-2xl lg:text-3xl font-semibold text-yellow-200 mb-2">
-                  Sri Lanka Tour Packages
-                  <br />| Sri Lanka Holidays
-                </h1>
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-medium text-yellow-200 mb-2">
+                  Sri Lanka Tour Packages | Sri Lanka Holidays
+                </h2>
                 <h1 className="text-4xl lg:text-6xl font-bold text-balance leading-tight">
                   <span className="bg-gradient-to-r from-white via-yellow-200 to-yellow-400 bg-clip-text text-transparent drop-shadow">
                     Sri Lanka Private Driver
@@ -347,7 +338,7 @@ export default function HomePage() {
                 </h1>
               </div>
 
-              <div className="space-y-6 text-lg leading-relaxed">
+              <div className="space-y-4 sm:space-y-5 text-base lg:text-lg leading-normal">
                 {[
                   [
                     "English-Speaking, Professional & Friendly Tour Guides",
@@ -386,8 +377,8 @@ export default function HomePage() {
                     "throughout your trip for a worry-free travel experience.",
                   ],
                 ].map(([title, desc]) => (
-                  <div key={title} className="flex items-start space-x-4 group">
-                    <div className="flex-shrink-0 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-black font-bold text-sm mt-1">
+                  <div key={title} className="flex items-start space-x-3.5 group">
+                    <div className="flex-shrink-0 w-7 h-7 bg-yellow-400 rounded-full flex items-center justify-center text-black font-bold text-xs mt-0.5">
                       ✓
                     </div>
                     <div className="group-hover:text-yellow-200 transition-colors">
@@ -396,11 +387,10 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-4 pt-4 sm:pt-5">
                 <Button
                   aria-label="Book your private driver now"
-                  size="lg"
-                  className="group bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                  className="h-14 sm:h-16 group bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg sm:text-xl px-9 py-5 rounded-full shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                   onClick={() => (window.location.href = "/drivers")}
                 >
                   <span className="flex items-center gap-2">
@@ -423,9 +413,6 @@ export default function HomePage() {
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-br from-slate-100/10 to-slate-200/10 rounded-full blur-3xl"></div>
         <div className="relative container mx-auto px-4 lg:px-24">
           <Reveal className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-              🎯 What We Offer
-            </div>
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
               Our Premium Services
             </h2>
@@ -721,9 +708,6 @@ export default function HomePage() {
       <section id="fleet" className="py-20 bg-white relative scroll-mt-24">
         <div className="relative container mx-auto px-4 lg:px-24">
           <Reveal className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium mb-4 border border-yellow-200">
-              🚗 Fleet Selection
-            </div>
             <h2 className="text-4xl lg:text-5xl font-bold text-black mb-6">
               Book Your Perfect Vehicle in Sri Lanka
             </h2>
@@ -733,7 +717,19 @@ export default function HomePage() {
             </p>
           </Reveal>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            {vehicles.length === 0 ? (
+            {vehiclesLoading ? (
+              Array.from({ length: 4 }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="relative bg-white border border-gray-100 rounded-2xl shadow-md overflow-hidden h-64 flex flex-col justify-end"
+                >
+                  <Skeleton className="absolute inset-0 w-full h-full rounded-2xl" />
+                  <div className="relative z-10 p-4">
+                    <Skeleton className="h-6 w-3/4 mx-auto bg-black/40 rounded" />
+                  </div>
+                </div>
+              ))
+            ) : vehicles.length === 0 ? (
               <div className="col-span-full text-center text-gray-400 py-12">
                 No vehicles available at the moment.
               </div>
@@ -796,10 +792,6 @@ export default function HomePage() {
         </div>
         <div className="relative container mx-auto px-2 sm:px-4 lg:px-24">
           <Reveal className="text-center mb-10 sm:mb-16">
-            <div className="inline-flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-white/20 text-white rounded-full text-xs sm:text-sm font-medium mb-3 sm:mb-4 backdrop-blur-sm border border-white/30">
-              🏆 Award Winning Service
-            </div>
-            <div className="flex items-center justify-center gap-3 mb-4 sm:mb-6"></div>
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
               Excellence Awards
             </h2>
@@ -897,9 +889,6 @@ export default function HomePage() {
         <div className="container mx-auto px-4 lg:px-24">
           <div className="mx-auto">
             <Reveal className="text-center mb-16">
-              <div className="inline-flex items-center px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-                🗺️ Our Experience
-              </div>
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
                 Our Private Tours
               </h2>

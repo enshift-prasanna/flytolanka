@@ -34,7 +34,27 @@ import {
   Car,
   BarChart3,
   FolderPlus,
+  Calendar,
+  Search,
+  RefreshCw,
+  Phone,
+  Mail,
+  MessageSquare,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  ExternalLink,
+  DollarSign,
+  MapPin,
+  AlertCircle,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 import { useAuth } from "@/components/auth-context";
 import { useRouter } from "next/navigation";
@@ -58,10 +78,28 @@ const AdminPage: React.FC = () => {
     categoryId: "",
     days: "",
     price: "",
+    pricingTiers: {
+      adultPrices: {} as Record<string, string>,
+      kidPrices: {} as Record<string, string>,
+      infantPrices: {} as Record<string, string>,
+    },
     shortDescription: "",
     detailedDescription: "",
     image: "",
   });
+  const [adultTierCount, setAdultTierCount] = useState(4);
+  const [kidTierCount, setKidTierCount] = useState(4);
+  const [infantTierCount, setInfantTierCount] = useState(4);
+
+  const selectedCategory = categories.find((c) => c.id === packageForm.categoryId);
+  const isHoneymoonCategory = Boolean(
+    packageForm.categoryId === "68babf3c85d85b76f41bcfe5" ||
+    (selectedCategory && (
+      selectedCategory.slug === "honeymoon-tours" ||
+      selectedCategory.name?.toLowerCase().includes("honeymoon") ||
+      selectedCategory.id === "68babf3c85d85b76f41bcfe5"
+    ))
+  );
   const [packages, setPackages] = useState<any[]>([]);
   const [editingPackage, setEditingPackage] = useState<string | null>(null);
   const [blogForm, setBlogForm] = useState({
@@ -83,6 +121,70 @@ const AdminPage: React.FC = () => {
   });
   const [things, setThings] = useState<any[]>([]);
   const [editingThings, setEditingThings] = useState<string | null>(null);
+
+  // Bookings state
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
+  const [bookingSearch, setBookingSearch] = useState("");
+  const [bookingStatusFilter, setBookingStatusFilter] = useState("ALL");
+  const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+  const fetchBookings = async () => {
+    setBookingsLoading(true);
+    try {
+      const res = await fetch("/api/admin/bookings");
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setBookings(data);
+      }
+    } catch (e) {
+      console.error("Failed to fetch bookings:", e);
+    } finally {
+      setBookingsLoading(false);
+    }
+  };
+
+  const handleUpdateBookingStatus = async (id: string, newStatus: string) => {
+    try {
+      const res = await fetch("/api/admin/bookings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      if (res.ok) {
+        setBookings((prev) =>
+          prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
+        );
+        if (selectedBooking && selectedBooking.id === id) {
+          setSelectedBooking((prev: any) => ({ ...prev, status: newStatus }));
+        }
+      }
+    } catch (e) {
+      console.error("Failed to update booking status:", e);
+    }
+  };
+
+  const handleDeleteBooking = async (id: string) => {
+    if (!confirm("Are you sure you want to permanently delete this booking?")) return;
+    try {
+      const res = await fetch("/api/admin/bookings", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        setBookings((prev) => prev.filter((b) => b.id !== id));
+        if (selectedBooking && selectedBooking.id === id) {
+          setIsDetailsOpen(false);
+          setSelectedBooking(null);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to delete booking:", e);
+    }
+  };
+
   // Cloudinary config
   const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dgyxftryr/upload";
   const CLOUDINARY_UPLOAD_PRESET = "ftl_main";
@@ -113,6 +215,7 @@ const AdminPage: React.FC = () => {
     fetch("/api/things-to-do?includeContent=true")
       .then((res) => res.json())
       .then(setThings);
+    fetchBookings();
   }, []);
 
   // Things to Do CRUD handlers
@@ -237,7 +340,27 @@ const AdminPage: React.FC = () => {
     if (imageUrl && typeof imageUrl !== "string") {
       imageUrl = await uploadImage(imageUrl);
     }
-    const payload = { ...packageForm, image: imageUrl };
+
+    // Clean up empty pricing tiers
+    const cleanAdults = Object.fromEntries(
+      Object.entries(packageForm.pricingTiers?.adultPrices || {}).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
+    );
+    const cleanKids = Object.fromEntries(
+      Object.entries(packageForm.pricingTiers?.kidPrices || {}).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
+    );
+    const cleanInfants = Object.fromEntries(
+      Object.entries(packageForm.pricingTiers?.infantPrices || {}).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
+    );
+
+    const hasAnyPricing = Object.keys(cleanAdults).length > 0 || Object.keys(cleanKids).length > 0 || Object.keys(cleanInfants).length > 0;
+
+    const payload = {
+      ...packageForm,
+      pricingTiers: hasAnyPricing
+        ? { adultPrices: cleanAdults, kidPrices: cleanKids, infantPrices: cleanInfants }
+        : null,
+      image: imageUrl,
+    };
     const method = editingPackage ? "PUT" : "POST";
     const res = await fetch("/api/package", {
       method,
@@ -246,12 +369,20 @@ const AdminPage: React.FC = () => {
       ),
     });
     if (res.ok) {
+      setAdultTierCount(4);
+      setKidTierCount(4);
+      setInfantTierCount(4);
       setPackageForm({
         title: "",
         slug: "",
         categoryId: "",
         days: "",
         price: "",
+        pricingTiers: {
+          adultPrices: {},
+          kidPrices: {},
+          infantPrices: {},
+        },
         shortDescription: "",
         detailedDescription: "",
         image: "",
@@ -263,12 +394,24 @@ const AdminPage: React.FC = () => {
     }
   }
   function handlePackageEdit(pkg: any) {
+    const aKeys = Object.keys(pkg.pricingTiers?.adultPrices || {}).map(Number).filter((n) => !isNaN(n));
+    const kKeys = Object.keys(pkg.pricingTiers?.kidPrices || {}).map(Number).filter((n) => !isNaN(n));
+    const iKeys = Object.keys(pkg.pricingTiers?.infantPrices || {}).map(Number).filter((n) => !isNaN(n));
+    setAdultTierCount(Math.max(4, ...(aKeys.length ? aKeys : [4])));
+    setKidTierCount(Math.max(4, ...(kKeys.length ? kKeys : [4])));
+    setInfantTierCount(Math.max(4, ...(iKeys.length ? iKeys : [4])));
+
     setPackageForm({
       title: pkg.title,
       slug: pkg.slug || "",
       categoryId: pkg.categoryId,
       days: pkg.days,
       price: pkg.price || "",
+      pricingTiers: pkg.pricingTiers || {
+        adultPrices: {},
+        kidPrices: {},
+        infantPrices: {},
+      },
       shortDescription: pkg.shortDescription,
       detailedDescription: pkg.detailedDescription,
       image: pkg.image || "",
@@ -338,6 +481,29 @@ const AdminPage: React.FC = () => {
     }
   }
 
+  const filteredBookings = bookings.filter((b) => {
+    const matchesStatus =
+      bookingStatusFilter === "ALL" || b.status === bookingStatusFilter;
+    const query = bookingSearch.toLowerCase().trim();
+    const matchesSearch =
+      !query ||
+      b.bookingRef?.toLowerCase().includes(query) ||
+      b.customerName?.toLowerCase().includes(query) ||
+      b.customerEmail?.toLowerCase().includes(query) ||
+      b.customerPhone?.toLowerCase().includes(query) ||
+      b.packageName?.toLowerCase().includes(query) ||
+      b.country?.toLowerCase().includes(query);
+
+    return matchesStatus && matchesSearch;
+  });
+
+  const totalBookingsCount = bookings.length;
+  const pendingBookingsCount = bookings.filter((b) => b.status === "PENDING").length;
+  const confirmedBookingsCount = bookings.filter((b) => b.status === "CONFIRMED").length;
+  const totalEstimatedRevenue = bookings
+    .filter((b) => b.status !== "CANCELLED")
+    .reduce((sum, b) => sum + (Number(b.totalPrice) || 0), 0);
+
   if (!user) return null;
 
   return (
@@ -349,7 +515,7 @@ const AdminPage: React.FC = () => {
               Admin Panel
             </h1>
             <p className="text-gray-600">
-              Manage your travel packages and blog content
+              Manage your travel packages, tour bookings, and blog content
             </p>
           </div>
           <button
@@ -364,7 +530,20 @@ const AdminPage: React.FC = () => {
           onValueChange={setActiveTab}
           className="space-y-6"
         >
-          <TabsList className="flex gap-2">
+          <TabsList className="flex flex-wrap gap-2">
+            <TabsTrigger value="bookings">
+              <Calendar className="inline mr-1" size={16} />
+              Bookings
+              {pendingBookingsCount > 0 ? (
+                <span className="ml-1.5 px-1.5 py-0.5 text-[11px] font-bold bg-amber-500 text-white rounded-full">
+                  {pendingBookingsCount}
+                </span>
+              ) : totalBookingsCount > 0 ? (
+                <span className="ml-1.5 px-1.5 py-0.5 text-[11px] font-medium bg-gray-200 text-gray-700 rounded-full">
+                  {totalBookingsCount}
+                </span>
+              ) : null}
+            </TabsTrigger>
             <TabsTrigger value="categories">
               <FolderPlus className="inline mr-1" size={16} />
               Categories
@@ -732,7 +911,7 @@ const AdminPage: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <Label>Price</Label>
+                    <Label>Price (Display / Starting)</Label>
                     <Input
                       value={packageForm.price}
                       onChange={(e) =>
@@ -741,6 +920,187 @@ const AdminPage: React.FC = () => {
                       placeholder="e.g. $100 or From $100"
                     />
                   </div>
+
+                  {/* Dynamic Pricing Tiers */}
+                  {isHoneymoonCategory ? (
+                    <div className="p-4 border rounded-xl bg-pink-50/70 border-pink-200 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">💍</span>
+                        <div>
+                          <h4 className="font-semibold text-gray-900 text-sm">
+                            Honeymoon Package Pricing (Couple - 2 Adults)
+                          </h4>
+                          <p className="text-xs text-gray-600">
+                            Honeymoon packages are exclusively for couples. Enter the total tour price for the couple below:
+                          </p>
+                        </div>
+                      </div>
+                      <div className="max-w-xs flex items-center gap-2 bg-white p-2.5 rounded-lg border border-pink-200">
+                        <span className="text-xs font-semibold text-gray-700 w-32">Price per Couple:</span>
+                        <span className="text-gray-400 font-semibold">$</span>
+                        <Input
+                          type="number"
+                          className="h-8 text-sm"
+                          placeholder="e.g. 850"
+                          value={(packageForm.pricingTiers?.adultPrices as any)?.["2"] ?? ""}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setPackageForm((f) => ({
+                              ...f,
+                              pricingTiers: {
+                                ...f.pricingTiers,
+                                adultPrices: {
+                                  ...(f.pricingTiers?.adultPrices || {}),
+                                  "2": val,
+                                },
+                              },
+                            }));
+                          }}
+                        />
+                        <span className="text-xs text-gray-400">USD</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-4 border rounded-xl bg-slate-50 border-slate-200 space-y-4">
+                      <div>
+                        <h4 className="font-semibold text-gray-900 text-sm">
+                          Dynamic Passenger Pricing ($ USD)
+                        </h4>
+                        <p className="text-xs text-gray-500">
+                          Set total package price based on group size. The booking form will calculate costs in real-time as guests adjust counts.
+                        </p>
+                      </div>
+
+                      {/* Adults Table */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-xs font-semibold text-primary">Adults Pricing ($)</Label>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-6 text-xs px-2 gap-1 border-dashed hover:border-solid text-primary hover:bg-primary/10"
+                            onClick={() => setAdultTierCount((c) => c + 1)}
+                          >
+                            <Plus size={12} /> Add More
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {Array.from({ length: adultTierCount }, (_, i) => (i + 1).toString()).map((count) => (
+                            <div key={`adult-${count}`} className="flex items-center gap-1 bg-white p-1.5 rounded border text-xs">
+                              <span className="w-14 text-gray-600 font-medium">{count} {count === "1" ? "Adult" : "Adults"}:</span>
+                              <span className="text-gray-400">$</span>
+                              <Input
+                                type="number"
+                                className="h-7 text-xs px-1"
+                                placeholder="0"
+                                value={(packageForm.pricingTiers?.adultPrices as any)?.[count] ?? ""}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setPackageForm((f) => ({
+                                    ...f,
+                                    pricingTiers: {
+                                      ...f.pricingTiers,
+                                      adultPrices: {
+                                        ...(f.pricingTiers?.adultPrices || {}),
+                                        [count]: val,
+                                      },
+                                    },
+                                  }));
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Kids Table */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-xs font-semibold text-secondary">Children (Age 3-12) Pricing ($)</Label>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-6 text-xs px-2 gap-1 border-dashed hover:border-solid text-secondary hover:bg-secondary/10"
+                            onClick={() => setKidTierCount((c) => c + 1)}
+                          >
+                            <Plus size={12} /> Add More
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {Array.from({ length: kidTierCount }, (_, i) => (i + 1).toString()).map((count) => (
+                            <div key={`kid-${count}`} className="flex items-center gap-1 bg-white p-1.5 rounded border text-xs">
+                              <span className="w-14 text-gray-600 font-medium">{count} {count === "1" ? "Kid" : "Kids"}:</span>
+                              <span className="text-gray-400">$</span>
+                              <Input
+                                type="number"
+                                className="h-7 text-xs px-1"
+                                placeholder="0"
+                                value={(packageForm.pricingTiers?.kidPrices as any)?.[count] ?? ""}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setPackageForm((f) => ({
+                                    ...f,
+                                    pricingTiers: {
+                                      ...f.pricingTiers,
+                                      kidPrices: {
+                                        ...(f.pricingTiers?.kidPrices || {}),
+                                        [count]: val,
+                                      },
+                                    },
+                                  }));
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Infants Table */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-xs font-semibold text-emerald-700">Infants (Age 0-2) Pricing ($)</Label>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-6 text-xs px-2 gap-1 border-dashed hover:border-solid text-emerald-700 hover:bg-emerald-50"
+                            onClick={() => setInfantTierCount((c) => c + 1)}
+                          >
+                            <Plus size={12} /> Add More
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {Array.from({ length: infantTierCount }, (_, i) => (i + 1).toString()).map((count) => (
+                            <div key={`infant-${count}`} className="flex items-center gap-1 bg-white p-1.5 rounded border text-xs">
+                              <span className="w-14 text-gray-600 font-medium">{count} {count === "1" ? "Infant" : "Infants"}:</span>
+                              <span className="text-gray-400">$</span>
+                              <Input
+                                type="number"
+                                className="h-7 text-xs px-1"
+                                placeholder="0"
+                                value={(packageForm.pricingTiers?.infantPrices as any)?.[count] ?? ""}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setPackageForm((f) => ({
+                                    ...f,
+                                    pricingTiers: {
+                                      ...f.pricingTiers,
+                                      infantPrices: {
+                                        ...(f.pricingTiers?.infantPrices || {}),
+                                        [count]: val,
+                                      },
+                                    },
+                                  }));
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <div>
                     <Label>Short Description</Label>
                     <Input
@@ -783,12 +1143,20 @@ const AdminPage: React.FC = () => {
                       variant="secondary"
                       onClick={() => {
                         setEditingPackage(null);
+                        setAdultTierCount(4);
+                        setKidTierCount(4);
+                        setInfantTierCount(4);
                         setPackageForm({
                           title: "",
                           slug: "",
                           categoryId: "",
                           days: "",
                           price: "",
+                          pricingTiers: {
+                            adultPrices: {},
+                            kidPrices: {},
+                            infantPrices: {},
+                          },
                           shortDescription: "",
                           detailedDescription: "",
                           image: "",
@@ -994,6 +1362,530 @@ const AdminPage: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Bookings Tab */}
+          <TabsContent value="bookings" className="space-y-6">
+            {/* Stat Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card className="border-l-4 border-l-primary shadow-xs py-0">
+                <CardContent className="p-5 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Total Inquiries
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                      {totalBookingsCount}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-primary/10 text-primary rounded-xl">
+                    <Calendar size={22} />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-l-4 border-l-amber-500 shadow-xs py-0">
+                <CardContent className="p-5 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider">
+                      Pending Review
+                    </p>
+                    <p className="text-2xl font-bold text-amber-900 mt-1">
+                      {pendingBookingsCount}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-amber-100 text-amber-700 rounded-xl">
+                    <Clock size={22} />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-l-4 border-l-emerald-500 shadow-xs py-0">
+                <CardContent className="p-5 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wider">
+                      Confirmed Tours
+                    </p>
+                    <p className="text-2xl font-bold text-emerald-900 mt-1">
+                      {confirmedBookingsCount}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-emerald-100 text-emerald-700 rounded-xl">
+                    <CheckCircle2 size={22} />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-l-4 border-l-yellow-400 shadow-xs py-0">
+                <CardContent className="p-5 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Est. Total Value
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">
+                      ${totalEstimatedRevenue.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-yellow-100 text-yellow-800 rounded-xl">
+                    <DollarSign size={22} />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Main Bookings Management Card */}
+            <Card>
+              <CardHeader className="pb-4 border-b">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <CardTitle className="text-xl font-bold text-gray-900">
+                      Tour Inquiries & Bookings
+                    </CardTitle>
+                    <CardDescription>
+                      Review, manage, and confirm customer booking requests submitted across your website.
+                    </CardDescription>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={fetchBookings}
+                    disabled={bookingsLoading}
+                    className="flex items-center gap-2 self-start md:self-auto cursor-pointer"
+                  >
+                    <RefreshCw
+                      size={15}
+                      className={bookingsLoading ? "animate-spin" : ""}
+                    />
+                    <span>{bookingsLoading ? "Refreshing..." : "Refresh"}</span>
+                  </Button>
+                </div>
+
+                {/* Filter and Search Bar */}
+                <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                  <div className="relative flex-1">
+                    <Search
+                      size={16}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    />
+                    <Input
+                      placeholder="Search ref, customer, email, phone, package, country..."
+                      value={bookingSearch}
+                      onChange={(e) => setBookingSearch(e.target.value)}
+                      className="pl-9 bg-white"
+                    />
+                  </div>
+
+                  <div className="w-full sm:w-48">
+                    <Select
+                      value={bookingStatusFilter}
+                      onValueChange={setBookingStatusFilter}
+                    >
+                      <SelectTrigger className="bg-white">
+                        <SelectValue placeholder="Filter by status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ALL">All Statuses ({totalBookingsCount})</SelectItem>
+                        <SelectItem value="PENDING">Pending ({pendingBookingsCount})</SelectItem>
+                        <SelectItem value="CONFIRMED">Confirmed ({confirmedBookingsCount})</SelectItem>
+                        <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-0">
+                {bookingsLoading && bookings.length === 0 ? (
+                  <div className="py-16 text-center text-gray-500">
+                    <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-3 text-primary" />
+                    <p className="text-sm font-medium">Loading bookings...</p>
+                  </div>
+                ) : filteredBookings.length === 0 ? (
+                  <div className="py-16 text-center text-gray-500 px-4">
+                    <Calendar className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                    <h3 className="text-base font-semibold text-gray-800">
+                      No bookings found
+                    </h3>
+                    <p className="text-sm text-gray-500 max-w-sm mx-auto mt-1">
+                      {bookingSearch || bookingStatusFilter !== "ALL"
+                        ? "No bookings match your current search or filter criteria."
+                        : "No tour bookings or inquiries have been received yet."}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-sm">
+                      <thead>
+                        <tr className="bg-gray-50/80 border-b text-xs uppercase font-semibold text-gray-500 tracking-wider">
+                          <th className="px-4 py-3">Reference / Date</th>
+                          <th className="px-4 py-3">Customer</th>
+                          <th className="px-4 py-3">Tour Package</th>
+                          <th className="px-4 py-3">Travelers & Dates</th>
+                          <th className="px-4 py-3">Total Price</th>
+                          <th className="px-4 py-3">Status</th>
+                          <th className="px-4 py-3 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {filteredBookings.map((b) => {
+                          const cleanPhone = (b.customerPhone || "").replace(/[^0-9]/g, "");
+                          const waText = encodeURIComponent(
+                            `Hello ${b.customerName}, thank you for contacting Fly To Lanka Tours regarding your inquiry (${b.bookingRef || "Tour"}). We'd love to help you plan your trip!`
+                          );
+
+                          return (
+                            <tr
+                              key={b.id}
+                              className="hover:bg-slate-50/60 transition-colors"
+                            >
+                              {/* Ref & Date */}
+                              <td className="px-4 py-3 align-top whitespace-nowrap">
+                                <div className="font-mono font-bold text-primary text-xs bg-primary/5 px-2 py-0.5 rounded inline-block">
+                                  {b.bookingRef || `FTL-${b.id.slice(-6).toUpperCase()}`}
+                                </div>
+                                <div className="text-[11px] text-gray-500 mt-1">
+                                  {new Date(b.createdAt).toLocaleDateString()}
+                                </div>
+                              </td>
+
+                              {/* Customer */}
+                              <td className="px-4 py-3 align-top">
+                                <div className="font-semibold text-gray-900">
+                                  {b.customerName}
+                                </div>
+                                <div className="text-xs text-gray-600 truncate max-w-[200px]">
+                                  <a
+                                    href={`mailto:${b.customerEmail}`}
+                                    className="hover:text-primary hover:underline flex items-center gap-1 mt-0.5"
+                                  >
+                                    <Mail size={12} className="shrink-0 text-gray-400" />
+                                    <span>{b.customerEmail}</span>
+                                  </a>
+                                </div>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <a
+                                    href={`tel:${b.customerPhone}`}
+                                    className="text-xs text-gray-700 hover:text-primary flex items-center gap-1"
+                                  >
+                                    <Phone size={12} className="shrink-0 text-gray-400" />
+                                    <span>{b.customerPhone}</span>
+                                  </a>
+                                  {cleanPhone && (
+                                    <a
+                                      href={`https://wa.me/${cleanPhone}?text=${waText}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      title="Open WhatsApp chat"
+                                      className="inline-flex items-center text-[10px] bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-1.5 py-0.5 rounded font-medium border border-emerald-200 transition-colors"
+                                    >
+                                      WhatsApp
+                                    </a>
+                                  )}
+                                </div>
+                                {b.country && (
+                                  <div className="text-[11px] text-gray-500 flex items-center gap-1 mt-0.5">
+                                    <MapPin size={11} className="text-gray-400" />
+                                    <span>{b.country}</span>
+                                  </div>
+                                )}
+                              </td>
+
+                              {/* Tour Package */}
+                              <td className="px-4 py-3 align-top">
+                                <div className="font-medium text-gray-900 max-w-[220px]">
+                                  {b.packageName}
+                                </div>
+                                {b.specialNotes && (
+                                  <div className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded p-1.5 mt-1 max-w-[220px] line-clamp-2">
+                                    <strong>Note:</strong> {b.specialNotes}
+                                  </div>
+                                )}
+                              </td>
+
+                              {/* Travelers & Dates */}
+                              <td className="px-4 py-3 align-top text-xs text-gray-700 whitespace-nowrap">
+                                <div>
+                                  <strong>Arrival:</strong> {b.arrivalDate || "Not set"}
+                                </div>
+                                {b.departureDate && (
+                                  <div>
+                                    <strong>Depart:</strong> {b.departureDate}
+                                  </div>
+                                )}
+                                <div className="text-gray-500 mt-1">
+                                  {b.adults} Adults
+                                  {b.children > 0 && `, ${b.children} Kids`}
+                                  {b.infants > 0 && `, ${b.infants} Inf`}
+                                </div>
+                              </td>
+
+                              {/* Total Price */}
+                              <td className="px-4 py-3 align-top whitespace-nowrap">
+                                <div className="font-bold text-gray-900 text-sm">
+                                  {b.totalPrice ? `$${Number(b.totalPrice).toFixed(0)}` : "—"}
+                                </div>
+                                {b.adultTotal && (
+                                  <div className="text-[11px] text-gray-500">
+                                    ${b.adultTotal} adults
+                                  </div>
+                                )}
+                              </td>
+
+                              {/* Status Dropdown */}
+                              <td className="px-4 py-3 align-top whitespace-nowrap">
+                                <Select
+                                  value={b.status || "PENDING"}
+                                  onValueChange={(val) => handleUpdateBookingStatus(b.id, val)}
+                                >
+                                  <SelectTrigger
+                                    className={`h-8 text-xs font-semibold rounded-full border px-2.5 ${
+                                      b.status === "CONFIRMED"
+                                        ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                                        : b.status === "CANCELLED"
+                                        ? "bg-red-50 text-red-800 border-red-300"
+                                        : "bg-amber-50 text-amber-800 border-amber-300"
+                                    }`}
+                                  >
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="PENDING">● Pending</SelectItem>
+                                    <SelectItem value="CONFIRMED">● Confirmed</SelectItem>
+                                    <SelectItem value="CANCELLED">● Cancelled</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </td>
+
+                              {/* Actions */}
+                              <td className="px-4 py-3 align-top text-right whitespace-nowrap">
+                                <div className="flex items-center justify-end gap-1.5">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => {
+                                      setSelectedBooking(b);
+                                      setIsDetailsOpen(true);
+                                    }}
+                                    className="h-8 px-2.5 text-xs flex items-center gap-1 cursor-pointer"
+                                  >
+                                    <Eye size={13} />
+                                    <span>View</span>
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => handleDeleteBooking(b.id)}
+                                    className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer"
+                                    title="Delete booking"
+                                  >
+                                    <Trash2 size={14} />
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Detailed Booking Modal */}
+            <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                {selectedBooking && (
+                  <>
+                    <DialogHeader>
+                      <div className="flex items-center justify-between gap-2 pr-6">
+                        <div>
+                          <DialogTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                            <span>Booking Details</span>
+                            <span className="font-mono text-sm bg-primary/10 text-primary px-2.5 py-0.5 rounded">
+                              {selectedBooking.bookingRef || `FTL-${selectedBooking.id.slice(-6).toUpperCase()}`}
+                            </span>
+                          </DialogTitle>
+                          <DialogDescription className="text-xs text-gray-500 mt-1">
+                            Received on {new Date(selectedBooking.createdAt).toLocaleString()}
+                          </DialogDescription>
+                        </div>
+                      </div>
+                    </DialogHeader>
+
+                    <div className="space-y-5 pt-2">
+                      {/* Customer Details Box */}
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <h4 className="text-xs uppercase font-semibold text-gray-500 tracking-wider mb-2">
+                          Customer Information
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                          <div>
+                            <span className="text-gray-500 block text-xs">Name:</span>
+                            <span className="font-bold text-gray-900">{selectedBooking.customerName}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 block text-xs">Country:</span>
+                            <span className="font-medium text-gray-900">{selectedBooking.country || "Not specified"}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 block text-xs">Email:</span>
+                            <a
+                              href={`mailto:${selectedBooking.customerEmail}`}
+                              className="text-primary hover:underline font-medium"
+                            >
+                              {selectedBooking.customerEmail}
+                            </a>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 block text-xs">Phone / WhatsApp:</span>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <a
+                                href={`tel:${selectedBooking.customerPhone}`}
+                                className="font-medium text-gray-900 hover:text-primary"
+                              >
+                                {selectedBooking.customerPhone}
+                              </a>
+                              {selectedBooking.customerPhone && (
+                                <a
+                                  href={`https://wa.me/${selectedBooking.customerPhone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                                    `Hello ${selectedBooking.customerName}, thank you for your Fly To Lanka Tours inquiry (${selectedBooking.bookingRef}). We are ready to assist you!`
+                                  )}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs bg-emerald-600 text-white hover:bg-emerald-700 px-2 py-0.5 rounded font-medium transition-colors"
+                                >
+                                  Chat on WhatsApp
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Tour Details */}
+                      <div className="p-4 rounded-xl bg-white border border-slate-200">
+                        <h4 className="text-xs uppercase font-semibold text-gray-500 tracking-wider mb-2">
+                          Tour & Travel Schedule
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                          <div className="sm:col-span-2">
+                            <span className="text-gray-500 block text-xs">Package Selected:</span>
+                            <span className="font-bold text-gray-900 text-base">{selectedBooking.packageName}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 block text-xs">Arrival Date:</span>
+                            <span className="font-medium text-gray-800">{selectedBooking.arrivalDate || "Not set"}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 block text-xs">Departure Date:</span>
+                            <span className="font-medium text-gray-800">{selectedBooking.departureDate || "Not set"}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 block text-xs">Travelers Breakdown:</span>
+                            <span className="font-medium text-gray-800">
+                              {selectedBooking.adults} Adults, {selectedBooking.children || 0} Children, {selectedBooking.infants || 0} Infants
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 block text-xs">Account Status:</span>
+                            <span className="text-xs text-gray-700 font-medium">
+                              {selectedBooking.clerkUserId ? "Registered Member" : "Guest Inquiry"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Price Breakdown */}
+                      <div className="p-4 rounded-xl bg-amber-50/60 border border-amber-200">
+                        <h4 className="text-xs uppercase font-semibold text-amber-800 tracking-wider mb-2">
+                          Pricing Breakdown
+                        </h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
+                          <div>
+                            <span className="text-xs text-gray-500 block">Adults:</span>
+                            <span className="font-semibold text-gray-800">
+                              ${selectedBooking.adultTotal || 0}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-xs text-gray-500 block">Children:</span>
+                            <span className="font-semibold text-gray-800">
+                              ${selectedBooking.kidTotal || 0}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-xs text-gray-500 block">Infants:</span>
+                            <span className="font-semibold text-gray-800">
+                              ${selectedBooking.infantTotal || 0}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-xs text-amber-900 font-bold block">Total Est.:</span>
+                            <span className="font-bold text-lg text-primary">
+                              ${selectedBooking.totalPrice || 0}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Special Notes */}
+                      {selectedBooking.specialNotes && (
+                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                          <h4 className="text-xs uppercase font-semibold text-gray-500 tracking-wider mb-1 flex items-center gap-1.5">
+                            <MessageSquare size={14} className="text-primary" />
+                            Special Requests / Customer Notes
+                          </h4>
+                          <p className="text-sm text-gray-800 whitespace-pre-wrap italic mt-1 bg-white p-3 rounded-lg border border-slate-100">
+                            "{selectedBooking.specialNotes}"
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Status Selector in Modal */}
+                      <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t">
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                          <span className="text-xs font-semibold text-gray-600">Booking Status:</span>
+                          <Select
+                            value={selectedBooking.status || "PENDING"}
+                            onValueChange={(val) => handleUpdateBookingStatus(selectedBooking.id, val)}
+                          >
+                            <SelectTrigger className="w-40 h-9 bg-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="PENDING">● Pending</SelectItem>
+                              <SelectItem value="CONFIRMED">● Confirmed</SelectItem>
+                              <SelectItem value="CANCELLED">● Cancelled</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDeleteBooking(selectedBooking.id)}
+                            className="cursor-pointer"
+                          >
+                            Delete Booking
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setIsDetailsOpen(false)}
+                            className="cursor-pointer"
+                          >
+                            Close
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </DialogContent>
+            </Dialog>
           </TabsContent>
         </Tabs>
       </div>

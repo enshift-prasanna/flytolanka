@@ -8,6 +8,7 @@ import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { Suspense } from "react";
 
+import { ClerkProvider } from "@clerk/nextjs";
 import { AuthProvider } from "@/components/auth-context";
 import "./globals.css";
 import { FixedButtons } from "../components/FixedButtons";
@@ -33,20 +34,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`font-sans ${GeistSans.variable} ${GeistMono.variable} ${poppins.variable}`}
-      >
-        <AuthProvider>
-          <Suspense fallback={<div>Loading...</div>}>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`font-sans ${GeistSans.variable} ${GeistMono.variable} ${poppins.variable}`}
+        >
+          <AuthProvider>
             <Navigation />
-            <main className="min-h-screen">{children}</main>
+            <Suspense fallback={null}>
+              <main className="min-h-screen">{children}</main>
+            </Suspense>
             <Footer />
-          </Suspense>
-          <Analytics />
-          <FixedButtons />
-        </AuthProvider>
-      </body>
-    </html>
+            <Analytics />
+            <FixedButtons />
+          </AuthProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

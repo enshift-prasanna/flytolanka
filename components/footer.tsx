@@ -43,7 +43,13 @@ function Reveal({ children, className = '' }: { children: React.ReactNode, class
 
 export function Footer() {
   const pathname = usePathname();
-  if (pathname.startsWith("/admin")) return null;
+  if (
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/sign-in") ||
+    pathname.startsWith("/sign-up")
+  ) {
+    return null;
+  }
   return (
     <footer className="relative text-white">
       {/* Background image with dark overlay */}
