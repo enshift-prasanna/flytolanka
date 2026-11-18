@@ -70,9 +70,18 @@ export async function POST(request: Request) {
       }
     }
 
-    // 5. Format readable summary table for emails
+    // 5. Format readable summary table for emails (exclude internal database & calculation fields)
+    const hiddenEmailKeys = [
+      'packageId',
+      'pricingTiers',
+      'totalPrice',
+      'adultTotal',
+      'kidTotal',
+      'infantTotal',
+    ];
+
     const detailsHtml = Object.entries(data)
-      .filter(([k]) => !['packageId', 'pricingTiers'].includes(k))
+      .filter(([k]) => !hiddenEmailKeys.includes(k))
       .map(
         ([key, value]) =>
           `<tr><td style="padding: 6px 12px; font-weight: 600; color: #002D37; border-bottom: 1px solid #eee; width: 40%;">${key}:</td><td style="padding: 6px 12px; color: #333; border-bottom: 1px solid #eee;">${value}</td></tr>`
@@ -181,6 +190,7 @@ export async function POST(request: Request) {
         replyTo: customerEmail || undefined,
         subject: `[${bookingRef}] New Form Submission from ${customerName}`,
         text: Object.entries(data)
+          .filter(([key]) => !hiddenEmailKeys.includes(key))
           .map(([key, value]) => `${key}: ${value}`)
           .join('\n'),
         html: `<p><strong>Booking Ref:</strong> ${bookingRef}</p><br/>${detailsHtml}`,
