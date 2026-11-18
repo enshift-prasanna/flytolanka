@@ -108,26 +108,32 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
   const effectiveChildren = isHoneymoon ? 0 : (parseInt(form.children || '0', 10) || 0);
   const effectiveInfants = isHoneymoon ? 0 : (parseInt(form.infants || '0', 10) || 0);
 
-  // Fallback couple price from packageData.price if pricingTiers not configured
-  const fallbackHoneymoonPrice = isHoneymoon && packageData?.price
-    ? parseFloat(String(packageData.price).replace(/,/g, '').replace(/[^0-9.]/g, '')) || 0
+  // Honeymoon couple price (from couplePrice config or package price)
+  const honeymoonCouplePrice = isHoneymoon
+    ? (packageData?.pricingTiers?.couplePrice
+        ? Number(packageData.pricingTiers.couplePrice)
+        : (packageData?.price ? parseFloat(String(packageData.price).replace(/,/g, '').replace(/[^0-9.]/g, '')) || 0 : 0))
     : 0;
 
-  // Calculate live dynamic price based on adults, children, and infants
+  // Calculate live dynamic price based on adults, children, and infants (with fallback to packageData.price for 1 adult)
   let estimatedPricing = calculatePackagePrice(
     packageData?.pricingTiers,
     effectiveAdults,
     effectiveChildren,
-    effectiveInfants
+    effectiveInfants,
+    packageData?.price
   );
 
-  // If Honeymoon and no tiered pricing was found, use the package display price
-  if (isHoneymoon && (!estimatedPricing.hasPricing || estimatedPricing.grandTotal === 0) && fallbackHoneymoonPrice > 0) {
+  // If Honeymoon, override to couple price
+  if (isHoneymoon && honeymoonCouplePrice > 0) {
     estimatedPricing = {
-      adultTotal: fallbackHoneymoonPrice,
+      unitAdultPrice: honeymoonCouplePrice,
+      unitKidPrice: 0,
+      unitInfantPrice: 0,
+      adultTotal: honeymoonCouplePrice,
       kidTotal: 0,
       infantTotal: 0,
-      grandTotal: fallbackHoneymoonPrice,
+      grandTotal: honeymoonCouplePrice,
       hasPricing: true,
     };
   }
@@ -642,17 +648,17 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                             <div className="text-xs text-emerald-700 pt-1 flex flex-wrap items-center justify-center gap-2">
                               {estimatedPricing.adultTotal > 0 && (
                                 <span className="bg-white px-2 py-0.5 rounded border border-emerald-200">
-                                  {form.adults} {Number(form.adults) === 1 ? 'Adult' : 'Adults'}: ${estimatedPricing.adultTotal}
+                                  {effectiveAdults} {effectiveAdults === 1 ? 'Adult' : 'Adults'} (${estimatedPricing.unitAdultPrice} each): ${estimatedPricing.adultTotal}
                                 </span>
                               )}
                               {estimatedPricing.kidTotal > 0 && (
                                 <span className="bg-white px-2 py-0.5 rounded border border-emerald-200">
-                                  {form.children} {Number(form.children) === 1 ? 'Child' : 'Children'}: ${estimatedPricing.kidTotal}
+                                  {effectiveChildren} {effectiveChildren === 1 ? 'Child' : 'Children'} (${estimatedPricing.unitKidPrice} each): ${estimatedPricing.kidTotal}
                                 </span>
                               )}
                               {estimatedPricing.infantTotal > 0 && (
                                 <span className="bg-white px-2 py-0.5 rounded border border-emerald-200">
-                                  {form.infants} {Number(form.infants) === 1 ? 'Infant' : 'Infants'}: ${estimatedPricing.infantTotal}
+                                  {effectiveInfants} {effectiveInfants === 1 ? 'Infant' : 'Infants'} (${estimatedPricing.unitInfantPrice} each): ${estimatedPricing.infantTotal}
                                 </span>
                               )}
                             </div>

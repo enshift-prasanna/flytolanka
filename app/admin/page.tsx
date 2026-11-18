@@ -79,17 +79,15 @@ const AdminPage: React.FC = () => {
     days: "",
     price: "",
     pricingTiers: {
-      adultPrices: {} as Record<string, string>,
-      kidPrices: {} as Record<string, string>,
-      infantPrices: {} as Record<string, string>,
+      adultPrice: "",
+      kidPrice: "",
+      infantPrice: "",
+      couplePrice: "",
     },
     shortDescription: "",
     detailedDescription: "",
     image: "",
   });
-  const [adultTierCount, setAdultTierCount] = useState(4);
-  const [kidTierCount, setKidTierCount] = useState(4);
-  const [infantTierCount, setInfantTierCount] = useState(4);
 
   const selectedCategory = categories.find((c) => c.id === packageForm.categoryId);
   const isHoneymoonCategory = Boolean(
@@ -341,24 +339,18 @@ const AdminPage: React.FC = () => {
       imageUrl = await uploadImage(imageUrl);
     }
 
-    // Clean up empty pricing tiers
-    const cleanAdults = Object.fromEntries(
-      Object.entries(packageForm.pricingTiers?.adultPrices || {}).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
-    );
-    const cleanKids = Object.fromEntries(
-      Object.entries(packageForm.pricingTiers?.kidPrices || {}).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
-    );
-    const cleanInfants = Object.fromEntries(
-      Object.entries(packageForm.pricingTiers?.infantPrices || {}).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
-    );
-
-    const hasAnyPricing = Object.keys(cleanAdults).length > 0 || Object.keys(cleanKids).length > 0 || Object.keys(cleanInfants).length > 0;
+    const pt = packageForm.pricingTiers || ({} as any);
+    const hasAnyPricing = Boolean(pt.adultPrice || pt.kidPrice || pt.infantPrice || pt.couplePrice);
+    const cleanTiers = hasAnyPricing ? {
+      ...(pt.adultPrice ? { adultPrice: pt.adultPrice } : {}),
+      ...(pt.kidPrice ? { kidPrice: pt.kidPrice } : {}),
+      ...(pt.infantPrice ? { infantPrice: pt.infantPrice } : {}),
+      ...(pt.couplePrice ? { couplePrice: pt.couplePrice } : {}),
+    } : null;
 
     const payload = {
       ...packageForm,
-      pricingTiers: hasAnyPricing
-        ? { adultPrices: cleanAdults, kidPrices: cleanKids, infantPrices: cleanInfants }
-        : null,
+      pricingTiers: cleanTiers,
       image: imageUrl,
     };
     const method = editingPackage ? "PUT" : "POST";
@@ -369,9 +361,6 @@ const AdminPage: React.FC = () => {
       ),
     });
     if (res.ok) {
-      setAdultTierCount(4);
-      setKidTierCount(4);
-      setInfantTierCount(4);
       setPackageForm({
         title: "",
         slug: "",
@@ -379,9 +368,10 @@ const AdminPage: React.FC = () => {
         days: "",
         price: "",
         pricingTiers: {
-          adultPrices: {},
-          kidPrices: {},
-          infantPrices: {},
+          adultPrice: "",
+          kidPrice: "",
+          infantPrice: "",
+          couplePrice: "",
         },
         shortDescription: "",
         detailedDescription: "",
@@ -394,23 +384,18 @@ const AdminPage: React.FC = () => {
     }
   }
   function handlePackageEdit(pkg: any) {
-    const aKeys = Object.keys(pkg.pricingTiers?.adultPrices || {}).map(Number).filter((n) => !isNaN(n));
-    const kKeys = Object.keys(pkg.pricingTiers?.kidPrices || {}).map(Number).filter((n) => !isNaN(n));
-    const iKeys = Object.keys(pkg.pricingTiers?.infantPrices || {}).map(Number).filter((n) => !isNaN(n));
-    setAdultTierCount(Math.max(4, ...(aKeys.length ? aKeys : [4])));
-    setKidTierCount(Math.max(4, ...(kKeys.length ? kKeys : [4])));
-    setInfantTierCount(Math.max(4, ...(iKeys.length ? iKeys : [4])));
-
+    const pt = pkg.pricingTiers || {};
     setPackageForm({
       title: pkg.title,
       slug: pkg.slug || "",
       categoryId: pkg.categoryId,
       days: pkg.days,
       price: pkg.price || "",
-      pricingTiers: pkg.pricingTiers || {
-        adultPrices: {},
-        kidPrices: {},
-        infantPrices: {},
+      pricingTiers: {
+        adultPrice: pt.adultPrice !== undefined ? String(pt.adultPrice) : (pt.adultPrices?.["1"] ? String(pt.adultPrices["1"]) : ""),
+        kidPrice: pt.kidPrice !== undefined ? String(pt.kidPrice) : (pt.kidPrices?.["1"] ? String(pt.kidPrices["1"]) : ""),
+        infantPrice: pt.infantPrice !== undefined ? String(pt.infantPrice) : (pt.infantPrices?.["1"] ? String(pt.infantPrices["1"]) : ""),
+        couplePrice: pt.couplePrice !== undefined ? String(pt.couplePrice) : (pt.adultPrices?.["2"] ? String(pt.adultPrices["2"]) : ""),
       },
       shortDescription: pkg.shortDescription,
       detailedDescription: pkg.detailedDescription,
@@ -921,7 +906,7 @@ const AdminPage: React.FC = () => {
                     />
                   </div>
 
-                  {/* Dynamic Pricing Tiers */}
+                  {/* Per-Person Dynamic Pricing */}
                   {isHoneymoonCategory ? (
                     <div className="p-4 border rounded-xl bg-pink-50/70 border-pink-200 space-y-3">
                       <div className="flex items-center gap-2">
@@ -942,17 +927,14 @@ const AdminPage: React.FC = () => {
                           type="number"
                           className="h-8 text-sm"
                           placeholder="e.g. 850"
-                          value={(packageForm.pricingTiers?.adultPrices as any)?.["2"] ?? ""}
+                          value={packageForm.pricingTiers?.couplePrice ?? ""}
                           onChange={(e) => {
                             const val = e.target.value;
                             setPackageForm((f) => ({
                               ...f,
                               pricingTiers: {
                                 ...f.pricingTiers,
-                                adultPrices: {
-                                  ...(f.pricingTiers?.adultPrices || {}),
-                                  "2": val,
-                                },
+                                couplePrice: val,
                               },
                             }));
                           }}
@@ -961,143 +943,116 @@ const AdminPage: React.FC = () => {
                       </div>
                     </div>
                   ) : (
-                    <div className="p-4 border rounded-xl bg-slate-50 border-slate-200 space-y-4">
+                    <div className="p-4 border rounded-xl bg-slate-50 border-slate-200 space-y-3">
                       <div>
                         <h4 className="font-semibold text-gray-900 text-sm">
-                          Dynamic Passenger Pricing ($ USD)
+                          Per-Person Passenger Pricing ($ USD)
                         </h4>
                         <p className="text-xs text-gray-500">
-                          Set total package price based on group size. The booking form will calculate costs in real-time as guests adjust counts.
+                          Set the individual rate for adults, children, and infants. Booking forms multiply each count and calculate total price in real time.
                         </p>
                       </div>
 
-                      {/* Adults Table */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Label className="text-xs font-semibold text-primary">Adults Pricing ($)</Label>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="h-6 text-xs px-2 gap-1 border-dashed hover:border-solid text-primary hover:bg-primary/10"
-                            onClick={() => setAdultTierCount((c) => c + 1)}
-                          >
-                            <Plus size={12} /> Add More
-                          </Button>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {/* Adult Price */}
+                        <div className="bg-white p-3 rounded-lg border border-primary/20 space-y-1.5 shadow-sm">
+                          <Label className="text-xs font-semibold text-primary block">
+                            Adult Price (Per Person)
+                          </Label>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-400 font-bold">$</span>
+                            <Input
+                              type="number"
+                              className="h-8 text-sm"
+                              placeholder={packageForm.price ? `Default (${packageForm.price.replace(/[^0-9.]/g, '')})` : "e.g. 150"}
+                              value={packageForm.pricingTiers?.adultPrice ?? ""}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setPackageForm((f) => ({
+                                  ...f,
+                                  pricingTiers: {
+                                    ...f.pricingTiers,
+                                    adultPrice: val,
+                                  },
+                                }));
+                              }}
+                            />
+                            <span className="text-xs text-gray-400">USD</span>
+                          </div>
+                          <p className="text-[11px] text-gray-400">
+                            {packageForm.pricingTiers?.adultPrice
+                              ? `Set to $${packageForm.pricingTiers.adultPrice} / adult`
+                              : "Defaults to main Price if empty"}
+                          </p>
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                          {Array.from({ length: adultTierCount }, (_, i) => (i + 1).toString()).map((count) => (
-                            <div key={`adult-${count}`} className="flex items-center gap-1 bg-white p-1.5 rounded border text-xs">
-                              <span className="w-14 text-gray-600 font-medium">{count} {count === "1" ? "Adult" : "Adults"}:</span>
-                              <span className="text-gray-400">$</span>
-                              <Input
-                                type="number"
-                                className="h-7 text-xs px-1"
-                                placeholder="0"
-                                value={(packageForm.pricingTiers?.adultPrices as any)?.[count] ?? ""}
-                                onChange={(e) => {
-                                  const val = e.target.value;
-                                  setPackageForm((f) => ({
-                                    ...f,
-                                    pricingTiers: {
-                                      ...f.pricingTiers,
-                                      adultPrices: {
-                                        ...(f.pricingTiers?.adultPrices || {}),
-                                        [count]: val,
-                                      },
-                                    },
-                                  }));
-                                }}
-                              />
-                            </div>
-                          ))}
+
+                        {/* Child Price */}
+                        <div className="bg-white p-3 rounded-lg border border-secondary/20 space-y-1.5 shadow-sm">
+                          <Label className="text-xs font-semibold text-secondary block">
+                            Child Price (Age 3-12)
+                          </Label>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-400 font-bold">$</span>
+                            <Input
+                              type="number"
+                              className="h-8 text-sm"
+                              placeholder="e.g. 75"
+                              value={packageForm.pricingTiers?.kidPrice ?? ""}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setPackageForm((f) => ({
+                                  ...f,
+                                  pricingTiers: {
+                                    ...f.pricingTiers,
+                                    kidPrice: val,
+                                  },
+                                }));
+                              }}
+                            />
+                            <span className="text-xs text-gray-400">USD</span>
+                          </div>
+                          <p className="text-[11px] text-gray-400">
+                            {packageForm.pricingTiers?.kidPrice
+                              ? `$${packageForm.pricingTiers.kidPrice} / child`
+                              : "Leave 0 or empty if free"}
+                          </p>
+                        </div>
+
+                        {/* Infant Price */}
+                        <div className="bg-white p-3 rounded-lg border border-emerald-200 space-y-1.5 shadow-sm">
+                          <Label className="text-xs font-semibold text-emerald-700 block">
+                            Infant Price (Age 0-2)
+                          </Label>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-400 font-bold">$</span>
+                            <Input
+                              type="number"
+                              className="h-8 text-sm"
+                              placeholder="0"
+                              value={packageForm.pricingTiers?.infantPrice ?? ""}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setPackageForm((f) => ({
+                                  ...f,
+                                  pricingTiers: {
+                                    ...f.pricingTiers,
+                                    infantPrice: val,
+                                  },
+                                }));
+                              }}
+                            />
+                            <span className="text-xs text-gray-400">USD</span>
+                          </div>
+                          <p className="text-[11px] text-gray-400">
+                            {packageForm.pricingTiers?.infantPrice
+                              ? `$${packageForm.pricingTiers.infantPrice} / infant`
+                              : "Usually free ($0)"}
+                          </p>
                         </div>
                       </div>
 
-                      {/* Kids Table */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Label className="text-xs font-semibold text-secondary">Children (Age 3-12) Pricing ($)</Label>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="h-6 text-xs px-2 gap-1 border-dashed hover:border-solid text-secondary hover:bg-secondary/10"
-                            onClick={() => setKidTierCount((c) => c + 1)}
-                          >
-                            <Plus size={12} /> Add More
-                          </Button>
-                        </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                          {Array.from({ length: kidTierCount }, (_, i) => (i + 1).toString()).map((count) => (
-                            <div key={`kid-${count}`} className="flex items-center gap-1 bg-white p-1.5 rounded border text-xs">
-                              <span className="w-14 text-gray-600 font-medium">{count} {count === "1" ? "Kid" : "Kids"}:</span>
-                              <span className="text-gray-400">$</span>
-                              <Input
-                                type="number"
-                                className="h-7 text-xs px-1"
-                                placeholder="0"
-                                value={(packageForm.pricingTiers?.kidPrices as any)?.[count] ?? ""}
-                                onChange={(e) => {
-                                  const val = e.target.value;
-                                  setPackageForm((f) => ({
-                                    ...f,
-                                    pricingTiers: {
-                                      ...f.pricingTiers,
-                                      kidPrices: {
-                                        ...(f.pricingTiers?.kidPrices || {}),
-                                        [count]: val,
-                                      },
-                                    },
-                                  }));
-                                }}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Infants Table */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Label className="text-xs font-semibold text-emerald-700">Infants (Age 0-2) Pricing ($)</Label>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="h-6 text-xs px-2 gap-1 border-dashed hover:border-solid text-emerald-700 hover:bg-emerald-50"
-                            onClick={() => setInfantTierCount((c) => c + 1)}
-                          >
-                            <Plus size={12} /> Add More
-                          </Button>
-                        </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                          {Array.from({ length: infantTierCount }, (_, i) => (i + 1).toString()).map((count) => (
-                            <div key={`infant-${count}`} className="flex items-center gap-1 bg-white p-1.5 rounded border text-xs">
-                              <span className="w-14 text-gray-600 font-medium">{count} {count === "1" ? "Infant" : "Infants"}:</span>
-                              <span className="text-gray-400">$</span>
-                              <Input
-                                type="number"
-                                className="h-7 text-xs px-1"
-                                placeholder="0"
-                                value={(packageForm.pricingTiers?.infantPrices as any)?.[count] ?? ""}
-                                onChange={(e) => {
-                                  const val = e.target.value;
-                                  setPackageForm((f) => ({
-                                    ...f,
-                                    pricingTiers: {
-                                      ...f.pricingTiers,
-                                      infantPrices: {
-                                        ...(f.pricingTiers?.infantPrices || {}),
-                                        [count]: val,
-                                      },
-                                    },
-                                  }));
-                                }}
-                              />
-                            </div>
-                          ))}
-                        </div>
+                      <div className="bg-slate-100/90 rounded-md p-2 text-xs text-gray-600">
+                        <span><strong>Formula:</strong> (Adults × Adult Price) + (Children × Child Price) + (Infants × Infant Price)</span>
                       </div>
                     </div>
                   )}
@@ -1143,9 +1098,6 @@ const AdminPage: React.FC = () => {
                       variant="secondary"
                       onClick={() => {
                         setEditingPackage(null);
-                        setAdultTierCount(4);
-                        setKidTierCount(4);
-                        setInfantTierCount(4);
                         setPackageForm({
                           title: "",
                           slug: "",
@@ -1153,9 +1105,10 @@ const AdminPage: React.FC = () => {
                           days: "",
                           price: "",
                           pricingTiers: {
-                            adultPrices: {},
-                            kidPrices: {},
-                            infantPrices: {},
+                            adultPrice: "",
+                            kidPrice: "",
+                            infantPrice: "",
+                            couplePrice: "",
                           },
                           shortDescription: "",
                           detailedDescription: "",
