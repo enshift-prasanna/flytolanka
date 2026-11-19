@@ -167,7 +167,7 @@ export default function HomePage() {
               <div className="bg-secondary bg-opacity-95 border border-white/20 rounded-2xl p-6 lg:p-7 shadow-xl text-white">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <h2 className="text-xl font-bold text-yellow-300 text-center tracking-tight">
-                    Book your Sri Lanka Tour
+                    Sri Lanka Tour Inquiry
                   </h2>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -316,7 +316,7 @@ export default function HomePage() {
                       className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-5 rounded-full shadow-lg hover:shadow-2xl transition duration-300"
                       disabled={loading}
                     >
-                      {loading ? 'Sending...' : 'Book your Sri Lanka Tour'}
+                      {loading ? 'Sending...' : 'Sri Lanka Tour Inquiry'}
                     </Button>
                     {success && <p className="text-center text-green-300 mt-2 text-sm">Request sent successfully!</p>}
                     {error && <p className="text-center text-red-300 mt-2 text-sm">{error}</p>}

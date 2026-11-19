@@ -16,18 +16,6 @@ export function Navigation() {
     setIsOpen(false);
   }, [pathname]);
 
-  // Lock body scroll when mobile fullscreen menu is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
-
   if (
     pathname.startsWith("/admin") ||
     pathname.startsWith("/sign-in") ||
@@ -41,12 +29,12 @@ export function Navigation() {
     { href: "/vehicles", label: "Vehicles" },
     { href: "/drivers", label: "Drivers" },
     { href: "/packages", label: "Packages" },
-    { href: "/sri-lanka", label: "Sri Lanka" },
+    { href: "/sri-lanka", label: "Blogs" },
     { href: "/things-to-do", label: "Things to Do" },
   ];
 
   return (
-    <header className={`bg-white shadow-sm border-b sticky top-0 ${isOpen ? "z-[9999]" : "z-50"}`}>
+    <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       {/* Top contact bar */}
       <div className="bg-secondary text-white py-2">
         <div className="container mx-auto px-4 lg:px-24 flex justify-between items-center text-sm">
@@ -142,105 +130,45 @@ export function Navigation() {
           </Button>
         </div>
 
-        {/* Fullscreen Mobile Navigation */}
+        {/* Mobile Navigation Dropdown */}
         {isOpen && (
-          <div className="fixed inset-0 z-[9999] bg-white flex flex-col justify-between p-6 md:hidden overflow-y-auto">
-            {/* Top Bar with Logo and Close Button */}
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <Link
-                href="/"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center space-x-2"
-              >
-                <div className="bg-primary text-white px-3 py-2 rounded-lg font-bold text-xl">
-                  FTLT
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-bold text-xl text-gray-900">
-                    Fly To Lanka Tours
-                  </span>
-                  <span className="text-xs text-gray-600">Travel & Transport</span>
-                </div>
-              </Link>
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="p-2.5 rounded-full hover:bg-gray-100 text-gray-700 transition-colors cursor-pointer"
-                aria-label="Close menu"
-              >
-                <X className="h-7 w-7" />
-              </button>
-            </div>
-
-            {/* Centered Navigation Links */}
-            <div className="flex flex-col items-center justify-center space-y-5 py-6 flex-1">
+          <div className="md:hidden mt-4 pb-4 border-t pt-4">
+            <div className="flex flex-col space-y-3">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-2xl font-semibold text-gray-800 hover:text-primary transition-colors tracking-tight text-center"
+                  className="text-gray-700 hover:text-primary font-medium py-1 transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   {item.label}
                 </Link>
               ))}
-            </div>
-
-            {/* Bottom Actions & Contacts */}
-            <div className="space-y-4 pt-4 border-t border-gray-100 w-full max-w-sm mx-auto">
-              <Link
-                href="/tailor-made"
-                className="block w-full"
-                onClick={() => setIsOpen(false)}
-              >
-                <Button className="w-full h-14 bg-secondary hover:bg-secondary/80 text-white font-semibold text-base rounded-xl shadow-sm cursor-pointer flex items-center justify-center">
-                  Tailor Made
-                </Button>
-              </Link>
-
-              <Show when="signed-in">
-                <div className="flex items-center justify-center gap-3 w-full">
-                  <Link
-                    href="/my-bookings"
-                    className="flex-1"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <Button className="w-full h-14 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold text-base rounded-xl shadow-sm border border-yellow-300 cursor-pointer flex items-center justify-center">
-                      My Bookings
-                    </Button>
-                  </Link>
-                  <div className="rounded-full p-[2.5px] bg-gradient-to-r from-yellow-400 to-yellow-500 border border-yellow-300 shadow-sm flex items-center justify-center shrink-0">
-                    <UserButton />
-                  </div>
-                </div>
-              </Show>
-
-              <Show when="signed-out">
-                <Link
-                  href="/sign-in"
-                  className="block w-full"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Button className="w-full h-14 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold text-base rounded-xl shadow-sm border border-yellow-300 cursor-pointer flex items-center justify-center">
-                    Sign In
+              <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
+                <Link href="/tailor-made" onClick={() => setIsOpen(false)}>
+                  <Button className="bg-secondary hover:bg-secondary/80 w-full text-white font-medium">
+                    Tailor Made
                   </Button>
                 </Link>
-              </Show>
-
-              {/* Quick Contact Footer */}
-              <div className="flex justify-center items-center gap-6 text-xs text-gray-500 pt-1">
-                <a
-                  href="tel:+94765533874"
-                  className="flex items-center gap-1 hover:text-primary transition-colors"
-                >
-                  <Phone className="h-3.5 w-3.5" /> +94 76 553 3874
-                </a>
-                <a
-                  href="mailto:info@flytolanka.com"
-                  className="flex items-center gap-1 hover:text-primary transition-colors"
-                >
-                  <Mail className="h-3.5 w-3.5" /> info@flytolanka.com
-                </a>
+                <Show when="signed-in">
+                  <div className="flex items-center gap-2">
+                    <Link href="/my-bookings" className="flex-1" onClick={() => setIsOpen(false)}>
+                      <Button className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold border border-yellow-300">
+                        My Bookings
+                      </Button>
+                    </Link>
+                    <div className="rounded-full p-[2.5px] bg-gradient-to-r from-yellow-400 to-yellow-500 border border-yellow-300 shadow-sm flex items-center justify-center shrink-0">
+                      <UserButton />
+                    </div>
+                  </div>
+                </Show>
+                <Show when="signed-out">
+                  <Link href="/sign-in" onClick={() => setIsOpen(false)}>
+                    <Button className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold border border-yellow-300">
+                      Sign In
+                    </Button>
+                  </Link>
+                </Show>
               </div>
             </div>
           </div>

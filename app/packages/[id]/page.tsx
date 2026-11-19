@@ -85,6 +85,43 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
+  // Ref & dynamic sticky position for the right-side inquiry card
+  const inquiryCardRef = useRef<HTMLDivElement | null>(null);
+  const [stickyTop, setStickyTop] = useState<string>("5rem");
+
+  useEffect(() => {
+    const updateSticky = () => {
+      if (!inquiryCardRef.current || typeof window === "undefined") return;
+      const cardHeight = inquiryCardRef.current.offsetHeight;
+      const windowHeight = window.innerHeight;
+      const navbarHeight = 80;
+      const bottomPadding = 105; // Generous space so card stops cleanly above the floating WhatsApp button
+
+      if (cardHeight + navbarHeight + bottomPadding <= windowHeight) {
+        // Fits comfortably in viewport: stick below navbar
+        setStickyTop(`${navbarHeight}px`);
+      } else {
+        // Taller than viewport: scroll naturally until its bottom is in view, then stick!
+        const topOffset = windowHeight - cardHeight - bottomPadding;
+        setStickyTop(`${topOffset}px`);
+      }
+    };
+
+    updateSticky();
+    window.addEventListener("resize", updateSticky);
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && inquiryCardRef.current) {
+      observer = new ResizeObserver(updateSticky);
+      observer.observe(inquiryCardRef.current);
+    }
+
+    return () => {
+      window.removeEventListener("resize", updateSticky);
+      if (observer) observer.disconnect();
+    };
+  }, [packageData, loading]);
+
   // Check if current package is a Honeymoon tour
   const isHoneymoon = Boolean(
     category?.slug === "honeymoon-tours" ||
@@ -372,7 +409,11 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                         <Star className="h-6 w-6 text-secondary fill-current" />
                         <div>
                           <p className="text-xs uppercase tracking-wide text-white/70">Price</p>
-                          <p className="font-semibold">{packageData.price}</p>
+                          <p className="font-semibold">
+                            {packageData.price.toLowerCase().includes("pp")
+                              ? packageData.price
+                              : `PP ${packageData.price}`}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -413,7 +454,11 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
             {packageData.price && (
               <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
                 <Star className="h-5 w-5 text-secondary fill-current" />
-                <span className="text-sm font-medium">{packageData.price}</span>
+                <span className="text-sm font-medium">
+                  {packageData.price.toLowerCase().includes("pp")
+                    ? packageData.price
+                    : `PP ${packageData.price}`}
+                </span>
               </div>
             )}
             <div className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3">
@@ -435,8 +480,8 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
 
 
       {/* Content Section */}
-      <section className="py-20 relative overflow-hidden" id="overview">
-        <div className="absolute inset-0 pointer-events-none">
+      <section className="py-20 relative" id="overview">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute -top-32 -right-16 w-72 h-72 bg-slate-200/30 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-200/30 rounded-full blur-3xl" />
         </div>
@@ -475,8 +520,13 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
             </div>
 
             <div className="lg:col-span-1">
-              <Reveal className="lg:sticky lg:top-8">
-                <Card id="inquiry" className="shadow-md hover:shadow-xl transition-shadow border-gray-200/70 rounded-2xl backdrop-blur-sm bg-white/90">
+              <div
+                ref={inquiryCardRef}
+                style={{ top: stickyTop }}
+                className="lg:sticky"
+              >
+                <Reveal>
+                  <Card id="inquiry" className="shadow-md hover:shadow-xl transition-shadow border-gray-200/70 rounded-2xl backdrop-blur-sm bg-white/90">
                   <CardHeader className="pb-2">
                     <CardTitle>Book Your Private Driver & Tour Guide</CardTitle>
                     <p className="text-sm text-gray-600">Fields marked with an * are required</p>
@@ -633,7 +683,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                       {estimatedPricing.hasPricing && (
                         <div className="bg-emerald-50/90 border border-emerald-200 rounded-xl p-4 text-center space-y-1">
                           <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wider">
-                            {isHoneymoon ? "Estimated Price per Couple (2 Adults)" : "Estimated Package Price"}
+                            {isHoneymoon ? "Price per Couple (2 Adults)" : "Total Package Price"}
                           </span>
                           <div className="text-3xl font-extrabold text-emerald-700">
                             ${estimatedPricing.grandTotal} USD
@@ -678,6 +728,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                 </Card>
               </Reveal>
             </div>
+          </div>
           </div>
         </div>
       </section>
