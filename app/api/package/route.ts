@@ -32,6 +32,7 @@ export async function GET(req: Request) {
           categoryId: true,
           days: true,
           price: true,
+          pricingTiers: true,
           shortDescription: true,
           image: true,
           category: {

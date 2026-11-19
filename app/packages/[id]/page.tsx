@@ -418,11 +418,21 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                         <Star className="h-6 w-6 text-secondary fill-current" />
                         <div>
                           <p className="text-xs uppercase tracking-wide text-white/70">Price</p>
-                          <p className="font-semibold">
-                            {packageData.price.toLowerCase().includes("pp")
-                              ? packageData.price
-                              : `PP ${packageData.price}`}
-                          </p>
+                          <div className="flex items-baseline gap-2">
+                            {(packageData.oldPrice || packageData.pricingTiers?.oldPrice) && (
+                              <span className="text-xs sm:text-sm text-white/60 line-through font-medium">
+                                {(() => {
+                                  const raw = String(packageData.oldPrice || packageData.pricingTiers?.oldPrice).trim();
+                                  return raw.startsWith("$") ? raw : `$${raw}`;
+                                })()}
+                              </span>
+                            )}
+                            <p className="font-semibold">
+                              {packageData.price.toLowerCase().includes("pp")
+                                ? packageData.price
+                                : `PP ${packageData.price}`}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -748,9 +758,19 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
           <div className="container mx-auto px-6 sm:px-10 lg:px-28 min-h-[104px] sm:min-h-[110px] pt-5 pb-8 sm:py-5.5 flex items-center justify-between gap-4">
             {/* Price Info */}
             <div className="flex flex-col justify-center min-w-0">
-              <span className="text-sm sm:text-base font-medium text-gray-500 leading-none mb-1">
-                From
-              </span>
+              <div className="flex items-center gap-2 leading-none mb-1">
+                <span className="text-xs sm:text-sm font-medium text-gray-500">
+                  From
+                </span>
+                {(packageData.oldPrice || packageData.pricingTiers?.oldPrice) && (
+                  <span className="text-sm sm:text-base font-bold text-gray-400 line-through">
+                    {(() => {
+                      const raw = String(packageData.oldPrice || packageData.pricingTiers?.oldPrice).trim();
+                      return raw.startsWith("$") ? raw : `$${raw}`;
+                    })()}
+                  </span>
+                )}
+              </div>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-950 tracking-tight leading-none whitespace-nowrap">
                   {getBottomBarPrice()}

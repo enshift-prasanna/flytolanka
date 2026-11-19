@@ -177,7 +177,17 @@ export default function CategoryPage({ params }: PageProps) {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="flex items-center justify-between pt-4 border-t">
-                        <div>
+                        <div className="flex flex-col">
+                          {(pkg.oldPrice || pkg.pricingTiers?.oldPrice) && (
+                            <span className="text-xs sm:text-sm font-semibold text-gray-400 line-through">
+                              {(() => {
+                                const raw = String(pkg.oldPrice || pkg.pricingTiers?.oldPrice).trim();
+                                if (raw.toLowerCase().includes("pp")) return raw;
+                                const withDollar = raw.startsWith("$") ? raw : `$${raw}`;
+                                return pkg.price?.toLowerCase().includes("pp") ? `${withDollar} PP` : `PP ${withDollar}`;
+                              })()}
+                            </span>
+                          )}
                           <span className="text-lg font-bold text-secondary">
                             {pkg.price
                               ? (pkg.price.toLowerCase().includes("pp")

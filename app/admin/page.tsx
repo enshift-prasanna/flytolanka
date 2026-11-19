@@ -77,6 +77,7 @@ const AdminPage: React.FC = () => {
     categoryId: "",
     days: "",
     price: "",
+    oldPrice: "",
     pricingTiers: {
       adultPrice: "",
       kidPrice: "",
@@ -337,16 +338,24 @@ const AdminPage: React.FC = () => {
     }
 
     const pt = packageForm.pricingTiers || ({} as any);
-    const hasAnyPricing = Boolean(pt.adultPrice || pt.kidPrice || pt.infantPrice || pt.couplePrice);
+    const hasAnyPricing = Boolean(
+      pt.adultPrice ||
+      pt.kidPrice ||
+      pt.infantPrice ||
+      pt.couplePrice ||
+      (packageForm.oldPrice && packageForm.oldPrice.trim())
+    );
     const cleanTiers = hasAnyPricing ? {
       ...(pt.adultPrice ? { adultPrice: pt.adultPrice } : {}),
       ...(pt.kidPrice ? { kidPrice: pt.kidPrice } : {}),
       ...(pt.infantPrice ? { infantPrice: pt.infantPrice } : {}),
       ...(pt.couplePrice ? { couplePrice: pt.couplePrice } : {}),
+      ...(packageForm.oldPrice && packageForm.oldPrice.trim() ? { oldPrice: packageForm.oldPrice.trim() } : {}),
     } : null;
 
+    const { oldPrice: _unusedOldPrice, ...basePayload } = packageForm;
     const payload = {
-      ...packageForm,
+      ...basePayload,
       pricingTiers: cleanTiers,
       image: imageUrl,
     };
@@ -364,6 +373,7 @@ const AdminPage: React.FC = () => {
         categoryId: "",
         days: "",
         price: "",
+        oldPrice: "",
         pricingTiers: {
           adultPrice: "",
           kidPrice: "",
@@ -388,6 +398,7 @@ const AdminPage: React.FC = () => {
       categoryId: pkg.categoryId,
       days: pkg.days,
       price: pkg.price || "",
+      oldPrice: pkg.oldPrice || pt.oldPrice || "",
       pricingTiers: {
         adultPrice: pt.adultPrice !== undefined ? String(pt.adultPrice) : (pt.adultPrices?.["1"] ? String(pt.adultPrices["1"]) : ""),
         kidPrice: pt.kidPrice !== undefined ? String(pt.kidPrice) : (pt.kidPrices?.["1"] ? String(pt.kidPrices["1"]) : ""),
@@ -882,15 +893,30 @@ const AdminPage: React.FC = () => {
                       }
                     />
                   </div>
-                  <div>
-                    <Label>Price (Display / Starting)</Label>
-                    <Input
-                      value={packageForm.price}
-                      onChange={(e) =>
-                        setPackageForm((f) => ({ ...f, price: e.target.value }))
-                      }
-                      placeholder="e.g. $100 or From $100"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Price (Display / Starting)</Label>
+                      <Input
+                        value={packageForm.price}
+                        onChange={(e) =>
+                          setPackageForm((f) => ({ ...f, price: e.target.value }))
+                        }
+                        placeholder="e.g. $100 or From $100"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <Label>Old Price (Optional)</Label>
+                        <span className="text-[11px] text-gray-500 font-normal">Crossed out with line</span>
+                      </div>
+                      <Input
+                        value={packageForm.oldPrice}
+                        onChange={(e) =>
+                          setPackageForm((f) => ({ ...f, oldPrice: e.target.value }))
+                        }
+                        placeholder="e.g. $150 or 150"
+                      />
+                    </div>
                   </div>
 
                   {/* Per-Person Dynamic Pricing */}
@@ -1091,6 +1117,7 @@ const AdminPage: React.FC = () => {
                           categoryId: "",
                           days: "",
                           price: "",
+                          oldPrice: "",
                           pricingTiers: {
                             adultPrice: "",
                             kidPrice: "",
@@ -1136,7 +1163,18 @@ const AdminPage: React.FC = () => {
                           </td>
                           <td className="px-4 py-2 border">{pkg.title}</td>
                           <td className="px-4 py-2 border font-mono text-xs text-blue-600">{pkg.slug || "-"}</td>
-                          <td className="px-4 py-2 border">{pkg.price || "N/A"}</td>
+                          <td className="px-4 py-2 border">
+                            <div className="flex flex-col">
+                              {(pkg.oldPrice || pkg.pricingTiers?.oldPrice) && (
+                                <span className="text-xs text-gray-400 line-through">
+                                  {String(pkg.oldPrice || pkg.pricingTiers?.oldPrice).startsWith("$")
+                                    ? (pkg.oldPrice || pkg.pricingTiers?.oldPrice)
+                                    : `$${pkg.oldPrice || pkg.pricingTiers?.oldPrice}`}
+                                </span>
+                              )}
+                              <span className="font-medium text-gray-900">{pkg.price || "N/A"}</span>
+                            </div>
+                          </td>
                           <td className="px-4 py-2 border">
                             {pkg.shortDescription?.length > 50
                               ? pkg.shortDescription.slice(0, 50) + "..."
