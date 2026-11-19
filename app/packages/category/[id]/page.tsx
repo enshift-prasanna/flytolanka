@@ -85,9 +85,9 @@ export default function CategoryPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
-      {/* Hero Section (copied from package[id], static image) */}
+      {/* Hero Section */}
       <section className="relative overflow-hidden" id="top">
-        <div className="relative h-[460px] lg:h-[520px]">
+        <div className="relative min-h-[480px] lg:min-h-[540px] flex items-center py-8 sm:py-12 lg:py-16">
           <Image
             src={optimizeImage(category?.image, 1600)}
             alt={category?.name || "Category"}
@@ -100,19 +100,19 @@ export default function CategoryPage({ params }: PageProps) {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_25%,rgba(255,255,255,0.18),transparent_60%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_75%,rgba(255,255,255,0.12),transparent_55%)]" />
           {/* Content */}
-          <div className="absolute inset-0 flex items-end pb-12 lg:items-center lg:pb-0">
+          <div className="relative z-10 w-full">
             <div className="container mx-auto px-4 lg:px-24">
               <Reveal>
                 <div className="max-w-4xl text-white">
-                  <div className="flex flex-wrap items-center gap-3 mb-5">
-                    <Link href="/packages" className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm backdrop-blur-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 transition-colors">
+                  <div className="flex flex-wrap items-center gap-3 mb-4 sm:mb-5">
+                    <Link href="/packages" className="inline-flex items-center gap-2 text-white/90 hover:text-white text-sm backdrop-blur-sm px-3.5 py-1.5 rounded-full bg-black/30 hover:bg-black/50 border border-white/20 transition-colors">
                       <ArrowLeft className="h-4 w-4" /> Back
                     </Link>
                   </div>
-                  <h1 className="text-4xl lg:text-5xl font-bold mb-5 leading-tight tracking-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-5 leading-tight tracking-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]">
                     {loading ? "Loading..." : category?.name}
                   </h1>
-                  <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed max-w-3xl">
+                  <p className="text-base sm:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 leading-relaxed max-w-3xl">
                     {category?.description}
                   </p>
                 </div>
@@ -120,7 +120,7 @@ export default function CategoryPage({ params }: PageProps) {
             </div>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent to-white" />
+        <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-b from-transparent to-white pointer-events-none" />
       </section>
 
       {/* Packages Grid */}

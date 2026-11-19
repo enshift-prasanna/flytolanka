@@ -7,12 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Clock, Users, Star, ArrowLeft } from "lucide-react";
+import { Clock, Users, Star, ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { optimizeImage } from "@/lib/utils";
-import { calculatePackagePrice } from "@/lib/pricing";
+import { calculatePackagePrice, extractPriceNumber } from "@/lib/pricing";
 import { useUser } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -71,7 +71,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
     vehicle: '',
     arrival: '',
     departure: '',
-    adults: '',
+    adults: '1',
     children: '',
     infants: '',
     requirements: '',
@@ -85,42 +85,51 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
-  // Ref & dynamic sticky position for the right-side inquiry card
-  const inquiryCardRef = useRef<HTMLDivElement | null>(null);
-  const [stickyTop, setStickyTop] = useState<string>("5rem");
+  // Floating bottom sticky bar visibility: auto-hides when near or at the inquiry form
+  const [isNearForm, setIsNearForm] = useState(false);
 
   useEffect(() => {
-    const updateSticky = () => {
-      if (!inquiryCardRef.current || typeof window === "undefined") return;
-      const cardHeight = inquiryCardRef.current.offsetHeight;
+    const handleScrollNearForm = () => {
+      const formEl = document.getElementById("inquiry");
+      if (!formEl || typeof window === "undefined") return;
+      const rect = formEl.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      const navbarHeight = 80;
-      const bottomPadding = 105; // Generous space so card stops cleanly above the floating WhatsApp button
-
-      if (cardHeight + navbarHeight + bottomPadding <= windowHeight) {
-        // Fits comfortably in viewport: stick below navbar
-        setStickyTop(`${navbarHeight}px`);
-      } else {
-        // Taller than viewport: scroll naturally until its bottom is in view, then stick!
-        const topOffset = windowHeight - cardHeight - bottomPadding;
-        setStickyTop(`${topOffset}px`);
-      }
+      // Hide bar when the form enters the screen (within 80px) and stay hidden while form is in view or below
+      const isVisibleOrNear = rect.top < windowHeight - 80 && rect.bottom > 80;
+      setIsNearForm(isVisibleOrNear);
     };
 
-    updateSticky();
-    window.addEventListener("resize", updateSticky);
-
-    let observer: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== "undefined" && inquiryCardRef.current) {
-      observer = new ResizeObserver(updateSticky);
-      observer.observe(inquiryCardRef.current);
-    }
+    window.addEventListener("scroll", handleScrollNearForm, { passive: true });
+    window.addEventListener("resize", handleScrollNearForm);
+    handleScrollNearForm();
 
     return () => {
-      window.removeEventListener("resize", updateSticky);
-      if (observer) observer.disconnect();
+      window.removeEventListener("scroll", handleScrollNearForm);
+      window.removeEventListener("resize", handleScrollNearForm);
     };
-  }, [packageData, loading]);
+  }, [loading, packageData]);
+
+  const handleScrollToForm = () => {
+    const formEl = document.getElementById("inquiry");
+    if (formEl) {
+      formEl.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Format clean starting price for the bottom bar
+  const getBottomBarPrice = () => {
+    if (isHoneymoon && packageData?.pricingTiers?.couplePrice) {
+      return `$${packageData.pricingTiers.couplePrice}`;
+    }
+    if (packageData?.pricingTiers?.adultPrice) {
+      return `$${packageData.pricingTiers.adultPrice}`;
+    }
+    if (packageData?.price) {
+      const num = extractPriceNumber(packageData.price);
+      if (num > 0) return `$${num.toLocaleString()}`;
+    }
+    return "Custom Quote";
+  };
 
   // Check if current package is a Honeymoon tour
   const isHoneymoon = Boolean(
@@ -247,7 +256,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
           vehicle: '',
           arrival: '',
           departure: '',
-          adults: '',
+          adults: '1',
           children: '',
           infants: '',
           requirements: '',
@@ -367,7 +376,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Hero Section */}
       <section className="relative overflow-hidden" id="top">
-        <div className="relative h-[460px] lg:h-[520px]">
+        <div className="relative min-h-[480px] lg:min-h-[540px] flex items-center py-8 sm:py-12 lg:py-16">
           <Image
             src={optimizeImage(packageData.image, 1600)}
             alt={packageData.title}
@@ -380,20 +389,20 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_25%,rgba(255,255,255,0.18),transparent_60%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_75%,rgba(255,255,255,0.12),transparent_55%)]" />
           {/* Content */}
-          <div className="absolute inset-0 flex items-end pb-12 lg:items-center lg:pb-0">
+          <div className="relative z-10 w-full">
             <div className="container mx-auto px-4 lg:px-24">
               <Reveal>
                 <div className="max-w-4xl text-white">
-                  <div className="flex flex-wrap items-center gap-3 mb-5">
-                    <Link href="/packages" className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm backdrop-blur-sm px-3 py-1.5 rounded-full bg-white/10 border border-white/10 transition-colors">
+                  <div className="flex flex-wrap items-center gap-3 mb-4 sm:mb-5">
+                    <Link href="/packages" className="inline-flex items-center gap-2 text-white/90 hover:text-white text-sm backdrop-blur-sm px-3.5 py-1.5 rounded-full bg-black/30 hover:bg-black/50 border border-white/20 transition-colors">
                       <ArrowLeft className="h-4 w-4" /> Back
                     </Link>
                     {/* <Badge className="bg-emerald-600/90 backdrop-blur-sm px-3 py-1 rounded-full shadow shadow-emerald-900/30">{category?.name}</Badge> */}
                   </div>
-                  <h1 className="text-4xl lg:text-5xl font-bold mb-5 leading-tight tracking-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-5 leading-tight tracking-tight text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]">
                     {packageData.title}
                   </h1>
-                  <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed max-w-3xl">
+                  <p className="text-base sm:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 leading-relaxed max-w-3xl">
                     {packageData.shortDescription}
                   </p>
                   <div className="hidden lg:grid grid-cols-5 gap-6 max-w-5xl">
@@ -501,172 +510,165 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                   </CardContent>
                 </Card>
               </Reveal>
-
-              {category && (
-                <Reveal className="delay-100" >
-                  <Card id="info" className="group border-gray-200/70 shadow-sm hover:shadow-xl transition-shadow rounded-2xl">
-                    <CardHeader className="pb-2">
-                      <CardTitle>Important Information</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div
-                        className="text-gray-600 leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: category.defaultText }}
-                      />
-                    </CardContent>
-                  </Card>
-                </Reveal>
-              )}
             </div>
 
-            <div className="lg:col-span-1">
-              <div
-                ref={inquiryCardRef}
-                style={{ top: stickyTop }}
-                className="lg:sticky"
-              >
+            <div className="lg:col-span-1 pb-36">
+              <div className="lg:sticky lg:top-16">
                 <Reveal>
-                  <Card id="inquiry" className="shadow-md hover:shadow-xl transition-shadow border-gray-200/70 rounded-2xl backdrop-blur-sm bg-white/90">
-                  <CardHeader className="pb-2">
-                    <CardTitle>Book Your Private Driver & Tour Guide</CardTitle>
-                    <p className="text-sm text-gray-600">Fields marked with an * are required</p>
+                  <Card id="inquiry" className="shadow-md hover:shadow-xl transition-shadow border-gray-200/70 rounded-2xl backdrop-blur-sm bg-white/95">
+                  <CardHeader className="p-4 pb-1">
+                    <CardTitle className="text-lg font-bold">Book Your Private Driver</CardTitle>
+                    <p className="text-xs text-gray-500">Fields marked with an * are required</p>
                   </CardHeader>
-                  <CardContent className="space-y-5">
-                    <form className="space-y-5" onSubmit={handleSubmit}>
+                  <CardContent className="p-4 pt-1 space-y-2.5">
+                    <form className="space-y-2.5" onSubmit={handleSubmit}>
                       {packageData?.categoryId === "68babf3c85d85b76f41bcfe6" ? (
                         <>
-                          <div className="space-y-2">
-                            <Label htmlFor="name">Name *</Label>
-                            <Input id="name" required value={form.name} onChange={handleChange} placeholder="Your full name" />
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div className="space-y-1">
+                              <Label htmlFor="name" className="text-xs font-semibold">Name *</Label>
+                              <Input id="name" required value={form.name} onChange={handleChange} placeholder="Your full name" className="h-9 text-sm" />
+                            </div>
+                            <div className="space-y-1">
+                              <Label htmlFor="email" className="text-xs font-semibold">Email *</Label>
+                              <Input id="email" type="email" required value={form.email} onChange={handleChange} placeholder="your@email.com" className="h-9 text-sm" />
+                            </div>
                           </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="email">Email *</Label>
-                            <Input id="email" type="email" required value={form.email} onChange={handleChange} placeholder="your@email.com" />
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div className="space-y-1">
+                              <Label htmlFor="phone" className="text-xs font-semibold">Phone / WhatsApp *</Label>
+                              <Input id="phone" type="tel" required value={form.phone} onChange={handleChange} placeholder="+94 76 553 3874" className="h-9 text-sm" />
+                            </div>
+                            <div className="space-y-1">
+                              <Label htmlFor="contactMethod" className="text-xs font-semibold">Preferred Contact</Label>
+                              <Select value={form.contactMethod} onValueChange={v => handleSelect('contactMethod', v)}>
+                                <SelectTrigger className="h-9 text-sm">
+                                  <SelectValue placeholder="Select Method" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="email">Email</SelectItem>
+                                  <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                                  <SelectItem value="phone">Phone Call</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
                           </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="phone">Phone / WhatsApp *</Label>
-                            <Input id="phone" type="tel" required value={form.phone} onChange={handleChange} placeholder="+94 76 553 3874" />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="contactMethod">Preferred Contact Method</Label>
-                            <Select value={form.contactMethod} onValueChange={v => handleSelect('contactMethod', v)}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Method" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="email">Email</SelectItem>
-                                <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                                <SelectItem value="phone">Phone Call</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="pickupLocation">Pick Up Location</Label>
-                            <Input id="pickupLocation" value={form.pickupLocation} onChange={handleChange} placeholder="Starting point (e.g., hotel name)" />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="dropoffLocation">Drop Off Location</Label>
-                            <Input id="dropoffLocation" value={form.dropoffLocation} onChange={handleChange} placeholder="Ending point (e.g., hotel name)" />
+                          <div className="grid grid-cols-2 gap-2.5">
+                            <div className="space-y-1">
+                              <Label htmlFor="pickupLocation" className="text-xs font-semibold">Pick Up Location</Label>
+                              <Input id="pickupLocation" value={form.pickupLocation} onChange={handleChange} placeholder="Hotel / address" className="h-9 text-sm" />
+                            </div>
+                            <div className="space-y-1">
+                              <Label htmlFor="dropoffLocation" className="text-xs font-semibold">Drop Off Location</Label>
+                              <Input id="dropoffLocation" value={form.dropoffLocation} onChange={handleChange} placeholder="Hotel / address" className="h-9 text-sm" />
+                            </div>
                           </div>
                           {isHoneymoon ? (
-                            <div className="p-3.5 bg-rose-50/80 border border-rose-200 rounded-xl space-y-1">
-                              <div className="flex items-center gap-2 text-rose-900 font-semibold text-sm">
-                                <span className="text-base">💍</span>
+                            <div className="p-2 bg-rose-50/80 border border-rose-200 rounded-lg">
+                              <div className="flex items-center gap-1.5 text-rose-900 font-semibold text-xs">
+                                <span className="text-sm">💍</span>
                                 <span>Exclusively for 2 Adults (Couple)</span>
                               </div>
                             </div>
                           ) : (
-                            <div className="grid grid-cols-1 gap-4">
-                              <div className="space-y-2">
-                                <Label htmlFor="adults">Number of Adults</Label>
-                                <Input id="adults" type="number" min="0" value={form.adults} onChange={handleChange} placeholder="0" />
+                            <div className="grid grid-cols-3 gap-1.5">
+                              <div className="space-y-0.5">
+                                <Label htmlFor="adults" className="text-[10px] font-semibold leading-tight block">Adults (13+)</Label>
+                                <Input id="adults" type="number" min="0" value={form.adults} onChange={handleChange} placeholder="1" className="h-8 text-xs text-center px-1" />
                               </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="children">Number of Children (Age)</Label>
-                                <Input id="children" type="text" value={form.children} onChange={handleChange} placeholder="e.g. 2 (5, 8 yrs)" />
+                              <div className="space-y-0.5">
+                                <Label htmlFor="children" className="text-[10px] font-semibold leading-tight block">Kids (6-12)</Label>
+                                <Input id="children" type="text" value={form.children} onChange={handleChange} placeholder="0" className="h-8 text-xs text-center px-1" />
                               </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="infants">Number of Infants</Label>
-                                <Input id="infants" type="number" min="0" value={form.infants} onChange={handleChange} placeholder="0" />
+                              <div className="space-y-0.5">
+                                <Label htmlFor="infants" className="text-[10px] font-semibold leading-tight block">Infants (0-5)</Label>
+                                <Input id="infants" type="number" min="0" value={form.infants} onChange={handleChange} placeholder="0" className="h-8 text-xs text-center px-1" />
                               </div>
                             </div>
                           )}
-                          <div className="space-y-2">
-                            <Label htmlFor="specialNotes">Special Notes</Label>
+                          <div className="space-y-1">
+                            <Label htmlFor="specialNotes" className="text-xs font-semibold">Special Notes</Label>
                             <Textarea
                               id="specialNotes"
                               value={form.specialNotes}
                               onChange={handleChange}
                               placeholder="Any special requests or instructions..."
-                              rows={4}
+                              rows={2}
+                              className="text-sm min-h-[50px]"
                             />
                           </div>
                         </>
                       ) : (
                         <>
-                          <div className="space-y-2">
-                            <Label htmlFor="name">Name *</Label>
-                            <Input id="name" required value={form.name} onChange={handleChange} placeholder="Your full name" />
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div className="space-y-1">
+                              <Label htmlFor="name" className="text-xs sm:text-[13px] font-semibold text-gray-800">Name *</Label>
+                              <Input id="name" required value={form.name} onChange={handleChange} placeholder="Your full name" className="h-9 text-xs sm:text-sm" />
+                            </div>
+                            <div className="space-y-1">
+                              <Label htmlFor="email" className="text-xs sm:text-[13px] font-semibold text-gray-800">Email *</Label>
+                              <Input id="email" type="email" required value={form.email} onChange={handleChange} placeholder="your@email.com" className="h-9 text-xs sm:text-sm" />
+                            </div>
                           </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="email">Email Address *</Label>
-                            <Input id="email" type="email" required value={form.email} onChange={handleChange} placeholder="your@email.com" />
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div className="space-y-1">
+                              <Label htmlFor="whatsapp" className="text-xs sm:text-[13px] font-semibold text-gray-800">WhatsApp Number</Label>
+                              <Input id="whatsapp" value={form.whatsapp} onChange={handleChange} placeholder="+94 76 553 3874" className="h-9 text-xs sm:text-sm" />
+                            </div>
+                            <div className="space-y-1">
+                              <Label htmlFor="vehicle" className="text-xs sm:text-[13px] font-semibold text-gray-800">Vehicle Type</Label>
+                              <Select value={form.vehicle} onValueChange={v => handleSelect('vehicle', v)}>
+                                <SelectTrigger className="h-9 text-xs sm:text-sm">
+                                  <SelectValue placeholder="Select vehicle" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="mini-car">Mini Car & Driver</SelectItem>
+                                  <SelectItem value="sedan-car">Sedan Car & Driver</SelectItem>
+                                  <SelectItem value="luxury-car">Luxury Car & Driver</SelectItem>
+                                  <SelectItem value="suv">SUV & Driver</SelectItem>
+                                  <SelectItem value="van">Van & Driver</SelectItem>
+                                  <SelectItem value="luxury-van">Luxury Van & Driver</SelectItem>
+                                  <SelectItem value="mini-coach">Mini Coach & Driver</SelectItem>
+                                  <SelectItem value="luxury-coach">Luxury Coach & Driver</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
                           </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="whatsapp">WhatsApp Number</Label>
-                            <Input id="whatsapp" value={form.whatsapp} onChange={handleChange} placeholder="+94 76 553 3874" />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="vehicle">Vehicle Type</Label>
-                            <Select value={form.vehicle} onValueChange={v => handleSelect('vehicle', v)}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select vehicle type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="mini-car">Mini Car & Driver</SelectItem>
-                                <SelectItem value="sedan-car">Sedan Car & Driver</SelectItem>
-                                <SelectItem value="luxury-car">Luxury Car & Driver</SelectItem>
-                                <SelectItem value="suv">SUV & Driver</SelectItem>
-                                <SelectItem value="van">Van & Driver</SelectItem>
-                                <SelectItem value="luxury-van">Luxury Van & Driver</SelectItem>
-                                <SelectItem value="mini-coach">Mini Coach & Driver</SelectItem>
-                                <SelectItem value="luxury-coach">Luxury Coach & Driver</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="arrival">Arrival Date *</Label>
-                            <Input id="arrival" type="date" required value={form.arrival} onChange={handleChange} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="departure">Departure Date</Label>
-                            <Input id="departure" type="date" value={form.departure} onChange={handleChange} />
+                          <div className="grid grid-cols-2 gap-2.5">
+                            <div className="space-y-1">
+                              <Label htmlFor="arrival" className="text-xs sm:text-[13px] font-semibold text-gray-800">Arrival Date *</Label>
+                              <Input id="arrival" type="date" required value={form.arrival} onChange={handleChange} className="h-9 text-xs sm:text-sm" />
+                            </div>
+                            <div className="space-y-1">
+                              <Label htmlFor="departure" className="text-xs sm:text-[13px] font-semibold text-gray-800">Departure Date</Label>
+                              <Input id="departure" type="date" value={form.departure} onChange={handleChange} className="h-9 text-xs sm:text-sm" />
+                            </div>
                           </div>
                           {isHoneymoon ? (
-                            <div className="p-3.5 bg-rose-50/80 border border-rose-200 rounded-xl space-y-1">
-                              <div className="flex items-center gap-2 text-rose-900 font-semibold text-sm">
-                                <span>Exclusively for 2 Adults (Couple)</span>
+                            <div className="p-2.5 bg-rose-50/80 border border-rose-200 rounded-lg">
+                              <div className="flex items-center gap-1.5 text-rose-900 font-semibold text-xs sm:text-sm">
+                                <span>💍 Exclusively for 2 Adults (Couple)</span>
                               </div>
                             </div>
                           ) : (
-                            <div className="grid grid-cols-1 gap-4">
-                              <div className="space-y-2">
-                                <Label htmlFor="adults">Number of Adults (13+)</Label>
-                                <Input id="adults" type="number" min="0" value={form.adults} onChange={handleChange} placeholder="0" />
+                            <div className="grid grid-cols-3 gap-2">
+                              <div className="space-y-1">
+                                <Label htmlFor="adults" className="text-xs sm:text-[13px] font-semibold leading-tight block text-gray-800">Adults (13+)</Label>
+                                <Input id="adults" type="number" min="0" value={form.adults} onChange={handleChange} placeholder="1" className="h-9 text-xs sm:text-sm text-center px-1" />
                               </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="children">Number of Children (6 to 12)</Label>
-                                <Input id="children" type="number" min="0" value={form.children} onChange={handleChange} placeholder="0" />
+                              <div className="space-y-1">
+                                <Label htmlFor="children" className="text-xs sm:text-[13px] font-semibold leading-tight block text-gray-800">Kids (6-12)</Label>
+                                <Input id="children" type="number" min="0" value={form.children} onChange={handleChange} placeholder="0" className="h-9 text-xs sm:text-sm text-center px-1" />
                               </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="infants">Number of Infants (0 to 5)</Label>
-                                <Input id="infants" type="number" min="0" value={form.infants} onChange={handleChange} placeholder="0" />
+                              <div className="space-y-1">
+                                <Label htmlFor="infants" className="text-xs sm:text-[13px] font-semibold leading-tight block text-gray-800">Infants (0-5)</Label>
+                                <Input id="infants" type="number" min="0" value={form.infants} onChange={handleChange} placeholder="0" className="h-9 text-xs sm:text-sm text-center px-1" />
                               </div>
                             </div>
                           )}
-                          <div className="space-y-2">
-                            <Label htmlFor="requirements">
-                              Describe your planned route, places you wish to visit, interests, or any special requirements... *
+                          <div className="space-y-1">
+                            <Label htmlFor="requirements" className="text-xs sm:text-[13px] font-semibold text-gray-800">
+                              Planned Route / Special Requirements *
                             </Label>
                             <Textarea
                               id="requirements"
@@ -674,40 +676,41 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                               value={form.requirements}
                               onChange={handleChange}
                               placeholder="Please describe your travel plans, interests, and any special requirements..."
-                              rows={4}
+                              rows={2}
+                              className="text-xs sm:text-sm min-h-[46px]"
                             />
                           </div>
                         </>
                       )}
                       {/* Live Calculated Price Breakdown */}
                       {estimatedPricing.hasPricing && (
-                        <div className="bg-emerald-50/90 border border-emerald-200 rounded-xl p-4 text-center space-y-1">
-                          <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wider">
+                        <div className="bg-emerald-50/90 border border-emerald-200 rounded-xl p-2 text-center space-y-0.5">
+                          <span className="text-[10px] font-semibold text-emerald-800 uppercase tracking-wider">
                             {isHoneymoon ? "Price per Couple (2 Adults)" : "Total Package Price"}
                           </span>
-                          <div className="text-3xl font-extrabold text-emerald-700">
+                          <div className="text-xl font-black text-emerald-700">
                             ${estimatedPricing.grandTotal} USD
                           </div>
                           {isHoneymoon ? (
-                            <div className="text-xs text-emerald-700 pt-1">
-                              <span className="bg-white px-2.5 py-0.5 rounded border border-emerald-200">
+                            <div className="text-xs text-emerald-700">
+                              <span className="bg-white px-2 py-0.5 rounded border border-emerald-200 text-[10px]">
                                 Couple Package Rate (2 Adults)
                               </span>
                             </div>
                           ) : (
-                            <div className="text-xs text-emerald-700 pt-1 flex flex-wrap items-center justify-center gap-2">
+                            <div className="text-xs text-emerald-700 flex flex-wrap items-center justify-center gap-1">
                               {estimatedPricing.adultTotal > 0 && (
-                                <span className="bg-white px-2 py-0.5 rounded border border-emerald-200">
+                                <span className="bg-white px-2 py-0.5 rounded border border-emerald-200 text-[10px]">
                                   {effectiveAdults} {effectiveAdults === 1 ? 'Adult' : 'Adults'} (${estimatedPricing.unitAdultPrice} each): ${estimatedPricing.adultTotal}
                                 </span>
                               )}
                               {estimatedPricing.kidTotal > 0 && (
-                                <span className="bg-white px-2 py-0.5 rounded border border-emerald-200">
+                                <span className="bg-white px-2 py-0.5 rounded border border-emerald-200 text-[10px]">
                                   {effectiveChildren} {effectiveChildren === 1 ? 'Child' : 'Children'} (${estimatedPricing.unitKidPrice} each): ${estimatedPricing.kidTotal}
                                 </span>
                               )}
                               {estimatedPricing.infantTotal > 0 && (
-                                <span className="bg-white px-2 py-0.5 rounded border border-emerald-200">
+                                <span className="bg-white px-2 py-0.5 rounded border border-emerald-200 text-[10px]">
                                   {effectiveInfants} {effectiveInfants === 1 ? 'Infant' : 'Infants'} (${estimatedPricing.unitInfantPrice} each): ${estimatedPricing.infantTotal}
                                 </span>
                               )}
@@ -716,12 +719,12 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                         </div>
                       )}
 
-                      <Button className="w-full bg-secondary hover:bg-secondary/80" size="lg" type="submit" disabled={sending}>{sending ? "Sending..." : "Send Inquiry"}</Button>
-                      {success && <p className="text-center text-green-600 mt-3">Booking request sent successfully!</p>}
-                      {error && <p className="text-center text-red-600 mt-3">{error}</p>}
-                      <div className="text-center text-sm text-gray-600">
-                        <p>Questions? Call us at</p>
-                        <p className="font-medium text-secondary">+94 76 553 3874</p>
+                      <Button className="w-full bg-secondary hover:bg-secondary/90 font-bold py-2 h-9 text-xs sm:text-sm shadow-md shadow-secondary/15" size="sm" type="submit" disabled={sending}>{sending ? "Sending..." : "Send Inquiry"}</Button>
+                      {success && <p className="text-center text-green-600 mt-1.5 text-xs font-medium">Booking request sent successfully!</p>}
+                      {error && <p className="text-center text-red-600 mt-1.5 text-xs">{error}</p>}
+                      <div className="text-center text-[11px] text-gray-500 pt-0.5">
+                        <span>Questions? Call us at </span>
+                        <span className="font-semibold text-secondary">+94 76 553 3874</span>
                       </div>
                     </form>
                   </CardContent>
@@ -732,6 +735,46 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
           </div>
         </div>
       </section>
+
+      {/* Floating Bottom Sticky Bar (Viator / GetYourGuide style) */}
+      {packageData && (
+        <div
+          className={`fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200/90 shadow-[0_-4px_25px_rgba(0,0,0,0.12)] transition-all duration-300 ease-in-out lg:hidden ${
+            !isNearForm
+              ? "translate-y-0 opacity-100 pointer-events-auto"
+              : "translate-y-full opacity-0 pointer-events-none"
+          }`}
+        >
+          <div className="container mx-auto px-6 sm:px-10 lg:px-28 min-h-[104px] sm:min-h-[110px] pt-5 pb-8 sm:py-5.5 flex items-center justify-between gap-4">
+            {/* Price Info */}
+            <div className="flex flex-col justify-center min-w-0">
+              <span className="text-sm sm:text-base font-medium text-gray-500 leading-none mb-1">
+                From
+              </span>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-950 tracking-tight leading-none whitespace-nowrap">
+                  {getBottomBarPrice()}
+                </span>
+                <span className="text-base sm:text-lg font-bold text-gray-600 whitespace-nowrap">
+                  {isHoneymoon ? "per couple" : "PP"}
+                </span>
+              </div>
+            </div>
+
+            {/* Inquire Action Button */}
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                type="button"
+                onClick={handleScrollToForm}
+                className="bg-secondary hover:bg-secondary/90 text-white font-bold text-base sm:text-lg px-9 sm:px-14 py-3 sm:py-3.5 h-auto min-w-[170px] sm:min-w-[210px] rounded-full shadow-none hover:shadow-none transition-all hover:scale-[1.02] active:scale-95 cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap"
+              >
+                <span>Send Inquiry</span>
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

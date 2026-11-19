@@ -45,7 +45,7 @@ export const FixedButtons = () => {
             justifyContent: "center",
             border: "none",
             cursor: "pointer",
-            transition: "box-shadow 0.2s",
+            transition: "box-shadow 0.2s, bottom 0.2s",
           }}
           onMouseOver={(e) =>
             (e.currentTarget.style.boxShadow =

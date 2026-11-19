@@ -69,7 +69,6 @@ const AdminPage: React.FC = () => {
     slug: "",
     description: "",
     image: "",
-    defaultText: "",
   });
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const [packageForm, setPackageForm] = useState({
@@ -298,7 +297,6 @@ const AdminPage: React.FC = () => {
         slug: "",
         description: "",
         image: "",
-        defaultText: "",
       });
       setEditingCategory(null);
       fetch("/api/category")
@@ -312,7 +310,6 @@ const AdminPage: React.FC = () => {
       slug: cat.slug || "",
       description: cat.description,
       image: cat.image || "",
-      defaultText: cat.defaultText || "",
     });
     setEditingCategory(cat.id);
     if (typeof window !== "undefined") {
@@ -744,15 +741,6 @@ const AdminPage: React.FC = () => {
                       }
                     />
                   </div>
-                  <div>
-                    <Label>Default Text</Label>
-                    <RichTextEditor
-                      value={categoryForm.defaultText}
-                      onChange={(val) =>
-                        setCategoryForm((f) => ({ ...f, defaultText: val }))
-                      }
-                    />
-                  </div>
                   <Button type="submit" variant="default">
                     {editingCategory ? "Update" : "Add"} Category
                   </Button>
@@ -767,7 +755,6 @@ const AdminPage: React.FC = () => {
                           slug: "",
                           description: "",
                           image: "",
-                          defaultText: "",
                         });
                       }}
                     >
