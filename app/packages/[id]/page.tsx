@@ -420,17 +420,12 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                           <p className="text-xs uppercase tracking-wide text-white/70">Price</p>
                           <div className="flex items-baseline gap-2">
                             {(packageData.oldPrice || packageData.pricingTiers?.oldPrice) && (
-                              <span className="text-xs sm:text-sm text-white/60 line-through font-medium">
-                                {(() => {
-                                  const raw = String(packageData.oldPrice || packageData.pricingTiers?.oldPrice).trim();
-                                  return raw.startsWith("$") ? raw : `$${raw}`;
-                                })()}
+                              <span className="text-xs sm:text-sm text-red-400 line-through font-medium">
+                                {packageData.oldPrice || packageData.pricingTiers?.oldPrice}
                               </span>
                             )}
                             <p className="font-semibold">
-                              {packageData.price.toLowerCase().includes("pp")
-                                ? packageData.price
-                                : `PP ${packageData.price}`}
+                              {packageData.price}
                             </p>
                           </div>
                         </div>
@@ -759,26 +754,23 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
             {/* Price Info */}
             <div className="flex flex-col justify-center min-w-0">
               <div className="flex items-center gap-2 leading-none mb-1">
-                <span className="text-xs sm:text-sm font-medium text-gray-500">
+                <span className="text-xs sm:text-sm font-semibold text-red-500">
                   From
                 </span>
                 {(packageData.oldPrice || packageData.pricingTiers?.oldPrice) && (
-                  <span className="text-sm sm:text-base font-bold text-gray-400 line-through">
-                    {(() => {
-                      const raw = String(packageData.oldPrice || packageData.pricingTiers?.oldPrice).trim();
-                      return raw.startsWith("$") ? raw : `$${raw}`;
-                    })()}
+                  <span className="text-xs sm:text-sm font-bold text-red-500 line-through">
+                    {packageData.oldPrice || packageData.pricingTiers?.oldPrice}
                   </span>
                 )}
               </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-950 tracking-tight leading-none whitespace-nowrap">
-                  {getBottomBarPrice()}
-                </span>
-                <span className="text-base sm:text-lg font-bold text-gray-600 whitespace-nowrap">
-                  {isHoneymoon ? "per couple" : "PP"}
-                </span>
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-950 tracking-tight leading-none whitespace-nowrap">
+                {getBottomBarPrice() === "Custom Quote" ? "Custom Quote" : `USD ${getBottomBarPrice()}`}
               </div>
+              {getBottomBarPrice() !== "Custom Quote" && (
+                <span className="text-sm sm:text-base font-semibold text-gray-600 mt-1 whitespace-nowrap">
+                  {isHoneymoon ? "per couple" : "per person"}
+                </span>
+              )}
             </div>
 
             {/* Inquire Action Button */}

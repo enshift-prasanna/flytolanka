@@ -901,7 +901,7 @@ const AdminPage: React.FC = () => {
                         onChange={(e) =>
                           setPackageForm((f) => ({ ...f, price: e.target.value }))
                         }
-                        placeholder="e.g. $100 or From $100"
+                        placeholder="e.g. USD $ 119"
                       />
                     </div>
                     <div>
@@ -914,7 +914,7 @@ const AdminPage: React.FC = () => {
                         onChange={(e) =>
                           setPackageForm((f) => ({ ...f, oldPrice: e.target.value }))
                         }
-                        placeholder="e.g. $150 or 150"
+                        placeholder="e.g. USD $ 199"
                       />
                     </div>
                   </div>
@@ -1166,10 +1166,8 @@ const AdminPage: React.FC = () => {
                           <td className="px-4 py-2 border">
                             <div className="flex flex-col">
                               {(pkg.oldPrice || pkg.pricingTiers?.oldPrice) && (
-                                <span className="text-xs text-gray-400 line-through">
-                                  {String(pkg.oldPrice || pkg.pricingTiers?.oldPrice).startsWith("$")
-                                    ? (pkg.oldPrice || pkg.pricingTiers?.oldPrice)
-                                    : `$${pkg.oldPrice || pkg.pricingTiers?.oldPrice}`}
+                                <span className="text-xs text-red-500 line-through">
+                                  {pkg.oldPrice || pkg.pricingTiers?.oldPrice}
                                 </span>
                               )}
                               <span className="font-medium text-gray-900">{pkg.price || "N/A"}</span>
