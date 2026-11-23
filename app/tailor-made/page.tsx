@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import Image from "next/image"
+import { Turnstile } from "@/components/Turnstile"
 
 function Reveal({ children, className = "" }: { children: React.ReactNode; className?: string }) {
 	const ref = useRef<HTMLDivElement | null>(null)
@@ -50,8 +51,10 @@ export default function TailorMadePage() {
 		end: '',
 		requirements: '',
 		specialInterest: '',
-		specialRequests: ''
+		specialRequests: '',
+		website_url: '',
 	});
+	const [turnstileToken, setTurnstileToken] = useState<string>('');
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const [error, setError] = useState('');
@@ -73,13 +76,13 @@ export default function TailorMadePage() {
 			const res = await fetch('/api/send-form-email', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(form)
+				body: JSON.stringify({ ...form, turnstileToken })
 			});
 			const result = await res.json();
 			if (result.success) {
 				setSuccess(true);
 				setForm({
-					name: '', country: '', email: '', phone: '', contactMethod: '', arrival: '', departure: '', days: '', adults: '', children: '', infants: '', start: '', end: '', requirements: '', specialInterest: '', specialRequests: ''
+					name: '', country: '', email: '', phone: '', contactMethod: '', arrival: '', departure: '', days: '', adults: '', children: '', infants: '', start: '', end: '', requirements: '', specialInterest: '', specialRequests: '', website_url: ''
 				});
 			} else {
 				setError(result.error || 'Failed to send.');
@@ -330,6 +333,21 @@ export default function TailorMadePage() {
 
 								{/* Submit */}
 								<div className="pt-2">
+									{/* Anti-spam honeypot */}
+									<input
+										type="text"
+										name="website_url"
+										value={form.website_url}
+										onChange={handleChange}
+										tabIndex={-1}
+										autoComplete="off"
+										className="hidden"
+										aria-hidden="true"
+									/>
+
+									{/* Cloudflare Turnstile */}
+									<Turnstile onVerify={setTurnstileToken} />
+
 									<Button type="submit" className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-6 rounded-full shadow-lg hover:shadow-2xl transition" disabled={loading}>{loading ? 'Sending...' : 'Submit Your Tailor-Made Request'}</Button>
 									{success && <p className="text-center text-green-300 mt-3">Request sent successfully!</p>}
 									{error && <p className="text-center text-red-300 mt-3">{error}</p>}

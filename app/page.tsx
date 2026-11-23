@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Turnstile } from "@/components/Turnstile";
 
 // Reusable reveal animation wrapper
 function Reveal({
@@ -69,7 +70,9 @@ export default function HomePage() {
     children: "",
     infants: "",
     specialNotes: "",
+    website_url: "",
   });
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -102,6 +105,8 @@ export default function HomePage() {
         "Number of Children (Age)": form.children || "0",
         "Number of Infants": form.infants || "0",
         "Special Notes": form.specialNotes || "None",
+        turnstileToken,
+        website_url: form.website_url,
       };
       const res = await fetch("/api/send-form-email", {
         method: "POST",
@@ -123,6 +128,7 @@ export default function HomePage() {
           children: "",
           infants: "",
           specialNotes: "",
+          website_url: "",
         });
       } else {
         setError(result.error || "Failed to send.");
@@ -311,6 +317,21 @@ export default function HomePage() {
                   </div>
 
                   <div className="pt-2">
+                    {/* Anti-spam honeypot */}
+                    <input
+                      type="text"
+                      name="website_url"
+                      value={form.website_url}
+                      onChange={handleChange}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      className="hidden"
+                      aria-hidden="true"
+                    />
+
+                    {/* Cloudflare Turnstile */}
+                    <Turnstile onVerify={setTurnstileToken} />
+
                     <Button
                       type="submit"
                       className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold py-5 rounded-full shadow-lg hover:shadow-2xl transition duration-300"

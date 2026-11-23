@@ -7,6 +7,7 @@ import Link from "next/link";
 import { MapPin, Users, Star, Phone } from "lucide-react";
 import { optimizeImage } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Turnstile } from "@/components/Turnstile";
 
 // Local Reveal animation (keeps existing content, only adds motion)
 function Reveal({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -49,8 +50,10 @@ export default function PackagesPage() {
     adults: '',
     children: '',
     specialInterest: '',
-    specialRequests: ''
+    specialRequests: '',
+    website_url: '',
   });
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [formLoading, setFormLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -85,14 +88,14 @@ export default function PackagesPage() {
       const res = await fetch('/api/send-form-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify({ ...form, turnstileToken })
       });
       const result = await res.json();
       if (result.success) {
         setSuccess(true);
         setForm({
           name: '', country: '', email: '', phone: '', arrival: '', departure: '', 
-          days: '', adults: '', children: '', specialInterest: '', specialRequests: ''
+          days: '', adults: '', children: '', specialInterest: '', specialRequests: '', website_url: ''
         });
       } else {
         setError(result.error || 'Failed to send.');
@@ -369,6 +372,21 @@ export default function PackagesPage() {
 
                 {/* Submit Button */}
                 <div className="pt-2">
+                  {/* Anti-spam honeypot */}
+                  <input
+                    type="text"
+                    name="website_url"
+                    value={form.website_url}
+                    onChange={handleChange}
+                    tabIndex={-1}
+                    autoComplete="off"
+                    className="hidden"
+                    aria-hidden="true"
+                  />
+
+                  {/* Cloudflare Turnstile */}
+                  <Turnstile onVerify={setTurnstileToken} />
+
                   <button 
                     type="submit" 
                     disabled={formLoading}

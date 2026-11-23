@@ -3,10 +3,51 @@ import nodemailer from 'nodemailer';
 import { Resend } from 'resend';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@clerk/nextjs/server';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 export async function POST(request: Request) {
   try {
     const data = await request.json();
+
+    // 0a. Honeypot check (instant silent drop for automated bots)
+    if (data.website_url || data.company_fax || data.honeypot) {
+      console.warn('Spambot trapped by honeypot field');
+      return NextResponse.json({ success: true, ref: 'FTL-VERIFIED' });
+    }
+
+    // 0b. Spambot Signature Filter (blocks the exact attacks seen in screenshot)
+    const arrivalRaw = String(data.arrival || data['Arrival Date'] || '').trim();
+    if (arrivalRaw.startsWith('1970') || (arrivalRaw.length >= 4 && parseInt(arrivalRaw.slice(0, 4), 10) < 2024)) {
+      console.warn('Spambot blocked due to historical/invalid arrival date:', arrivalRaw);
+      return NextResponse.json({ error: 'Please select a valid upcoming arrival date.' }, { status: 400 });
+    }
+
+    const rawAdults = parseInt(data.adults || data['Number of Adults'] || '1', 10) || 1;
+    const rawInfants = parseInt(data.infants || data['Number of Infants'] || '0', 10) || 0;
+    if (rawInfants > 15 || rawAdults > 90) {
+      console.warn('Spambot blocked due to unreasonable passenger counts:', { rawAdults, rawInfants });
+      return NextResponse.json({ error: 'Please enter a valid passenger count.' }, { status: 400 });
+    }
+
+    const rawName = String(data.name || data.Name || '').trim();
+    if (rawName.length > 20 && !rawName.includes(' ') && /[A-Z]/.test(rawName) && /[a-z]/.test(rawName)) {
+      console.warn('Spambot blocked due to machine-generated name pattern:', rawName);
+      return NextResponse.json({ error: 'Please enter a valid name.' }, { status: 400 });
+    }
+
+    // 0c. Cloudflare Turnstile Verification
+    if (process.env.TURNSTILE_SECRET_KEY) {
+      const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('cf-connecting-ip') || undefined;
+      const turnstileToken = data.turnstileToken || data['cf-turnstile-response'];
+      const turnstileCheck = await verifyTurnstileToken(turnstileToken, clientIp);
+      if (!turnstileCheck.success) {
+        console.warn('Spambot blocked by Cloudflare Turnstile:', turnstileCheck.error);
+        return NextResponse.json(
+          { error: 'Security verification failed. Please complete the verification check.' },
+          { status: 403 }
+        );
+      }
+    }
 
     // 1. Identify User ID from Clerk session if signed in
     let clerkUserId: string | null = null;
@@ -78,6 +119,11 @@ export async function POST(request: Request) {
       'adultTotal',
       'kidTotal',
       'infantTotal',
+      'turnstileToken',
+      'cf-turnstile-response',
+      'website_url',
+      'company_fax',
+      'honeypot',
     ];
 
     const detailsHtml = Object.entries(data)

@@ -12,7 +12,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { optimizeImage } from "@/lib/utils";
-import { calculatePackagePrice, extractPriceNumber } from "@/lib/pricing";
+import { calculatePackagePrice, extractPriceNumber, GROUP_TIERS, getStartingTierPrice } from "@/lib/pricing";
+import { Turnstile } from "@/components/Turnstile";
 import { useUser } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -79,8 +80,10 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
     contactMethod: '',
     pickupLocation: '',
     dropoffLocation: '',
-    specialNotes: ''
+    specialNotes: '',
+    website_url: '',
   });
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -120,6 +123,10 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
   const getBottomBarPrice = () => {
     if (isHoneymoon && packageData?.pricingTiers?.couplePrice) {
       return `$${packageData.pricingTiers.couplePrice}`;
+    }
+    const startingTier = getStartingTierPrice(packageData?.pricingTiers);
+    if (startingTier > 0) {
+      return `$${startingTier}`;
     }
     if (packageData?.pricingTiers?.adultPrice) {
       return `$${packageData.pricingTiers.adultPrice}`;
@@ -223,6 +230,8 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
       'Number of Children (Age)': childDisplay,
       'Number of Infants': infantDisplay,
       'Special Notes': form.specialNotes || 'None',
+      turnstileToken,
+      website_url: form.website_url,
       ...pricingPayload,
     } : {
       package: packageData.title,
@@ -237,6 +246,8 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
       'Number of Children (6 to 12)': childDisplay,
       'Number of Infants (0 to 5)': infantDisplay,
       'Special Requirements': form.requirements,
+      turnstileToken,
+      website_url: form.website_url,
       ...pricingPayload,
     };
 
@@ -264,7 +275,8 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
           contactMethod: '',
           pickupLocation: '',
           dropoffLocation: '',
-          specialNotes: ''
+          specialNotes: '',
+          website_url: ''
         });
       } else {
         setError(result.error || 'Failed to send.');
@@ -671,6 +683,41 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                               </div>
                             </div>
                           )}
+
+                          {/* Group Pricing Rates Preview (if tiers configured) */}
+                          {!isHoneymoon && packageData?.pricingTiers?.adultTiers && Object.values(packageData.pricingTiers.adultTiers).some(v => Boolean(v && Number(v) > 0)) && (
+                            <div className="bg-slate-50 border border-slate-200/90 rounded-lg p-2 space-y-1.5">
+                              <div className="flex items-center justify-between font-semibold text-gray-700 text-[11px]">
+                                <span className="flex items-center gap-1">
+                                  <span>👥</span>
+                                  <span>Group Pricing (Per Person)</span>
+                                </span>
+                                {estimatedPricing.activeTierKey && (
+                                  <span className="text-emerald-700 bg-emerald-100/80 px-1.5 py-0.5 rounded text-[10px] font-bold">
+                                    Current: Tier {estimatedPricing.activeTierKey}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="grid grid-cols-4 gap-1 text-[10px] text-center">
+                                {GROUP_TIERS.filter(t => Boolean(packageData?.pricingTiers?.adultTiers?.[t.key] && Number(packageData.pricingTiers.adultTiers[t.key]) > 0)).map((t) => {
+                                  const isCurrent = estimatedPricing.activeTierKey === t.key;
+                                  return (
+                                    <div
+                                      key={t.key}
+                                      className={`p-1 rounded border transition-colors ${
+                                        isCurrent
+                                          ? "bg-emerald-50 border-emerald-400 font-bold text-emerald-800 shadow-xs"
+                                          : "bg-white border-gray-200 text-gray-600"
+                                      }`}
+                                    >
+                                      <div className="text-[9px] text-gray-500 leading-tight">{t.key} pax</div>
+                                      <div className="font-semibold text-gray-900 leading-tight">${packageData?.pricingTiers?.adultTiers?.[t.key]}</div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
                           <div className="space-y-1">
                             <Label htmlFor="requirements" className="text-xs sm:text-[13px] font-semibold text-gray-800">
                               Planned Route / Special Requirements *
@@ -706,7 +753,7 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                             <div className="text-xs text-emerald-700 flex flex-wrap items-center justify-center gap-1">
                               {estimatedPricing.adultTotal > 0 && (
                                 <span className="bg-white px-2 py-0.5 rounded border border-emerald-200 text-[10px]">
-                                  {effectiveAdults} {effectiveAdults === 1 ? 'Adult' : 'Adults'} (${estimatedPricing.unitAdultPrice} each): ${estimatedPricing.adultTotal}
+                                  {effectiveAdults} {effectiveAdults === 1 ? 'Adult' : 'Adults'} (${estimatedPricing.unitAdultPrice} each{estimatedPricing.activeTierKey ? ` • Tier ${estimatedPricing.activeTierKey}` : ''}): ${estimatedPricing.adultTotal}
                                 </span>
                               )}
                               {estimatedPricing.kidTotal > 0 && (
@@ -723,6 +770,21 @@ export default function PackageDetailPage({ params }: { params: { id: string } }
                           )}
                         </div>
                       )}
+
+                      {/* Anti-spam honeypot (invisible to real users) */}
+                      <input
+                        type="text"
+                        name="website_url"
+                        value={form.website_url || ""}
+                        onChange={handleChange}
+                        tabIndex={-1}
+                        autoComplete="off"
+                        className="hidden"
+                        aria-hidden="true"
+                      />
+
+                      {/* Cloudflare Turnstile */}
+                      <Turnstile onVerify={setTurnstileToken} />
 
                       <Button className="w-full bg-secondary hover:bg-secondary/90 font-bold py-2 h-9 text-xs sm:text-sm shadow-md shadow-secondary/15" size="sm" type="submit" disabled={sending}>{sending ? "Sending..." : "Send Inquiry"}</Button>
                       {success && <p className="text-center text-green-600 mt-1.5 text-xs font-medium">Booking request sent successfully!</p>}

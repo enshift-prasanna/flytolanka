@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Turnstile } from "@/components/Turnstile";
 
 export default function BlogPostPage({ params }: { params: { id: string } }) {
   const [post, setPost] = useState<any>(null);
@@ -47,7 +48,9 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
     budget: [] as string[],
     specialInterest: "",
     specialRequests: "",
+    website_url: "",
   });
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -80,7 +83,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
       const res = await fetch("/api/send-form-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, turnstileToken }),
       });
       const result = await res.json();
       if (result.success) {
@@ -105,6 +108,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
           budget: [],
           specialInterest: "",
           specialRequests: "",
+          website_url: "",
         });
       } else {
         setError(result.error || "Failed to send.");
@@ -736,6 +740,21 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                           onChange={handleChange}
                         />
                       </div>
+
+                      {/* Anti-spam honeypot */}
+                      <input
+                        type="text"
+                        name="website_url"
+                        value={form.website_url}
+                        onChange={handleChange}
+                        tabIndex={-1}
+                        autoComplete="off"
+                        className="hidden"
+                        aria-hidden="true"
+                      />
+
+                      {/* Cloudflare Turnstile */}
+                      <Turnstile onVerify={setTurnstileToken} />
 
                       {/* Submit */}
                       <Button

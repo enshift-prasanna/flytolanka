@@ -9,6 +9,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { optimizeImage } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
+import { getStartingTierPrice } from "@/lib/pricing"
 
 import { useEffect, useState, useRef } from "react"
 
@@ -184,7 +185,11 @@ export default function CategoryPage({ params }: PageProps) {
                             </span>
                           )}
                           <span className="text-lg font-bold text-secondary">
-                            {pkg.price || "Contact for Pricing"}
+                            {pkg.price
+                              ? pkg.price
+                              : getStartingTierPrice(pkg.pricingTiers) > 0
+                                ? `From USD $ ${getStartingTierPrice(pkg.pricingTiers)}`
+                                : "Contact for Pricing"}
                           </span>
                         </div>
                         <Link href={`/packages/${pkg.slug || pkg.id}`}>

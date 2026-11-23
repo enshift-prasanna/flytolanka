@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { GROUP_TIERS } from "@/lib/pricing";
 import { RichTextEditor } from "@/components/rich-text-editor";
 import {
   Plus,
@@ -83,6 +84,16 @@ const AdminPage: React.FC = () => {
       kidPrice: "",
       infantPrice: "",
       couplePrice: "",
+      adultTiers: {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4-5": "",
+        "6-8": "",
+        "9-15": "",
+        "16-30": "",
+        "31-45": "",
+      } as Record<string, string>,
     },
     shortDescription: "",
     detailedDescription: "",
@@ -338,11 +349,19 @@ const AdminPage: React.FC = () => {
     }
 
     const pt = packageForm.pricingTiers || ({} as any);
+    const rawTiers = pt.adultTiers || {};
+    const cleanAdultTiers: Record<string, string> = {};
+    for (const [k, v] of Object.entries(rawTiers)) {
+      if (typeof v === "string" && v.trim() !== "") {
+        cleanAdultTiers[k] = v.trim();
+      }
+    }
     const hasAnyPricing = Boolean(
       pt.adultPrice ||
       pt.kidPrice ||
       pt.infantPrice ||
       pt.couplePrice ||
+      Object.keys(cleanAdultTiers).length > 0 ||
       (packageForm.oldPrice && packageForm.oldPrice.trim())
     );
     const cleanTiers = hasAnyPricing ? {
@@ -350,6 +369,7 @@ const AdminPage: React.FC = () => {
       ...(pt.kidPrice ? { kidPrice: pt.kidPrice } : {}),
       ...(pt.infantPrice ? { infantPrice: pt.infantPrice } : {}),
       ...(pt.couplePrice ? { couplePrice: pt.couplePrice } : {}),
+      ...(Object.keys(cleanAdultTiers).length > 0 ? { adultTiers: cleanAdultTiers } : {}),
       ...(packageForm.oldPrice && packageForm.oldPrice.trim() ? { oldPrice: packageForm.oldPrice.trim() } : {}),
     } : null;
 
@@ -379,6 +399,16 @@ const AdminPage: React.FC = () => {
           kidPrice: "",
           infantPrice: "",
           couplePrice: "",
+          adultTiers: {
+            "1": "",
+            "2": "",
+            "3": "",
+            "4-5": "",
+            "6-8": "",
+            "9-15": "",
+            "16-30": "",
+            "31-45": "",
+          },
         },
         shortDescription: "",
         detailedDescription: "",
@@ -392,6 +422,7 @@ const AdminPage: React.FC = () => {
   }
   function handlePackageEdit(pkg: any) {
     const pt = pkg.pricingTiers || {};
+    const existingTiers = pt.adultTiers || {};
     setPackageForm({
       title: pkg.title,
       slug: pkg.slug || "",
@@ -404,6 +435,16 @@ const AdminPage: React.FC = () => {
         kidPrice: pt.kidPrice !== undefined ? String(pt.kidPrice) : (pt.kidPrices?.["1"] ? String(pt.kidPrices["1"]) : ""),
         infantPrice: pt.infantPrice !== undefined ? String(pt.infantPrice) : (pt.infantPrices?.["1"] ? String(pt.infantPrices["1"]) : ""),
         couplePrice: pt.couplePrice !== undefined ? String(pt.couplePrice) : (pt.adultPrices?.["2"] ? String(pt.adultPrices["2"]) : ""),
+        adultTiers: {
+          "1": existingTiers["1"] !== undefined ? String(existingTiers["1"]) : (pt.adultPrices?.["1"] ? String(pt.adultPrices["1"]) : ""),
+          "2": existingTiers["2"] !== undefined ? String(existingTiers["2"]) : (pt.adultPrices?.["2"] ? String(pt.adultPrices["2"]) : ""),
+          "3": existingTiers["3"] !== undefined ? String(existingTiers["3"]) : (pt.adultPrices?.["3"] ? String(pt.adultPrices["3"]) : ""),
+          "4-5": existingTiers["4-5"] !== undefined ? String(existingTiers["4-5"]) : (pt.adultPrices?.["4"] ? String(pt.adultPrices["4"]) : ""),
+          "6-8": existingTiers["6-8"] !== undefined ? String(existingTiers["6-8"]) : "",
+          "9-15": existingTiers["9-15"] !== undefined ? String(existingTiers["9-15"]) : "",
+          "16-30": existingTiers["16-30"] !== undefined ? String(existingTiers["16-30"]) : "",
+          "31-45": existingTiers["31-45"] !== undefined ? String(existingTiers["31-45"]) : "",
+        },
       },
       shortDescription: pkg.shortDescription,
       detailedDescription: pkg.detailedDescription,
@@ -956,116 +997,131 @@ const AdminPage: React.FC = () => {
                       </div>
                     </div>
                   ) : (
-                    <div className="p-4 border rounded-xl bg-slate-50 border-slate-200 space-y-3">
+                    <div className="p-4 border rounded-xl bg-slate-50 border-slate-200 space-y-4">
                       <div>
-                        <h4 className="font-semibold text-gray-900 text-sm">
-                          Per-Person Passenger Pricing ($ USD)
-                        </h4>
-                        <p className="text-xs text-gray-500">
-                          Set the individual rate for adults, children, and infants. Booking forms multiply each count and calculate total price in real time.
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4 text-primary" />
+                          <h4 className="font-semibold text-gray-900 text-sm">
+                            Group Size Tiered Pricing ($ USD / Person)
+                          </h4>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          Set the per-person rate for each group range. If a customer enters 4 or 5 adults, the 4-5 tier price will be applied automatically.
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        {/* Adult Price */}
-                        <div className="bg-white p-3 rounded-lg border border-primary/20 space-y-1.5 shadow-sm">
-                          <Label className="text-xs font-semibold text-primary block">
-                            Adult Price (Per Person)
-                          </Label>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-gray-400 font-bold">$</span>
-                            <Input
-                              type="number"
-                              className="h-8 text-sm"
-                              placeholder={packageForm.price ? `Default (${packageForm.price.replace(/[^0-9.]/g, '')})` : "e.g. 150"}
-                              value={packageForm.pricingTiers?.adultPrice ?? ""}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                setPackageForm((f) => ({
-                                  ...f,
-                                  pricingTiers: {
-                                    ...f.pricingTiers,
-                                    adultPrice: val,
-                                  },
-                                }));
-                              }}
-                            />
-                            <span className="text-xs text-gray-400">USD</span>
+                      {/* 8 Group Range Inputs */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        {GROUP_TIERS.map((tier) => (
+                          <div
+                            key={tier.key}
+                            className="bg-white p-2.5 rounded-lg border border-primary/20 space-y-1 shadow-sm hover:border-primary/40 transition-colors"
+                          >
+                            <div className="flex items-center justify-between">
+                              <Label className="text-xs font-bold text-gray-800">
+                                {tier.label}
+                              </Label>
+                              <span className="text-[10px] font-semibold text-primary/70 bg-primary/10 px-1.5 py-0.5 rounded">
+                                {tier.key}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span className="text-gray-400 font-bold text-xs">$</span>
+                              <Input
+                                type="number"
+                                className="h-7 text-xs font-medium"
+                                placeholder="e.g. 80"
+                                value={packageForm.pricingTiers?.adultTiers?.[tier.key] ?? ""}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setPackageForm((f) => ({
+                                    ...f,
+                                    pricingTiers: {
+                                      ...f.pricingTiers,
+                                      adultTiers: {
+                                        ...(f.pricingTiers?.adultTiers || {}),
+                                        [tier.key]: val,
+                                      },
+                                    },
+                                  }));
+                                }}
+                              />
+                              <span className="text-[10px] text-gray-400 font-semibold">PP</span>
+                            </div>
                           </div>
-                          <p className="text-[11px] text-gray-400">
-                            {packageForm.pricingTiers?.adultPrice
-                              ? `Set to $${packageForm.pricingTiers.adultPrice} / adult`
-                              : "Defaults to main Price if empty"}
-                          </p>
-                        </div>
-
-                        {/* Child Price */}
-                        <div className="bg-white p-3 rounded-lg border border-secondary/20 space-y-1.5 shadow-sm">
-                          <Label className="text-xs font-semibold text-secondary block">
-                            Child Price (Age 3-12)
-                          </Label>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-gray-400 font-bold">$</span>
-                            <Input
-                              type="number"
-                              className="h-8 text-sm"
-                              placeholder="e.g. 75"
-                              value={packageForm.pricingTiers?.kidPrice ?? ""}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                setPackageForm((f) => ({
-                                  ...f,
-                                  pricingTiers: {
-                                    ...f.pricingTiers,
-                                    kidPrice: val,
-                                  },
-                                }));
-                              }}
-                            />
-                            <span className="text-xs text-gray-400">USD</span>
-                          </div>
-                          <p className="text-[11px] text-gray-400">
-                            {packageForm.pricingTiers?.kidPrice
-                              ? `$${packageForm.pricingTiers.kidPrice} / child`
-                              : "Leave 0 or empty if free"}
-                          </p>
-                        </div>
-
-                        {/* Infant Price */}
-                        <div className="bg-white p-3 rounded-lg border border-emerald-200 space-y-1.5 shadow-sm">
-                          <Label className="text-xs font-semibold text-emerald-700 block">
-                            Infant Price (Age 0-2)
-                          </Label>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-gray-400 font-bold">$</span>
-                            <Input
-                              type="number"
-                              className="h-8 text-sm"
-                              placeholder="0"
-                              value={packageForm.pricingTiers?.infantPrice ?? ""}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                setPackageForm((f) => ({
-                                  ...f,
-                                  pricingTiers: {
-                                    ...f.pricingTiers,
-                                    infantPrice: val,
-                                  },
-                                }));
-                              }}
-                            />
-                            <span className="text-xs text-gray-400">USD</span>
-                          </div>
-                          <p className="text-[11px] text-gray-400">
-                            {packageForm.pricingTiers?.infantPrice
-                              ? `$${packageForm.pricingTiers.infantPrice} / infant`
-                              : "Usually free ($0)"}
-                          </p>
-                        </div>
+                        ))}
                       </div>
 
-                      <div className="bg-slate-100/90 rounded-md p-2 text-xs text-gray-600">
-                        <span><strong>Formula:</strong> (Adults × Adult Price) + (Children × Child Price) + (Infants × Infant Price)</span>
+                      {/* Children & Infants Pricing */}
+                      <div className="pt-2 border-t border-slate-200">
+                        <h5 className="text-xs font-semibold text-gray-700 mb-2">
+                          Child & Infant Rates (Optional)
+                        </h5>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {/* Child Price */}
+                          <div className="bg-white p-2.5 rounded-lg border border-secondary/20 space-y-1 shadow-sm">
+                            <Label className="text-xs font-semibold text-secondary block">
+                              Child Price (Age 3-12)
+                            </Label>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-gray-400 font-bold text-xs">$</span>
+                              <Input
+                                type="number"
+                                className="h-8 text-xs"
+                                placeholder="e.g. 75"
+                                value={packageForm.pricingTiers?.kidPrice ?? ""}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setPackageForm((f) => ({
+                                    ...f,
+                                    pricingTiers: {
+                                      ...f.pricingTiers,
+                                      kidPrice: val,
+                                    },
+                                  }));
+                                }}
+                              />
+                              <span className="text-xs text-gray-400">USD</span>
+                            </div>
+                            <p className="text-[10px] text-gray-400">
+                              {packageForm.pricingTiers?.kidPrice
+                                ? `$${packageForm.pricingTiers.kidPrice} / child`
+                                : "0 or empty if free"}
+                            </p>
+                          </div>
+
+                          {/* Infant Price */}
+                          <div className="bg-white p-2.5 rounded-lg border border-emerald-200 space-y-1 shadow-sm">
+                            <Label className="text-xs font-semibold text-emerald-700 block">
+                              Infant Price (Age 0-2)
+                            </Label>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-gray-400 font-bold text-xs">$</span>
+                              <Input
+                                type="number"
+                                className="h-8 text-xs"
+                                placeholder="0"
+                                value={packageForm.pricingTiers?.infantPrice ?? ""}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setPackageForm((f) => ({
+                                    ...f,
+                                    pricingTiers: {
+                                      ...f.pricingTiers,
+                                      infantPrice: val,
+                                    },
+                                  }));
+                                }}
+                              />
+                              <span className="text-xs text-gray-400">USD</span>
+                            </div>
+                            <p className="text-[10px] text-gray-400">
+                              {packageForm.pricingTiers?.infantPrice
+                                ? `$${packageForm.pricingTiers.infantPrice} / infant`
+                                : "0 or empty if free"}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -1123,6 +1179,16 @@ const AdminPage: React.FC = () => {
                             kidPrice: "",
                             infantPrice: "",
                             couplePrice: "",
+                            adultTiers: {
+                              "1": "",
+                              "2": "",
+                              "3": "",
+                              "4-5": "",
+                              "6-8": "",
+                              "9-15": "",
+                              "16-30": "",
+                              "31-45": "",
+                            },
                           },
                           shortDescription: "",
                           detailedDescription: "",
