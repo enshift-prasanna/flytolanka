@@ -26,8 +26,6 @@ export function Navigation() {
 
   const navItems = [
     { href: "/", label: "Home" },
-    { href: "/vehicles", label: "Vehicles" },
-    { href: "/drivers", label: "Drivers" },
     { href: "/packages", label: "Packages" },
     { href: "/sri-lanka", label: "Blogs" },
     { href: "/things-to-do", label: "Things to Do" },

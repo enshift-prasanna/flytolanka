@@ -81,50 +81,37 @@ export const FixedButtons = () => {
         </button>
       )}
 
-      {/* Chat with us text box */}
+      {/* WhatsApp Chat Button */}
       <a
         href="https://wa.me/94765533874"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed right-26 bottom-7 lg:right-35 lg:bottom-13 z-30 bg-[#25D366] text-white px-5 py-2 lg:px-6 lg:py-3 rounded-[20px] text-base lg:text-lg font-medium shadow-lg whitespace-nowrap no-underline block cursor-pointer transition-transform duration-200 hover:scale-105"
-        onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
-        onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+        aria-label="Chat with us on WhatsApp"
+        className="fixed right-1 bottom-1 lg:right-3 lg:bottom-3 z-30 flex items-center group no-underline cursor-pointer select-none"
       >
-        Chat with us
-        <div
-          style={{
-            position: "absolute",
-            right: "-8px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: 0,
-            height: 0,
-            borderLeft: "8px solid #25D366",
-            borderTop: "6px solid transparent",
-            borderBottom: "6px solid transparent",
-          }}
-        />
-      </a>
+        {/* Chat with us text bubble */}
+        <span className="relative bg-[#25D366] text-white px-4 py-2 lg:px-4.5 lg:py-2.5 rounded-full text-sm lg:text-[15px] font-medium shadow-md whitespace-nowrap transition-transform duration-200 group-hover:scale-105 mr-[-6px]">
+          Chat with us
+          <span
+            className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-0 h-0"
+            style={{
+              borderLeft: "7px solid #25D366",
+              borderTop: "6px solid transparent",
+              borderBottom: "6px solid transparent",
+            }}
+          />
+        </span>
 
-      <a
-        href="https://wa.me/94765533874"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Contact via WhatsApp"
-        className="fixed right-0 bottom-0 lg:right-4 lg:bottom-4 z-30 flex items-center justify-center cursor-pointer p-0"
-        style={{
-          background: "none",
-          boxShadow: "none",
-          border: "none",
-        }}
-      >
-        <iframe
-          src="https://lottie.host/embed/1207ea19-22eb-4450-b8f9-d03b3a00f187/EVzS4iKWsm.lottie"
-          title="WhatsApp Animation"
-          className="w-[100px] h-[100px] lg:w-[120px] lg:h-[120px]"
-          style={{ border: "none", background: "none", pointerEvents: "none" }}
-          allowFullScreen
-        />
+        {/* Animated WhatsApp icon */}
+        <div className="flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
+          <iframe
+            src="https://lottie.host/embed/1207ea19-22eb-4450-b8f9-d03b3a00f187/EVzS4iKWsm.lottie"
+            title="WhatsApp Animation"
+            className="w-[88px] h-[88px] lg:w-[100px] lg:h-[100px]"
+            style={{ border: "none", background: "none", pointerEvents: "none" }}
+            allowFullScreen
+          />
+        </div>
       </a>
     </>
   )

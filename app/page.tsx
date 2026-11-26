@@ -54,8 +54,6 @@ function Reveal({
 
 export default function HomePage() {
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [vehicles, setVehicles] = useState<any[]>([]);
-  const [vehiclesLoading, setVehiclesLoading] = useState(true);
 
   // Booking Form State
   const [form, setForm] = useState({
@@ -145,13 +143,6 @@ export default function HomePage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
-  useEffect(() => {
-    fetch("/api/vehicle")
-      .then((res) => res.json())
-      .then((data) => setVehicles(Array.isArray(data) ? data : []))
-      .catch(() => setVehicles([]))
-      .finally(() => setVehiclesLoading(false));
-  }, []);
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 [scrollbar-width:thin] [scrollbar-color:hsl(var(--primary))_#e0f2fe]">
       {/* Hero Section */}
@@ -410,12 +401,19 @@ export default function HomePage() {
               </div>
               <div className="flex flex-col sm:flex-row gap-4 pt-4 sm:pt-5">
                 <Button
-                  aria-label="Book your private driver now"
+                  aria-label="Book your tour now"
                   className="h-14 sm:h-16 group bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg sm:text-xl px-9 py-5 rounded-full shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-                  onClick={() => (window.location.href = "/drivers")}
+                  onClick={() => {
+                    const hero = document.getElementById("hero");
+                    if (hero) {
+                      hero.scrollIntoView({ behavior: "smooth" });
+                    } else {
+                      window.location.href = "/packages";
+                    }
+                  }}
                 >
                   <span className="flex items-center gap-2">
-                    Book Your Driver Now{" "}
+                    Book Your Tour Now{" "}
                     <span className="transition-transform group-hover:translate-x-1">
                       →
                     </span>
@@ -722,82 +720,6 @@ export default function HomePage() {
               </Card>
             </Reveal>
           </div>
-        </div>
-      </section>
-
-      {/* Book With Us Section */}
-      <section id="fleet" className="py-20 bg-white relative scroll-mt-24">
-        <div className="relative container mx-auto px-4 lg:px-24">
-          <Reveal className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-black mb-6">
-              Book Your Perfect Vehicle in Sri Lanka
-            </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Choose from our premium fleet of well-maintained vehicles with
-              professional drivers
-            </p>
-          </Reveal>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            {vehiclesLoading ? (
-              Array.from({ length: 4 }).map((_, idx) => (
-                <div
-                  key={idx}
-                  className="relative bg-white border border-gray-100 rounded-2xl shadow-md overflow-hidden h-64 flex flex-col justify-end"
-                >
-                  <Skeleton className="absolute inset-0 w-full h-full rounded-2xl" />
-                  <div className="relative z-10 p-4">
-                    <Skeleton className="h-6 w-3/4 mx-auto bg-black/40 rounded" />
-                  </div>
-                </div>
-              ))
-            ) : vehicles.length === 0 ? (
-              <div className="col-span-full text-center text-gray-400 py-12">
-                No vehicles available at the moment.
-              </div>
-            ) : (
-              vehicles.map((vehicle, i) => (
-                <Reveal key={vehicle.id || i}>
-                  <Card className="relative bg-white border border-gray-100 rounded-2xl shadow-md overflow-hidden p-0 h-64 flex">
-                    {vehicle.image ? (
-                      <Image
-                        src={vehicle.image}
-                        alt={vehicle.title || "Vehicle"}
-                        fill
-                        sizes="100vw"
-                        className="object-cover w-full h-full"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        No image
-                      </div>
-                    )}
-                    <div className="absolute bottom-0 left-0 w-full bg-black/60 text-white text-center text-lg font-semibold px-4 py-3">
-                      {vehicle.title || vehicle.name}
-                    </div>
-                  </Card>
-                </Reveal>
-              ))
-            )}
-          </div>
-          <Reveal className="text-center">
-            <Button
-              aria-label="View other vehicles"
-              size="lg"
-              className="group bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-bold text-lg px-10 py-4 rounded-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-              onClick={() => (window.location.href = "/vehicles")}
-            >
-              <span className="flex items-center gap-2">
-                View Other Vehicles{" "}
-                <span className="group-hover:translate-x-1 transition-transform">
-                  →
-                </span>
-              </span>
-            </Button>
-            <p className="text-black mt-4 text-sm">
-              ✨ No advance payment required • 24/7 support • Best rates
-              guaranteed
-            </p>
-          </Reveal>
         </div>
       </section>
 

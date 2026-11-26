@@ -19,6 +19,11 @@ export const metadata: Metadata = {
     "Experience Sri Lanka with our professional drivers and quality vehicles. Airport transfers, city tours, and travel packages across the beautiful island.",
   keywords:
     "Sri Lanka travel, transportation, drivers, vehicles, tours, airport transfer",
+  icons: {
+    icon: "/ftl.png",
+    shortcut: "/ftl.png",
+    apple: "/ftl.png",
+  },
 };
 
 const poppins = Poppins({

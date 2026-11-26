@@ -48,6 +48,12 @@ export default function CategoryPage({ params }: PageProps) {
   const [loading, setLoading] = useState(true)
   const [showScrollTop, setShowScrollTop] = useState(false)
 
+  const isHoneymoon = Boolean(
+    category?.slug === "honeymoon-tours" ||
+    category?.name?.toLowerCase().includes("honeymoon") ||
+    categoryId === "68babf3c85d85b76f41bcfe5"
+  );
+
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
@@ -184,13 +190,19 @@ export default function CategoryPage({ params }: PageProps) {
                               {pkg.oldPrice || pkg.pricingTiers?.oldPrice}
                             </span>
                           )}
-                          <span className="text-lg font-bold text-secondary">
+                          <span className="text-lg font-bold text-secondary leading-tight">
                             {pkg.price
                               ? pkg.price
                               : getStartingTierPrice(pkg.pricingTiers) > 0
                                 ? `From USD $ ${getStartingTierPrice(pkg.pricingTiers)}`
                                 : "Contact for Pricing"}
                           </span>
+                          {((pkg.price && pkg.price !== "Contact for Pricing") || getStartingTierPrice(pkg.pricingTiers) > 0) &&
+                            !(typeof pkg.price === "string" && /(per\s+person|per\s+couple|\/person|\/pp)/i.test(pkg.price)) && (
+                              <span className="text-xs font-medium text-gray-500 mt-0.5">
+                                {isHoneymoon ? "per couple" : "per person"}
+                              </span>
+                            )}
                         </div>
                         <Link href={`/packages/${pkg.slug || pkg.id}`}>
                           <Button className="bg-secondary hover:bg-secondary/80">
